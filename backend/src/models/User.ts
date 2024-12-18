@@ -1,26 +1,68 @@
-import mongoose from 'mongoose';
+import { 
+  Entity, 
+  PrimaryGeneratedColumn, 
+  Column, 
+  CreateDateColumn, 
+  UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+  OneToMany
+} from 'typeorm';
+import { Interest } from './Interest';
+import { Subscription } from './Subscription';
+import { UserInteraction } from './UserInteraction';
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true
-  },
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin'
+}
 
-export const User = mongoose.model('User', UserSchema);
+@Entity('users')
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column({ length: 100 })
+  name!: string;
+
+  @Column({ unique: true, length: 255 })
+  email!: string;
+
+  @Column()
+  passwordHash!: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER
+  })
+  role!: UserRole;
+
+  @Column({ default: false })
+  isEmailVerified!: boolean;
+
+  @Column({ nullable: true })
+  passwordResetToken!: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  passwordResetExpires!: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  emailVerificationToken!: string;
+
+  @ManyToMany(() => Interest, { cascade: true, nullable: true })
+  @JoinTable()
+  preferences!: Interest[];
+
+  @OneToMany(() => Subscription, subscription => subscription.user, { nullable: true })
+  subscriptions!: Subscription[];
+
+  @OneToMany(() => UserInteraction, interaction => interaction.user, { nullable: true })
+  interactions!: UserInteraction[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
+}
