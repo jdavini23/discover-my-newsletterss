@@ -19,7 +19,7 @@ export const errorHandler = (
   let statusCode = 500;
   let errorResponse: ErrorResponse = {
     status: 'error',
-    statusCode: statusCode,
+    statusCode,
     message: 'Internal Server Error'
   };
 
