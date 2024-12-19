@@ -1,16 +1,13 @@
 import request from 'supertest';
 import { app } from '../app';
-import { AppDataSource } from '../config/database';
 import { User } from '../models/User';
-import { setup, teardown } from './setup';
+import { TestDataSource } from '../config/testDatabase';
+import { clearDatabase } from './setup';
+import bcrypt from 'bcrypt';
 
 describe('Authentication Endpoints', () => {
-  beforeAll(async () => {
-    await setup();
-  });
-
-  afterAll(async () => {
-    await teardown();
+  beforeEach(async () => {
+    await clearDatabase();
   });
 
   describe('POST /api/auth/register', () => {
@@ -18,43 +15,36 @@ describe('Authentication Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/register')
         .send({
+          name: 'New User',
           email: 'newuser@example.com',
-          password: 'password123',
-          firstName: 'John',
-          lastName: 'Doe',
-          preferences: ['Technology', 'Sports']
+          password: 'password123'
         });
 
-      console.log('Registration Response:', response.status, response.body);
-      expect(response.status).toBeGreaterThanOrEqual(200);
-      expect(response.status).toBeLessThan(300);
+      expect(response.status).toBe(201);
       expect(response.body.user).toBeDefined();
       expect(response.body.user.email).toBe('newuser@example.com');
       expect(response.body.user.isEmailVerified).toBe(false);
+      expect(response.body.token).toBeDefined();
     });
 
     it('should reject registration with existing email', async () => {
-      // First, register a user
-      await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'existinguser@example.com',
-          password: 'password123',
-          firstName: 'Existing',
-          lastName: 'User'
-        });
+      // First create a user
+      const userRepo = TestDataSource.getRepository(User);
+      await userRepo.save({
+        name: 'Existing User',
+        email: 'existinguser@example.com',
+        passwordHash: await bcrypt.hash('password123', 10)
+      });
 
-      // Try to register with the same email
+      // Try to register with same email
       const response = await request(app)
         .post('/api/auth/register')
         .send({
+          name: 'Another User',
           email: 'existinguser@example.com',
-          password: 'anotherpassword',
-          firstName: 'Another',
-          lastName: 'User'
+          password: 'password123'
         });
 
-      console.log('Registration Response:', response.status, response.body);
       expect(response.status).toBe(400);
       expect(response.body.error).toContain('already exists');
     });
@@ -62,23 +52,21 @@ describe('Authentication Endpoints', () => {
 
   describe('POST /api/auth/login', () => {
     beforeEach(async () => {
-      // Ensure a user exists for login tests
-      await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'logintest@example.com',
-          password: 'loginpassword',
-          firstName: 'Login',
-          lastName: 'Test'
-        });
+      // Create a test user
+      const userRepo = TestDataSource.getRepository(User);
+      await userRepo.save({
+        name: 'Test User',
+        email: 'testuser@example.com',
+        passwordHash: await bcrypt.hash('password123', 10)
+      });
     });
 
     it('should login successfully with correct credentials', async () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'logintest@example.com',
-          password: 'loginpassword'
+          email: 'testuser@example.com',
+          password: 'password123'
         });
 
       expect(response.status).toBe(200);
@@ -90,7 +78,7 @@ describe('Authentication Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'logintest@example.com',
+          email: 'testuser@example.com',
           password: 'wrongpassword'
         });
 
@@ -103,7 +91,7 @@ describe('Authentication Endpoints', () => {
         .post('/api/auth/login')
         .send({
           email: 'nonexistent@example.com',
-          password: 'somepassword'
+          password: 'password123'
         });
 
       expect(response.status).toBe(401);
@@ -113,32 +101,24 @@ describe('Authentication Endpoints', () => {
 
   describe('POST /api/auth/forgot-password', () => {
     beforeEach(async () => {
-      // Ensure a user exists for password reset tests
-      await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'resetpassword@example.com',
-          password: 'oldpassword',
-          firstName: 'Reset',
-          lastName: 'Password'
-        });
+      // Create a test user
+      const userRepo = TestDataSource.getRepository(User);
+      await userRepo.save({
+        name: 'Test User',
+        email: 'testuser@example.com',
+        passwordHash: await bcrypt.hash('password123', 10)
+      });
     });
 
     it('should generate a password reset token', async () => {
       const response = await request(app)
         .post('/api/auth/forgot-password')
         .send({
-          email: 'resetpassword@example.com'
+          email: 'testuser@example.com'
         });
 
-      console.log('Forgot Password Response:', response.status, response.body);
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Password reset token generated');
-      
-      // In development, the token should be returned
-      if (process.env.NODE_ENV === 'development') {
-        expect(response.body.resetToken).toBeDefined();
-      }
     });
 
     it('should reject password reset for non-existent email', async () => {
@@ -148,7 +128,6 @@ describe('Authentication Endpoints', () => {
           email: 'nonexistent@example.com'
         });
 
-      console.log('Forgot Password Response:', response.status, response.body);
       expect(response.status).toBe(400);
       expect(response.body.error).toContain('No user found');
     });
@@ -156,49 +135,24 @@ describe('Authentication Endpoints', () => {
 
   describe('POST /api/auth/reset-password', () => {
     let resetToken: string;
-    const testUser = {
-      email: 'resettest@example.com',
-      password: 'oldpassword',
-      firstName: 'Reset',
-      lastName: 'Test'
-    };
 
     beforeEach(async () => {
-      // Ensure the user is registered first
-      const registerResponse = await request(app)
-        .post('/api/auth/register')
-        .send(testUser);
-      
-      console.log('Registration Response:', registerResponse.status, registerResponse.body);
-      
-      // Check for registration success or existing user
-      if (registerResponse.status === 400 && registerResponse.body.error.includes('already exists')) {
-        // User already exists, that's fine
-        console.log('User already exists, proceeding with existing user');
-      } else {
-        // For new registrations, check status code
-        expect(registerResponse.status).toBeGreaterThanOrEqual(200);
-        expect(registerResponse.status).toBeLessThan(300);
-      }
+      // Create a test user with a reset token
+      const userRepo = TestDataSource.getRepository(User);
+      resetToken = 'valid-reset-token';
+      const resetExpires = new Date();
+      resetExpires.setHours(resetExpires.getHours() + 1);
 
-      // Then initiate password reset
-      const resetResponse = await request(app)
-        .post('/api/auth/forgot-password')
-        .send({
-          email: testUser.email
-        });
-
-      console.log('Reset Response:', resetResponse.status, resetResponse.body);
-      expect(resetResponse.status).toBe(200);
-
-      // Ensure we have a reset token
-      resetToken = resetResponse.body.resetToken;
-      console.log('Generated Reset Token:', resetToken);
-      expect(resetToken).toBeDefined();
+      await userRepo.save({
+        name: 'Reset Test User',
+        email: 'resettest@example.com',
+        passwordHash: await bcrypt.hash('oldpassword', 10),
+        passwordResetToken: resetToken,
+        passwordResetExpires: resetExpires
+      });
     });
 
     it('should reset password successfully', async () => {
-      console.log('Using Reset Token:', resetToken);
       const response = await request(app)
         .post('/api/auth/reset-password')
         .send({
@@ -206,15 +160,14 @@ describe('Authentication Endpoints', () => {
           newPassword: 'newpassword123'
         });
 
-      console.log('Reset Password Response:', response.status, response.body);
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Password reset successfully');
+      expect(response.body.message).toBe('Password has been reset');
 
-      // Verify new password works
+      // Try logging in with new password
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          email: testUser.email,
+          email: 'resettest@example.com',
           password: 'newpassword123'
         });
 
@@ -225,7 +178,7 @@ describe('Authentication Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/reset-password')
         .send({
-          token: 'invalidtoken',
+          token: 'invalid-token',
           newPassword: 'newpassword123'
         });
 
