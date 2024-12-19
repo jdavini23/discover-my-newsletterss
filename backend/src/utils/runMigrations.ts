@@ -11,9 +11,9 @@ export const runMigrations = async (): Promise<void> => {
     await AppDataSource.runMigrations();
 
     console.log('Migrations run successfully');
-  } catch (_error) {
-    console.error('Error running migrations');
-    throw new Error('Failed to run migrations');
+  } catch (error) {
+    console.error('Error running migrations:', error);
+    process.exit(1);
   } finally {
     // Close the database connection
     if (AppDataSource.isInitialized) {
@@ -35,9 +35,9 @@ export const checkMigrationStatus = async (): Promise<{
       pending: pendingMigrations.length,
       applied: appliedMigrations.length,
     };
-  } catch (_error) {
-    console.error('Error checking migration status');
-    throw new Error('Failed to check migration status');
+  } catch (error) {
+    console.error('Error checking migration status:', error);
+    process.exit(1);
   }
 };
 
@@ -45,8 +45,8 @@ export const checkMigrationStatus = async (): Promise<{
 if (require.main === module) {
   void runMigrations()
     .then(() => console.log('Migration process completed'))
-    .catch((_error) => {
-      console.error('Migration process failed');
+    .catch((error) => {
+      console.error('Migration process failed:', error);
       process.exit(1);
     });
 }
