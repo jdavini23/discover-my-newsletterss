@@ -1,7 +1,5 @@
 import { User } from '../models/User';
 import { Interest } from '../models/Interest';
-import { UserRepository } from '../repositories/UserRepository';
-import { InterestRepository } from '../repositories/InterestRepository';
 import { 
   hashPassword, 
   comparePasswords, 
@@ -11,14 +9,19 @@ import {
 } from '../utils/authUtils';
 import { AppDataSource } from '../config/database';
 import { MoreThan } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { getTestDataSource } from '../config/testDatabase';
+import bcrypt from 'bcrypt';
 
 export class UserService {
-  private userRepository: any;
-  private interestRepository: any;
+  private userRepository: Repository<User>;
+  private interestRepository: Repository<Interest>;
+  private dataSource: DataSource;
 
-  constructor() {
-    this.userRepository = AppDataSource.getRepository(User);
-    this.interestRepository = AppDataSource.getRepository(Interest);
+  constructor(dataSource = AppDataSource) {
+    this.dataSource = dataSource;
+    this.userRepository = this.dataSource.getRepository(User);
+    this.interestRepository = this.dataSource.getRepository(Interest);
   }
 
   async registerUser(
@@ -27,7 +30,7 @@ export class UserService {
     firstName?: string, 
     lastName?: string, 
     preferences?: string[]
-  ): Promise<User> {
+  ): Promise<{ user: User, token: string }> {
     // Check if user already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
@@ -59,7 +62,12 @@ export class UserService {
     }
 
     // Save user
-    return this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user);
+
+    // Generate token
+    const token = generateToken(savedUser.id);
+
+    return { user: savedUser, token };
   }
 
   async loginUser(email: string, password: string): Promise<{ user: User, token: string }> {
@@ -91,7 +99,7 @@ export class UserService {
 
     // Generate reset token
     const resetToken = generatePasswordResetToken();
-    const hashedResetToken = hashResetToken(resetToken);
+    const hashedResetToken = await bcrypt.hash(resetToken, 10);
 
     // Set reset token and expiration
     user.passwordResetToken = hashedResetToken;
@@ -104,16 +112,20 @@ export class UserService {
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    const hashedToken = hashResetToken(token);
-
     const user = await this.userRepository.findOne({ 
       where: { 
-        passwordResetToken: hashedToken,
         passwordResetExpires: MoreThan(new Date()) 
       } 
     });
 
-    if (!user) {
+    if (!user || !user.passwordResetToken) {
+      throw new Error('Invalid or expired reset token');
+    }
+
+    // Compare reset token using bcrypt
+    const isTokenValid = await bcrypt.compare(token, user.passwordResetToken);
+    
+    if (!isTokenValid) {
       throw new Error('Invalid or expired reset token');
     }
 
