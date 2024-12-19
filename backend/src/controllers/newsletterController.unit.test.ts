@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { Request, Response } from 'express';
 import { Newsletter, NewsletterFrequency } from '../models/Newsletter';
 import { Interest } from '../models/Interest';
