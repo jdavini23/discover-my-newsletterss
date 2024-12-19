@@ -1,24 +1,50 @@
 import { TestDataSource } from '../config/testDatabase';
 
-// Minimal setup for validation tests
+// Mock Redis for testing
+jest.mock('../config/redis', () => ({
+  redisClient: {
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+    on: jest.fn(),
+    connect: jest.fn().mockResolvedValue(true),
+    quit: jest.fn().mockResolvedValue(true)
+  }
+}));
+
+// Mock database initialization for integration tests
 const initializeTestDatabase = async () => {
-  // Do nothing for validation tests
+  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'integration') {
+    console.log('Skipping database initialization for test environment');
+    return;
+  }
+
+  try {
+    await TestDataSource.initialize();
+    console.log('Test database initialized successfully');
+  } catch (error) {
+    console.error('Error initializing test database:', error);
+    throw error;
+  }
 };
 
 const clearTestDatabase = async () => {
-  // Do nothing for validation tests
+  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'integration') {
+    return;
+  }
+  // Implement database clearing logic
 };
 
 beforeAll(async () => {
-  // No database initialization
+  await initializeTestDatabase();
 });
 
 beforeEach(async () => {
-  // No database clearing
+  await clearTestDatabase();
 });
 
 afterAll(async () => {
-  // No teardown
+  // Teardown logic if needed
 });
 
 export { clearTestDatabase as clearDatabase };

@@ -11,6 +11,15 @@ const redisConfig = {
   connectTimeout: 10000, // 10 seconds
   maxRetriesPerRequest: 3,
   retryStrategy: (times: number) => {
+    // For testing environments, limit retry attempts
+    if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'integration') {
+      if (times > 3) {
+        console.warn('Max Redis connection retries reached. Skipping connection.');
+        return null;
+      }
+    }
+
+    // Exponential backoff for connection retries
     const delay = Math.min(times * 50, 2000);
     console.warn(`Redis connection retry attempt ${times}, delay: ${delay}ms`);
     return delay;
@@ -21,7 +30,9 @@ export const redisClient = new Redis(redisConfig);
 
 // Enhanced error handling
 redisClient.on('error', (err) => {
-  console.error('Redis Client Error:', err);
+  if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'integration') {
+    console.error('Redis Client Error:', err);
+  }
 });
 
 redisClient.on('connect', () => {
