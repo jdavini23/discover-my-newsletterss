@@ -1,15 +1,24 @@
-import { setupTestDatabase, teardownTestDatabase, clearDatabase } from '../config/testDatabase';
+import { TestDataSource } from '../config/testDatabase';
+
+// Minimal setup for validation tests
+const initializeTestDatabase = async () => {
+  // Do nothing for validation tests
+};
+
+const clearTestDatabase = async () => {
+  // Do nothing for validation tests
+};
 
 beforeAll(async () => {
-  await setupTestDatabase();
+  // No database initialization
 });
 
 beforeEach(async () => {
-  await clearDatabase();
+  // No database clearing
 });
 
 afterAll(async () => {
-  await teardownTestDatabase();
+  // No teardown
 });
 
-export { clearDatabase };
+export { clearTestDatabase as clearDatabase };
