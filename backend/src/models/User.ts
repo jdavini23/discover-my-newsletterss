@@ -37,13 +37,13 @@ export class User {
   isEmailVerified!: boolean;
 
   @Column({ nullable: true, type: 'varchar' })
-  passwordResetToken!: string;
+  passwordResetToken!: string | null;
 
   @Column({ type: 'datetime', nullable: true })
   passwordResetExpires!: Date | null;
 
   @Column({ nullable: true, type: 'varchar' })
-  emailVerificationToken!: string;
+  emailVerificationToken!: string | null;
 
   @ManyToMany(() => Interest, interest => interest.users, { cascade: true })
   @JoinTable({
