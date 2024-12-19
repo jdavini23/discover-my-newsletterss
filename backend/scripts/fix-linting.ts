@@ -9,7 +9,6 @@ async function fixLintingIssues() {
   // Initialize ESLint
   const eslint = new ESLint({
     fix: true,
-    useEslintrc: true,
   });
 
   // Function to recursively find TypeScript files
@@ -42,9 +41,6 @@ async function fixLintingIssues() {
   // Process each file
   for (const file of tsFiles) {
     try {
-      // Read file contents
-      const fileContents = fs.readFileSync(file, 'utf8');
-
       // Lint and fix the file
       const results = await eslint.lintFiles([file]);
 
