@@ -66,7 +66,9 @@ export const errorHandler = (
 };
 
 // Async error wrapper to simplify error handling in route handlers
-export const asyncHandler = (fn: Function) => {
+export const asyncHandler = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await fn(req, res, next);
