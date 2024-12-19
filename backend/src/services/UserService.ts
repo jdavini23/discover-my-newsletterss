@@ -1,16 +1,14 @@
 import { User } from '../models/User';
 import { Interest } from '../models/Interest';
-import { 
-  hashPassword, 
-  comparePasswords, 
-  generateToken, 
+import {
+  hashPassword,
+  comparePasswords,
+  generateToken,
   generatePasswordResetToken,
-  hashResetToken 
 } from '../utils/authUtils';
 import { AppDataSource } from '../config/database';
 import { MoreThan } from 'typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { getTestDataSource } from '../config/testDatabase';
 import bcrypt from 'bcrypt';
 
 export class UserService {
@@ -18,19 +16,19 @@ export class UserService {
   private interestRepository: Repository<Interest>;
   private dataSource: DataSource;
 
-  constructor(dataSource = AppDataSource) {
+  constructor(dataSource: DataSource = AppDataSource) {
     this.dataSource = dataSource;
     this.userRepository = this.dataSource.getRepository(User);
     this.interestRepository = this.dataSource.getRepository(Interest);
   }
 
   async registerUser(
-    email: string, 
-    password: string, 
-    firstName?: string, 
-    lastName?: string, 
+    email: string,
+    password: string,
+    firstName?: string,
+    lastName?: string,
     preferences?: string[]
-  ): Promise<{ user: User, token: string }> {
+  ): Promise<{ user: User; token: string }> {
     // Check if user already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
@@ -70,29 +68,27 @@ export class UserService {
     return { user: savedUser, token };
   }
 
-  async loginUser(email: string, password: string): Promise<{ user: User, token: string }> {
+  async loginUser(email: string, password: string): Promise<{ user: User; token: string }> {
     const user = await this.userRepository.findOne({ where: { email } });
-    
+
     if (!user) {
       throw new Error('Invalid email or password');
     }
 
     const isPasswordValid = await comparePasswords(password, user.passwordHash);
-    
+
     if (!isPasswordValid) {
       throw new Error('Invalid email or password');
     }
 
     const token = generateToken(user.id);
-    
+
     return { user, token };
   }
 
   async initiatePasswordReset(email: string): Promise<string> {
-    console.log('Initiating Password Reset for Email:', email);
     const user = await this.userRepository.findOne({ where: { email } });
-    
-    console.log('Found User:', user);
+
     if (!user) {
       throw new Error('No user found with this email');
     }
@@ -107,15 +103,14 @@ export class UserService {
 
     await this.userRepository.save(user);
 
-    console.log('Generated Reset Token:', resetToken);
     return resetToken; // This is the unhashed token to be sent to user's email
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findOne({ 
-      where: { 
-        passwordResetExpires: MoreThan(new Date()) 
-      } 
+    const user = await this.userRepository.findOne({
+      where: {
+        passwordResetExpires: MoreThan(new Date()),
+      },
     });
 
     if (!user || !user.passwordResetToken) {
@@ -124,7 +119,7 @@ export class UserService {
 
     // Compare reset token using bcrypt
     const isTokenValid = await bcrypt.compare(token, user.passwordResetToken);
-    
+
     if (!isTokenValid) {
       throw new Error('Invalid or expired reset token');
     }
@@ -142,7 +137,7 @@ export class UserService {
 
   async updateUserPreferences(userId: string, preferenceNames: string[]): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    
+
     if (!user) {
       throw new Error('User not found');
     }
