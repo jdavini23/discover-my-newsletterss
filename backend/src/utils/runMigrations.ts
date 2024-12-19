@@ -1,6 +1,5 @@
 import { initializeDatabase } from '../config/database';
 import { AppDataSource } from '../config/database';
-import { DataSource } from 'typeorm';
 
 // Migration runner with explicit return type
 export const runMigrations = async (): Promise<void> => {
@@ -44,7 +43,7 @@ export const checkMigrationStatus = async (): Promise<{
 
 // Run the migration script if this file is directly executed
 if (require.main === module) {
-  runMigrations()
+  void runMigrations()
     .then(() => console.log('Migration process completed'))
     .catch((error) => {
       console.error('Migration process failed:', error);
