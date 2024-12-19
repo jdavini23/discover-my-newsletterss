@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "lint:autofix": "ts-node scripts/fix-linting.ts",
+    "lint:advanced-fix": "ts-node scripts/advanced-lint-fix.ts",
     "commit": "node scripts/commit.js",
     "start": "ts-node-dev src/server.ts",
     "build": "tsc",
