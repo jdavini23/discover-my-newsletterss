@@ -9,18 +9,19 @@ interface ErrorResponse {
   stack?: string;
 }
 
+// Error handler with explicit return type
 export const errorHandler = (
   err: Error, 
-  req: Request, 
+  _req: Request, 
   res: Response, 
-  next: NextFunction
-) => {
+  _next: NextFunction
+): void => {
   // Default error values
   let statusCode = 500;
   let errorResponse: ErrorResponse = {
     status: 'error',
     statusCode,
-    message: 'Internal Server Error'
+    message: 'Internal Server Error',
   };
 
   // Handle custom AppError
@@ -29,7 +30,7 @@ export const errorHandler = (
     errorResponse = {
       status: 'error',
       statusCode: err.statusCode,
-      message: err.message
+      message: err.message,
     };
   }
 
@@ -39,7 +40,7 @@ export const errorHandler = (
     errorResponse = {
       status: 'error',
       statusCode: 400,
-      message: 'Database validation error'
+      message: 'Database validation error',
     };
   }
 
@@ -49,7 +50,7 @@ export const errorHandler = (
     errorResponse = {
       status: 'error',
       statusCode: 400,
-      message: err.message
+      message: err.message,
     };
   }
 
@@ -66,14 +67,21 @@ export const errorHandler = (
 };
 
 // Async error wrapper to simplify error handling in route handlers
-export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
-) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const asyncHandler = <T extends (req: Request, res: Response, next: NextFunction) => Promise<unknown>>(
+  fn: T
+): ((req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       await fn(req, res, next);
     } catch (error) {
       next(error);
     }
   };
+};
+
+// Create a custom error logger for non-production environments
+export const logError = (error: Error): void => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(`[${new Date().toISOString()}] Error:`, error);
+  }
 };
