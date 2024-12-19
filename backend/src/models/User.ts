@@ -39,8 +39,8 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   passwordResetToken!: string;
 
-  @Column({ nullable: true, type: 'varchar' })
-  passwordResetExpires!: string;
+  @Column({ type: 'datetime', nullable: true })
+  passwordResetExpires!: Date | null;
 
   @Column({ nullable: true, type: 'varchar' })
   emailVerificationToken!: string;
