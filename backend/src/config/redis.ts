@@ -59,9 +59,9 @@ export const connectRedis = async (): Promise<void> => {
   try {
     await redisClient.ping();
     console.log('Redis connected successfully');
-  } catch (error) {
-    console.error('Redis connection error:', error);
-    throw error;
+  } catch (_error) {
+    console.error('Redis connection error');
+    throw new Error('Redis connection failed');
   }
 };
 
@@ -69,8 +69,8 @@ export const disconnectRedis = async (): Promise<void> => {
   try {
     await redisClient.quit();
     console.log('Redis disconnected successfully');
-  } catch (error) {
-    console.error('Redis disconnection error:', error);
+  } catch (_error) {
+    console.error('Redis disconnection error');
   }
 };
 
@@ -78,51 +78,51 @@ export const clearRedisCache = async (): Promise<void> => {
   try {
     await redisClient.flushdb();
     console.log('Redis cache cleared');
-  } catch (error) {
-    console.error('Error clearing Redis cache:', error);
+  } catch (_error) {
+    console.error('Error clearing Redis cache');
   }
 };
 
-export async function cacheNewsletter(
+export const cacheNewsletter = async (
   key: string,
-  newsletter: any,
-  expirySeconds: number = 3600 // Default 1 hour
-) {
+  newsletter: unknown,
+  expirySeconds = 3600 // Default 1 hour
+): Promise<void> => {
   try {
     await redisClient.set(key, JSON.stringify(newsletter), 'EX', expirySeconds);
     console.log(`Newsletter cached: ${key}, Expiry: ${expirySeconds}s`);
-  } catch (error) {
-    console.error('Error caching newsletter:', error);
-    throw error;
+  } catch (_error) {
+    console.error('Error caching newsletter');
+    throw new Error('Failed to cache newsletter');
   }
-}
+};
 
-export async function getCachedNewsletter(key: string) {
+export const getCachedNewsletter = async (key: string): Promise<unknown | null> => {
   try {
     const cachedData = await redisClient.get(key);
     return cachedData ? JSON.parse(cachedData) : null;
-  } catch (error) {
-    console.error('Error retrieving cached newsletter:', error);
-    throw error;
+  } catch (_error) {
+    console.error('Error retrieving cached newsletter');
+    throw new Error('Failed to retrieve cached newsletter');
   }
-}
+};
 
-export async function deleteCachedNewsletter(key: string) {
+export const deleteCachedNewsletter = async (key: string): Promise<void> => {
   try {
     await redisClient.del(key);
     console.log(`Deleted cached newsletter: ${key}`);
-  } catch (error) {
-    console.error('Error deleting cached newsletter:', error);
-    throw error;
+  } catch (_error) {
+    console.error('Error deleting cached newsletter');
+    throw new Error('Failed to delete cached newsletter');
   }
-}
+};
 
 // Graceful shutdown
-export async function closeRedisConnection() {
+export const closeRedisConnection = async (): Promise<void> => {
   try {
     await redisClient.quit();
     console.log('Redis connection closed');
-  } catch (error) {
-    console.error('Error closing Redis connection:', error);
+  } catch (_error) {
+    console.error('Error closing Redis connection');
   }
-}
+};
