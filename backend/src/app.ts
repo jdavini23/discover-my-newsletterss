@@ -17,7 +17,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/interests', interestRoutes);
-app.use('/api/newsletters', newsletterRoutes);
+app.use('/newsletters', newsletterRoutes);
 app.use('/api/preferences', userPreferencesRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/users', userRouter);

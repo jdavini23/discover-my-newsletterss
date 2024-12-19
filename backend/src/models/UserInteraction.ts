@@ -8,13 +8,6 @@ import {
 import { User } from './User';
 import { Newsletter } from './Newsletter';
 
-export enum InteractionType {
-  VIEW = 'view',
-  LIKE = 'like',
-  SAVE = 'save',
-  SHARE = 'share'
-}
-
 @Entity('user_interactions')
 export class UserInteraction {
   @PrimaryGeneratedColumn('uuid')
@@ -27,10 +20,10 @@ export class UserInteraction {
   newsletter!: Newsletter;
 
   @Column({
-    type: 'enum',
-    enum: InteractionType
+    type: 'varchar',
+    length: 20
   })
-  interactionType!: InteractionType;
+  interactionType!: string;
 
   @CreateDateColumn()
   timestamp!: Date;

@@ -12,13 +12,6 @@ import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
 
-export enum NewsletterFrequency {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly'
-}
-
 @Entity('newsletters')
 export class Newsletter {
   @PrimaryGeneratedColumn('uuid')
@@ -37,11 +30,11 @@ export class Newsletter {
   url!: string;
 
   @Column({
-    type: 'enum',
-    enum: NewsletterFrequency,
-    default: NewsletterFrequency.WEEKLY
+    type: 'varchar',
+    length: 20,
+    default: 'weekly'
   })
-  frequency!: NewsletterFrequency;
+  frequency!: string;
 
   @Column({ type: 'float', nullable: true, default: 0 })
   averageRating?: number;
@@ -53,7 +46,7 @@ export class Newsletter {
   @OneToMany(() => Subscription, subscription => subscription.newsletter)
   subscriptions!: Subscription[];
 
-  @OneToMany(() => UserInteraction, interaction => interaction.newsletter, { nullable: true })
+  @OneToMany(() => UserInteraction, interaction => interaction.newsletter)
   interactions!: UserInteraction[];
 
   @CreateDateColumn()

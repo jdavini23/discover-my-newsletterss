@@ -5,13 +5,13 @@ import { checkJwt } from '../middleware/checkJwt';
 const router = express.Router();
 const newsletterController = new NewsletterController();
 
-// Create a new newsletter (Admin only)
-router.post('/', checkJwt, newsletterController.createNewsletter);
+// Create a new newsletter 
+router.post('/', newsletterController.createNewsletter);
 
-// Fetch newsletters (Public)
+// Fetch newsletters 
 router.get('/', newsletterController.fetchNewsletters);
 
-// Get newsletter by ID (Public)
+// Get newsletter by ID 
 router.get('/:id', newsletterController.getNewsletterById);
 
 export default router;

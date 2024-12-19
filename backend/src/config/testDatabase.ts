@@ -1,34 +1,52 @@
 import { DataSource } from 'typeorm';
+import path from 'path';
+
+// Import all entities
 import { User } from '../models/User';
-import { Interest } from '../models/Interest';
 import { Newsletter } from '../models/Newsletter';
+import { Interest } from '../models/Interest';
 import { Subscription } from '../models/Subscription';
 import { UserInteraction } from '../models/UserInteraction';
 
-export const TestDataSource = new DataSource({
-  type: 'mysql',
-  host: 'localhost',
-  port: 3307,  // Updated to match Docker Compose port
-  username: 'root',
-  password: 'root',
-  database: 'newsletter_test',
-  entities: [User, Interest, Newsletter, Subscription, UserInteraction],
-  synchronize: true,
-  dropSchema: true,
-  logging: false
-});
+let testDataSource: DataSource | null = null;
+
+export const getTestDataSource = () => {
+  if (!testDataSource) {
+    testDataSource = new DataSource({
+      type: 'sqlite',
+      database: ':memory:',
+      synchronize: true,
+      logging: false,
+      entities: [
+        User,
+        Newsletter, 
+        Interest, 
+        Subscription, 
+        UserInteraction
+      ]
+    });
+  }
+  return testDataSource;
+};
 
 export const setupTestDatabase = async () => {
   try {
-    // Initialize the test database connection
-    if (!TestDataSource.isInitialized) {
-      await TestDataSource.initialize();
+    const dataSource = getTestDataSource();
+    
+    // If already initialized, destroy first
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
     }
-
-    // Drop all tables and recreate them
-    await TestDataSource.synchronize(true);
-
+    
+    // Initialize the database
+    await dataSource.initialize();
+    
     console.log('Test database initialized successfully');
+
+    // Log the current state of the database
+    const interestRepo = dataSource.getRepository(Interest);
+    const interests = await interestRepo.find();
+    console.log('Current Interests in Database:', interests);
   } catch (error) {
     console.error('Error initializing test database:', error);
     throw error;
@@ -37,10 +55,12 @@ export const setupTestDatabase = async () => {
 
 export const clearDatabase = async () => {
   try {
-    if (TestDataSource.isInitialized) {
-      const entities = TestDataSource.entityMetadatas;
+    const dataSource = getTestDataSource();
+    
+    if (dataSource.isInitialized) {
+      const entities = dataSource.entityMetadatas;
       for (const entity of entities) {
-        const repository = TestDataSource.getRepository(entity.target);
+        const repository = dataSource.getRepository(entity.target);
         await repository.clear();
       }
     }
@@ -52,12 +72,14 @@ export const clearDatabase = async () => {
 
 export const teardownTestDatabase = async () => {
   try {
-    if (TestDataSource.isInitialized) {
-      await TestDataSource.destroy();
-      console.log('Test database connection closed');
+    const dataSource = getTestDataSource();
+    
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+      console.log('Test database destroyed successfully');
     }
   } catch (error) {
-    console.error('Error closing test database connection:', error);
+    console.error('Error destroying test database:', error);
     throw error;
   }
 };

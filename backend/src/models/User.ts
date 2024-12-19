@@ -12,11 +12,6 @@ import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
 
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin'
-}
-
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -32,22 +27,22 @@ export class User {
   passwordHash!: string;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER
+    type: 'varchar',
+    length: 20,
+    default: 'user'
   })
-  role!: UserRole;
+  role!: string;
 
   @Column({ default: false })
   isEmailVerified!: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   passwordResetToken!: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  passwordResetExpires!: Date;
+  @Column({ nullable: true, type: 'varchar' })
+  passwordResetExpires!: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   emailVerificationToken!: string;
 
   @ManyToMany(() => Interest, interest => interest.users, { cascade: true })

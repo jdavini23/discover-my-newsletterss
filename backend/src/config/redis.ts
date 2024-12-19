@@ -7,28 +7,23 @@ dotenv.config();
 const redisConfig = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379', 10),
-  password: process.env.REDIS_PASSWORD || undefined,
-  connectTimeout: 10000, // 10 seconds
-  maxRetriesPerRequest: 3,
   retryStrategy: (times: number) => {
-    // For testing environments, limit retry attempts
-    if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'integration') {
-      if (times > 3) {
-        console.warn('Max Redis connection retries reached. Skipping connection.');
-        return null;
-      }
-    }
-
-    // Exponential backoff for connection retries
     const delay = Math.min(times * 50, 2000);
     console.warn(`Redis connection retry attempt ${times}, delay: ${delay}ms`);
+    
+    // If max retries reached, return null to stop retrying
+    if (times > 10) {
+      console.warn('Max Redis connection retries reached. Skipping connection.');
+      return null;
+    }
+    
     return delay;
   }
 };
 
+// Enhanced error handling
 export const redisClient = new Redis(redisConfig);
 
-// Enhanced error handling
 redisClient.on('error', (err) => {
   if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'integration') {
     console.error('Redis Client Error:', err);
@@ -36,7 +31,7 @@ redisClient.on('error', (err) => {
 });
 
 redisClient.on('connect', () => {
-  console.log('Redis Client Connected Successfully');
+  console.log('Redis client connected successfully');
 });
 
 export async function initializeRedis() {

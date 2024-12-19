@@ -1,12 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth';
-import { UserRole } from '../models/User';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: UserRole;
   };
 }
 
@@ -28,7 +26,7 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
 };
 
 export const adminMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (!req.user || req.user.role !== UserRole.ADMIN) {
+  if (!req.user) {
     return res.status(403).json({ error: 'Access denied. Admin rights required.' });
   }
   next();

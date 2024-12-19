@@ -3,6 +3,7 @@ import { AppDataSource } from '../config/database';
 import { User } from '../models/User';
 import { Newsletter } from '../models/Newsletter';
 import { Interest } from '../models/Interest';
+import { redisClient } from '../config/redis';
 
 // Extend Request type to include user property
 interface AuthenticatedRequest extends Request {
@@ -22,6 +23,14 @@ export class RecommendationController {
     try {
       const userId = req.user.id; // From JWT middleware
       const { page = 1, limit = 10 } = req.query;
+
+      // Check cache first
+      const cacheKey = `recommendations:newsletters:${userId}:page:${page}:limit:${limit}`;
+      const cachedRecommendations = await redisClient.get(cacheKey);
+      
+      if (cachedRecommendations) {
+        return res.json(JSON.parse(cachedRecommendations));
+      }
 
       // Find user with their preferences
       const user = await this.userRepository.findOne({
@@ -49,13 +58,18 @@ export class RecommendationController {
 
       const [newsletters, total] = await queryBuilder.getManyAndCount();
 
-      res.json({
+      const result = {
         newsletters,
         page: Number(page),
         limit: Number(limit),
         total,
         matchedInterests: user.preferences
-      });
+      };
+
+      // Cache recommendations for 1 hour
+      await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+
+      res.json(result);
     } catch (error) {
       console.error('Error generating recommendations:', error);
       res.status(500).json({ error: 'Failed to generate recommendations' });
@@ -67,6 +81,14 @@ export class RecommendationController {
     try {
       const userId = req.user.id; // From JWT middleware
       const { limit = 5 } = req.query;
+
+      // Check cache first
+      const cacheKey = `recommendations:interests:${userId}:limit:${limit}`;
+      const cachedInterests = await redisClient.get(cacheKey);
+      
+      if (cachedInterests) {
+        return res.json(JSON.parse(cachedInterests));
+      }
 
       // Find user with their current preferences
       const user = await this.userRepository.findOne({
@@ -91,10 +113,15 @@ export class RecommendationController {
         .limit(Number(limit))
         .getMany();
 
-      res.json({ 
+      const result = { 
         recommendedInterests: relatedInterests,
         currentInterests: user.preferences
-      });
+      };
+
+      // Cache recommendations for 1 hour
+      await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+
+      res.json(result);
     } catch (error) {
       console.error('Error finding recommended interests:', error);
       res.status(500).json({ error: 'Failed to find recommended interests' });

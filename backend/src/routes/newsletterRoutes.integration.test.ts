@@ -1,32 +1,31 @@
 import request from 'supertest';
 import { app } from '../app';
-import { Newsletter, NewsletterFrequency } from '../models/Newsletter';
+import { Newsletter } from '../models/Newsletter';
 import { Interest } from '../models/Interest';
-import { setupTestDatabase, teardownTestDatabase } from '../config/testDatabase';
-import { AppDataSource } from '../config/database';
+import { setupTestDatabase, teardownTestDatabase, getTestDataSource } from '../config/testDatabase';
 
 describe('Newsletter Routes Integration Tests', () => {
   let testInterest: Interest;
-  let authToken: string;
 
   beforeAll(async () => {
     // Initialize test database
     await setupTestDatabase();
 
     // Create a test interest
-    const interestRepo = AppDataSource.getRepository(Interest);
+    const dataSource = getTestDataSource();
+    const interestRepo = dataSource.getRepository(Interest);
     testInterest = new Interest();
     testInterest.name = 'Test Interest';
-    await interestRepo.save(testInterest);
+    const savedTestInterest = await interestRepo.save(testInterest);
+    console.log('Saved Test Interest:', savedTestInterest);
+    console.log('Saved Test Interest ID:', savedTestInterest.id);
 
-    // Authenticate and get token (adjust based on your auth implementation)
-    const authResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'testadmin@example.com',
-        password: 'adminpassword'
-      });
-    authToken = authResponse.body.token;
+    // Verify the interest was saved
+    const foundInterest = await interestRepo.findOne({ where: { id: savedTestInterest.id } });
+    console.log('Found Interest:', foundInterest);
+    expect(foundInterest).toBeDefined();
+    expect(foundInterest?.id).toBe(savedTestInterest.id);
+    expect(foundInterest?.name).toBe('Test Interest');
   });
 
   afterAll(async () => {
@@ -41,13 +40,12 @@ describe('Newsletter Routes Integration Tests', () => {
         description: 'A newsletter created during integration testing',
         authorName: 'Test Author',
         url: 'https://test-newsletter.com',
-        frequency: NewsletterFrequency.WEEKLY,
+        frequency: 'weekly',
         interestIds: [testInterest.id]
       };
 
       const response = await request(app)
         .post('/newsletters')
-        .set('Authorization', `Bearer ${authToken}`)
         .send(newsletterData);
 
       expect(response.status).toBe(201);
@@ -56,9 +54,31 @@ describe('Newsletter Routes Integration Tests', () => {
         description: 'A newsletter created during integration testing',
         authorName: 'Test Author',
         url: 'https://test-newsletter.com',
-        frequency: NewsletterFrequency.WEEKLY
+        frequency: 'weekly'
       });
-      expect(response.body.interests[0].id).toBe(testInterest.id);
+      
+      // Verify interests are correctly associated
+      const dataSource = getTestDataSource();
+      const newsletterRepo = dataSource.getRepository(Newsletter);
+      const savedNewsletter = await newsletterRepo.findOne({ 
+        where: { id: response.body.id },
+        relations: ['interests'] 
+      });
+      
+      console.log('Saved Newsletter:', savedNewsletter);
+      console.log('Associated Interests:', savedNewsletter?.interests);
+      
+      expect(savedNewsletter).toBeDefined();
+      expect(savedNewsletter?.interests).toHaveLength(1);
+      expect(savedNewsletter?.interests[0].id).toBe(testInterest.id);
+
+      // Verify via GET request
+      const getResponse = await request(app)
+        .get(`/newsletters/${response.body.id}`);
+
+      expect(getResponse.status).toBe(200);
+      expect(getResponse.body.interests).toHaveLength(1);
+      expect(getResponse.body.interests[0].id).toBe(testInterest.id);
     });
 
     it('should return validation error for incomplete newsletter', async () => {
@@ -68,7 +88,6 @@ describe('Newsletter Routes Integration Tests', () => {
 
       const response = await request(app)
         .post('/newsletters')
-        .set('Authorization', `Bearer ${authToken}`)
         .send(incompleteNewsletterData);
 
       expect(response.status).toBe(400);
@@ -80,14 +99,15 @@ describe('Newsletter Routes Integration Tests', () => {
   describe('GET /newsletters', () => {
     beforeEach(async () => {
       // Seed some newsletters for testing
-      const newsletterRepo = AppDataSource.getRepository(Newsletter);
+      const dataSource = getTestDataSource();
+      const newsletterRepo = dataSource.getRepository(Newsletter);
       const newsletters = [
         {
           name: 'Tech Weekly',
           description: 'Tech news newsletter',
           authorName: 'Tech Insider',
           url: 'https://techweekly.com',
-          frequency: NewsletterFrequency.WEEKLY,
+          frequency: 'weekly',
           interests: [testInterest]
         },
         {
@@ -95,7 +115,7 @@ describe('Newsletter Routes Integration Tests', () => {
           description: 'Science discoveries newsletter',
           authorName: 'Science Mag',
           url: 'https://sciencemonthly.com',
-          frequency: NewsletterFrequency.MONTHLY,
+          frequency: 'monthly',
           interests: [testInterest]
         }
       ];
@@ -117,7 +137,7 @@ describe('Newsletter Routes Integration Tests', () => {
     it('should filter newsletters by frequency', async () => {
       const response = await request(app)
         .get('/newsletters')
-        .query({ frequency: NewsletterFrequency.WEEKLY });
+        .query({ frequency: 'weekly' });
 
       expect(response.status).toBe(200);
       expect(response.body.newsletters).toHaveLength(1);
@@ -130,25 +150,27 @@ describe('Newsletter Routes Integration Tests', () => {
 
     beforeEach(async () => {
       // Create a test newsletter
-      const newsletterRepo = AppDataSource.getRepository(Newsletter);
+      const dataSource = getTestDataSource();
+      const newsletterRepo = dataSource.getRepository(Newsletter);
       const newsletter = new Newsletter();
       newsletter.name = 'Test Get Newsletter';
       newsletter.description = 'Newsletter for get by ID test';
       newsletter.authorName = 'Test Author';
       newsletter.url = 'https://test-get.com';
-      newsletter.frequency = NewsletterFrequency.DAILY;
+      newsletter.frequency = 'daily';
       newsletter.interests = [testInterest];
       
       const savedNewsletter = await newsletterRepo.save(newsletter);
       testNewsletterId = savedNewsletter.id;
     });
 
-    it('should get newsletter by ID', async () => {
+    it('should get newsletter by ID with interests', async () => {
       const response = await request(app)
         .get(`/newsletters/${testNewsletterId}`);
 
       expect(response.status).toBe(200);
       expect(response.body.name).toBe('Test Get Newsletter');
+      expect(response.body.interests).toHaveLength(1);
       expect(response.body.interests[0].id).toBe(testInterest.id);
     });
 
