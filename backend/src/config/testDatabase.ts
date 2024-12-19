@@ -39,12 +39,12 @@ export const initializeTestDatabase = async (): Promise<DataSource> => {
     // Optional: Log database state
     const interestRepo = dataSource.getRepository(Interest);
     const interests = await interestRepo.find();
-    console.log('Current Interests in Database:', interests);
+    console.log('Current Interests in Database:', interests.length);
 
     return dataSource;
-  } catch (error) {
-    console.error('Test database initialization error:', error);
-    throw error;
+  } catch (_error) {
+    console.error('Test database initialization failed');
+    throw new Error('Failed to initialize test database');
   }
 };
 
@@ -54,8 +54,8 @@ export const closeTestDatabase = async (dataSource?: DataSource): Promise<void> 
     try {
       await dataSource.destroy();
       console.log('Test database connection closed');
-    } catch (error) {
-      console.error('Error closing test database:', error);
+    } catch (_error) {
+      console.error('Error closing test database');
     }
   }
 };
@@ -85,9 +85,9 @@ export const setupTestDatabase = async (): Promise<void> => {
     await initializeTestDatabase();
 
     console.log('Test database reinitialized successfully');
-  } catch (error) {
-    console.error('Error reinitializing test database:', error);
-    throw error;
+  } catch (_error) {
+    console.error('Error reinitializing test database');
+    throw new Error('Failed to reinitialize test database');
   }
 };
 
@@ -99,7 +99,7 @@ export const destroyTestDatabase = async (): Promise<void> => {
       await closeTestDatabase(dataSource);
       console.log('Test database destroyed successfully');
     }
-  } catch (error) {
-    console.error('Error destroying test database:', error);
+  } catch (_error) {
+    console.error('Error destroying test database');
   }
 };
