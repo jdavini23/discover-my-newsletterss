@@ -1,8 +1,9 @@
 # Newsletter Discovery Platform - Backend
 
 ## Prerequisites
-- Node.js (v18+)
-- PostgreSQL (v13+)
+- Node.js (v16+)
+- MySQL (v8.0+)
+- Redis
 
 ## Setup
 
@@ -15,7 +16,7 @@ npm install
 3. Create a `.env` file in the root directory with the following contents:
 ```
 PORT=5000
-DATABASE_URL=postgresql://username:password@localhost:5432/newsletter_discovery
+DATABASE_URL=mysql://username:password@localhost:3306/newsletter_discovery
 NODE_ENV=development
 JWT_SECRET=your_jwt_secret_here
 ```
@@ -33,9 +34,53 @@ npm run dev
 
 ## Environment Variables
 - `PORT`: Server port
-- `DATABASE_URL`: PostgreSQL connection string
+- `DATABASE_URL`: MySQL connection string
 - `NODE_ENV`: Application environment (development/production)
 - `JWT_SECRET`: Secret for JWT token generation
+
+## Testing
+
+### Running Tests
+
+Before running tests, ensure you have Docker installed and running.
+
+1. Start the test database:
+```bash
+docker-compose up -d test-db
+```
+
+2. Run unit tests:
+```bash
+npm run test:unit
+```
+
+3. Run integration tests:
+```bash
+npm run test:integration
+```
+
+4. Run all tests with coverage:
+```bash
+npm run test:coverage
+```
+
+### Test Database
+
+The test suite uses a separate MySQL database (`newsletter_test`) running in a Docker container. 
+This ensures that tests do not interfere with your development or production databases.
+
+- Database Host: `localhost`
+- Database Port: `3307`
+- Database Name: `newsletter_test`
+- Username: `root`
+- Password: `root`
+
+### Cleanup
+
+To stop the test database:
+```bash
+docker-compose down
+```
 
 ## Project Structure
 - `src/models/`: TypeORM entity definitions
