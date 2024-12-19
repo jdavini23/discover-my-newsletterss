@@ -7,6 +7,7 @@ import { initializeDatabase } from './config/database';
 
 // Import routes
 import authRoutes from './routes/authRoutes';
+import interestRoutes from './routes/interestRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -20,21 +21,13 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api', interestRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString() 
-  });
-});
-
-// Global error handler
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Something went wrong!',
-    message: err.message 
   });
 });
 

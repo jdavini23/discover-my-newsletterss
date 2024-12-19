@@ -50,8 +50,12 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   emailVerificationToken!: string;
 
-  @ManyToMany(() => Interest, { cascade: true, nullable: true })
-  @JoinTable()
+  @ManyToMany(() => Interest, interest => interest.users, { cascade: true })
+  @JoinTable({
+    name: 'user_interests',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'interestId', referencedColumnName: 'id' }
+  })
   preferences!: Interest[];
 
   @OneToMany(() => Subscription, subscription => subscription.user, { nullable: true })

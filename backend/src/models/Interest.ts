@@ -20,6 +20,6 @@ export class Interest {
   @Column({ nullable: true })
   icon?: string;
 
-  @ManyToMany(() => User, user => user.preferences, { nullable: true })
+  @ManyToMany(() => User, user => user.preferences)
   users!: User[];
 }
