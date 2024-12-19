@@ -14,7 +14,6 @@ async function advancedLintFix() {
   // Initialize ESLint with fix enabled
   const eslint = new ESLint({
     fix: true,
-    extensions: ['.ts', '.tsx'],
   });
 
   // Function to recursively find TypeScript files
