@@ -6,6 +6,7 @@ import newsletterRoutes from './routes/newsletterRoutes';
 import userPreferencesRoutes from './routes/userPreferencesRoutes';
 import recommendationRoutes from './routes/recommendationRoutes';
 import { errorHandler } from './middleware/errorHandler';
+import { userRouter } from './controllers/userController';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api/interests', interestRoutes);
 app.use('/api/newsletters', newsletterRoutes);
 app.use('/api/preferences', userPreferencesRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/users', userRouter);
 
 // 404 handler for undefined routes
 app.use((req: Request, res: Response, next: NextFunction) => {
