@@ -4,7 +4,13 @@ import crypto from 'crypto';
 
 // Environment variables for JWT and reset token
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
-const RESET_TOKEN_SECRET = process.env.RESET_TOKEN_SECRET || 'your_reset_token_secret';
+
+// Token payload interface
+interface TokenPayload {
+  id: string;
+  iat?: number;
+  exp?: number;
+}
 
 // Password hashing
 export const hashPassword = async (password: string): Promise<string> => {
@@ -13,7 +19,10 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 // Password comparison
-export const comparePasswords = async (password: string, hashedPassword: string): Promise<boolean> => {
+export const comparePasswords = async (
+  password: string,
+  hashedPassword: string
+): Promise<boolean> => {
   return bcrypt.compare(password, hashedPassword);
 };
 
@@ -23,10 +32,10 @@ export const generateToken = (userId: string, expiresIn: string = '1h'): string 
 };
 
 // Verify JWT token
-export const verifyToken = (token: string): { id: string } | null => {
+export const verifyToken = (token: string): TokenPayload | null => {
   try {
-    return jwt.verify(token, JWT_SECRET) as { id: string };
-  } catch (error) {
+    return jwt.verify(token, JWT_SECRET) as TokenPayload;
+  } catch (_error) {
     return null;
   }
 };
@@ -34,11 +43,6 @@ export const verifyToken = (token: string): { id: string } | null => {
 // Generate password reset token
 export const generatePasswordResetToken = (): string => {
   return crypto.randomBytes(32).toString('hex');
-};
-
-// Hash reset token
-export const hashResetToken = (token: string): string => {
-  return crypto.createHash('sha256').update(token).digest('hex');
 };
 
 // Verify reset token
