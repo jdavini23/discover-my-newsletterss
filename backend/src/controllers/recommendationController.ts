@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AppDataSource } from '../config/database';
 import { User } from '../models/User';
 import { Newsletter } from '../models/Newsletter';
@@ -63,26 +63,28 @@ export class RecommendationController {
     return user;
   }
 
-  _getPersonalizedRecommendations = asyncHandler(async (req: AuthenticatedRequest, _____res: Response): Promise<Response> => {
+  _getPersonalizedRecommendations = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = (req as AuthenticatedRequest).user.id;
       const { page, limit } = this.parseQueryParams(req.query);
       const cacheKey = this.generateCacheKey('newsletters', userId, { page, limit });
 
       // Check cache first
       const cachedRecommendations = await redisClient.get(cacheKey);
       if (cachedRecommendations) {
-        return res.json(JSON.parse(cachedRecommendations));
+        res.json(JSON.parse(cachedRecommendations));
+        return;
       }
 
       const user = await this.findUserWithPreferences(userId);
 
       // If no preferences, return empty recommendations
       if (!user.preferences?.length) {
-        return res.status(200).json({ 
+        res.status(200).json({ 
           newsletters: [], 
           message: 'No preferences set for personalized recommendations' 
         });
+        return;
       }
 
       const interestIds = user.preferences.map(interest => interest.id);
@@ -107,29 +109,23 @@ export class RecommendationController {
       // Cache the result
       await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
 
-      return res.json(result);
-    } catch (_error: unknown) {
-      if (error instanceof NotFoundError) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      
-      return res.status(500).json({
-        message: 'Error fetching personalized recommendations',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      res.json(result);
+    } catch (error: unknown) {
+      next(error);
     }
   });
 
-  _getRecommendedInterests = asyncHandler(async (req: AuthenticatedRequest, _____res: Response): Promise<Response> => {
+  _getRecommendedInterests = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = (req as AuthenticatedRequest).user.id;
       const { limit } = this.parseQueryParams(req.query);
       const cacheKey = this.generateCacheKey('interests', userId, { limit });
 
       // Check cache first
       const cachedInterests = await redisClient.get(cacheKey);
       if (cachedInterests) {
-        return res.json(JSON.parse(cachedInterests));
+        res.json(JSON.parse(cachedInterests));
+        return;
       }
 
       const user = await this.findUserWithPreferences(userId);
@@ -153,16 +149,9 @@ export class RecommendationController {
       // Cache the result
       await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
 
-      return res.json(result);
-    } catch (_error: unknown) {
-      if (error instanceof NotFoundError) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      
-      return res.status(500).json({
-        message: 'Error fetching recommended interests',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
+      res.json(result);
+    } catch (error: unknown) {
+      next(error);
     }
   });
 }
