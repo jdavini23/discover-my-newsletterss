@@ -48,7 +48,7 @@ const App: React.FC = () => {
             </Route>
           </Route>
 
-          {/* 404 Not Found */}
+          {/* 404 Not Found - must be the last route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
