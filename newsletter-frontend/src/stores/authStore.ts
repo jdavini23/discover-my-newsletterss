@@ -22,6 +22,7 @@ interface AuthState {
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: () => boolean;
+  refreshToken: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -114,6 +115,37 @@ export const useAuthStore = create<AuthState>()(
           return decoded.exp > Date.now() / 1000;
         } catch {
           return false;
+        }
+      },
+
+      refreshToken: async () => {
+        try {
+          const response = await api.post('/auth/refresh-token');
+          const { token } = response.data;
+          
+          // Decode token to extract user info
+          const decodedUser = jwtDecode<JWTPayload>(token);
+          
+          // Set secure HTTP-only cookie
+          Cookies.set('authToken', token, { 
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            expires: new Date(decodedUser.exp * 1000)
+          });
+
+          set({ 
+            user: {
+              id: decodedUser.id,
+              email: decodedUser.email,
+              name: decodedUser.name,
+              roles: decodedUser.roles
+            }, 
+            token 
+          });
+        } catch (error) {
+          console.error('Token refresh failed', error);
+          get().logout(); // Logout if refresh fails
+          throw new Error('Token refresh failed');
         }
       }
     }),
