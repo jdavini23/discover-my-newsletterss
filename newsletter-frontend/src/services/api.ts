@@ -2,17 +2,23 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 // Define types for newsletter and other data
-interface Newsletter {
+export interface Newsletter {
   id: string;
-  title: string;
-  description?: string;
-  // Add other newsletter properties as needed
+  name: string;
+  description: string;
+  url: string;
+  category?: string;
+  tags?: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface NewsletterCreateData {
-  title: string;
-  description?: string;
-  // Add other properties required for newsletter creation
+  name: string;
+  description: string;
+  url: string;
+  category?: string;
+  tags?: string[];
 }
 
 // Create axios instance
@@ -77,32 +83,31 @@ api.interceptors.response.use(
   }
 );
 
-// Example service methods
+// Authentication service methods
 export const authService = {
   login: (email: string, password: string) => api.post('/auth/login', { email, password }),
-
   register: (email: string, password: string) => api.post('/auth/register', { email, password }),
 };
 
 // Newsletter-specific service methods
 export const newsletterService = {
   async getNewsletters() {
-    const response = await api.get('/newsletters');
+    const response = await api.get<Newsletter[]>('/newsletters');
     return response.data;
   },
 
   async createNewsletter(data: NewsletterCreateData) {
-    const response = await api.post('/newsletters', data);
+    const response = await api.post<Newsletter>('/newsletters', data);
     return response.data;
   },
 
   async updateNewsletter(id: string, data: Partial<Newsletter>) {
-    const response = await api.patch(`/newsletters/${id}`, data);
+    const response = await api.patch<Newsletter>(`/newsletters/${id}`, data);
     return response.data;
   },
 
   async deleteNewsletter(id: string) {
-    const response = await api.delete(`/newsletters/${id}`);
+    const response = await api.delete<void>(`/newsletters/${id}`);
     return response.data;
   }
 };
