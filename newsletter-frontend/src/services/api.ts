@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Define types for newsletter and other data
 interface Newsletter {
@@ -14,46 +15,64 @@ interface NewsletterCreateData {
   // Add other properties required for newsletter creation
 }
 
-// Create an axios instance with base configuration
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 10000, // 10 seconds
+// Create axios instance
+export const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor for adding auth token
+// Request interceptor for adding token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling
+// Response interceptor for handling token refresh and errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error('Data:', error.response.data);
-      console.error('Status:', error.response.status);
-      console.error('Headers:', error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error('Request:', error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error('Error:', error.message);
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If unauthorized and we haven't already tried to refresh
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Call refresh token endpoint
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        const { token } = response.data;
+
+        // Update cookie with new token
+        Cookies.set('authToken', token, { 
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          expires: 7 // 7 days
+        });
+
+        // Retry the original request with new token
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        return axios(originalRequest);
+      } catch (refreshError) {
+        // If refresh fails, logout user
+        Cookies.remove('authToken');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -65,16 +84,27 @@ export const authService = {
   register: (email: string, password: string) => api.post('/auth/register', { email, password }),
 };
 
+// Newsletter-specific service methods
 export const newsletterService = {
-  getNewsletters: () => api.get<Newsletter[]>('/newsletters'),
+  async getNewsletters() {
+    const response = await api.get('/newsletters');
+    return response.data;
+  },
 
-  getNewsletter: (id: string) => api.get<Newsletter>(`/newsletters/${id}`),
+  async createNewsletter(data: NewsletterCreateData) {
+    const response = await api.post('/newsletters', data);
+    return response.data;
+  },
 
-  createNewsletter: (data: NewsletterCreateData) => api.post<Newsletter>('/newsletters', data),
+  async updateNewsletter(id: string, data: Partial<Newsletter>) {
+    const response = await api.patch(`/newsletters/${id}`, data);
+    return response.data;
+  },
 
-  updateNewsletter: (id: string, data: NewsletterCreateData) => api.put<Newsletter>(`/newsletters/${id}`, data),
-
-  deleteNewsletter: (id: string) => api.delete<void>(`/newsletters/${id}`),
+  async deleteNewsletter(id: string) {
+    const response = await api.delete(`/newsletters/${id}`);
+    return response.data;
+  }
 };
 
 export default api;
