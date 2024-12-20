@@ -1,4 +1,5 @@
-import { TestDataSource } from '../config/testDatabase';
+import { setupTestDatabase, getTestDataSource } from '../config/testDatabase';
+;
 
 // Mock Redis for testing
 jest.mock('../config/redis', () => ({
@@ -6,45 +7,24 @@ jest.mock('../config/redis', () => ({
     set: jest.fn(),
     get: jest.fn(),
     del: jest.fn(),
-    on: jest.fn(),
-    connect: jest.fn().mockResolvedValue(true),
-    quit: jest.fn().mockResolvedValue(true)
-  }
+  },
 }));
 
-// Mock database initialization for integration tests
-const initializeTestDatabase = async () => {
-  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'integration') {
-    console.log('Skipping database initialization for test environment');
-    return;
-  }
+// Mocking the data source
+jest.mock('../config/database', () => ({
+  AppDataSource: getTestDataSource(),
+}));
 
-  try {
-    await TestDataSource.initialize();
-    console.log('Test database initialized successfully');
-  } catch (error) {
-    console.error('Error initializing test database:', error);
-    throw error;
-  }
-};
-
-const clearTestDatabase = async () => {
-  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'integration') {
-    return;
-  }
-  // Implement database clearing logic
-};
-
-beforeAll(async () => {
-  await initializeTestDatabase();
-});
-
+// Clear database before each test
 beforeEach(async () => {
-  await clearTestDatabase();
+  const dataSource = getTestDataSource();
+
+  // Drop and recreate all tables
+  await dataSource.dropDatabase();
+  await dataSource.synchronize();
 });
 
-afterAll(async () => {
-  // Teardown logic if needed
+// Ensure database is set up before all tests
+beforeAll(async () => {
+  await setupTestDatabase();
 });
-
-export { clearTestDatabase as clearDatabase };

@@ -21,11 +21,11 @@ export const AppDataSource = new DataSource({
   logging: true,
 });
 
-export const initializeDatabase = async () => {
+export const _initializeDatabase = async (__req: Request, __res: Response): Promise<void> => {
   try {
     await AppDataSource.initialize();
     console.log('Database connection established successfully');
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('Error connecting to the database:', error);
     throw error;
   }

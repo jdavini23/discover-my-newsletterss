@@ -63,7 +63,7 @@ export class RecommendationController {
     return user;
   }
 
-  getPersonalizedRecommendations = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+  _getPersonalizedRecommendations = asyncHandler(async (req: AuthenticatedRequest, _____res: Response): Promise<Response> => {
     try {
       const userId = req.user.id;
       const { page, limit } = this.parseQueryParams(req.query);
@@ -108,7 +108,7 @@ export class RecommendationController {
       await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
 
       return res.json(result);
-    } catch (error) {
+    } catch (_error: unknown) {
       if (error instanceof NotFoundError) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -120,7 +120,7 @@ export class RecommendationController {
     }
   });
 
-  getRecommendedInterests = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+  _getRecommendedInterests = asyncHandler(async (req: AuthenticatedRequest, _____res: Response): Promise<Response> => {
     try {
       const userId = req.user.id;
       const { limit } = this.parseQueryParams(req.query);
@@ -154,7 +154,7 @@ export class RecommendationController {
       await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
 
       return res.json(result);
-    } catch (error) {
+    } catch (_error: unknown) {
       if (error instanceof NotFoundError) {
         return res.status(404).json({ message: 'User not found' });
       }

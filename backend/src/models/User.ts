@@ -1,13 +1,4 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
-  CreateDateColumn, 
-  UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
-  OneToMany
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany,  } from 'typeorm';
 import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
@@ -29,7 +20,7 @@ export class User {
   @Column({
     type: 'varchar',
     length: 20,
-    default: 'user'
+    default: 'user',
   })
   role!: string;
 
@@ -45,18 +36,18 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   emailVerificationToken!: string | null;
 
-  @ManyToMany(() => Interest, interest => interest.users, { cascade: true })
+  @ManyToMany(() => Interest, (interest) => interest.users, { cascade: true })
   @JoinTable({
     name: 'user_interests',
     joinColumn: { name: 'userId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'interestId', referencedColumnName: 'id' }
+    inverseJoinColumn: { name: 'interestId', referencedColumnName: 'id' },
   })
   preferences!: Interest[];
 
-  @OneToMany(() => Subscription, subscription => subscription.user, { nullable: true })
+  @OneToMany(() => Subscription, (subscription) => subscription.user, { nullable: true })
   subscriptions!: Subscription[];
 
-  @OneToMany(() => UserInteraction, interaction => interaction.user, { nullable: true })
+  @OneToMany(() => UserInteraction, (interaction) => interaction.user, { nullable: true })
   interactions!: UserInteraction[];
 
   @CreateDateColumn()

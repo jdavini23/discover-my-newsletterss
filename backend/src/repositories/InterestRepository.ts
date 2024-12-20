@@ -9,9 +9,9 @@ export class InterestRepository extends BaseRepository<Interest> {
   }
 
   async findByName(name: string): Promise<Interest | null> {
-    return this.repository.findOne({ 
+    return this.repository.findOne({
       where: { name },
-      relations: ['users'] 
+      relations: ['users'],
     });
   }
 }

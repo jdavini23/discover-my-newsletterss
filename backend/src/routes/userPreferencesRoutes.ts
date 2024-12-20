@@ -1,7 +1,7 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { UserPreferencesController } from '../controllers/userPreferencesController';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { Request, Response, NextFunction } from 'express';
+;
 
 const router = express.Router();
 const userPreferencesController = new UserPreferencesController();
@@ -15,21 +15,29 @@ interface AuthenticatedRequest extends Request {
 }
 
 // Update user preferences
-router.put('/preferences', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    await userPreferencesController.updateUserPreferences(req as any, res);
-  } catch (error) {
-    next(error);
+router.put(
+  '/preferences',
+  authMiddleware,
+  async (req: AuthenticatedRequest, _____res: Response, _____next: NextFunction) => {
+    try {
+      await userPreferencesController.updateUserPreferences(req as any, res);
+    } catch (_error: unknown) {
+      next(error);
+    }
   }
-});
+);
 
 // Get user preferences
-router.get('/preferences', authMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    await userPreferencesController.getUserPreferences(req as any, res);
-  } catch (error) {
-    next(error);
+router.get(
+  '/preferences',
+  authMiddleware,
+  async (req: AuthenticatedRequest, _____res: Response, _____next: NextFunction) => {
+    try {
+      await userPreferencesController.getUserPreferences(req as any, res);
+    } catch (_error: unknown) {
+      next(error);
+    }
   }
-});
+);
 
 export default router;

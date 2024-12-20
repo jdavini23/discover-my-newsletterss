@@ -27,30 +27,30 @@ describe('Recommendation Controller Integration Tests', () => {
     testInterests = await interestRepository.save([
       { name: 'Technology' },
       { name: 'Science' },
-      { name: 'Business' }
+      { name: 'Business' },
     ]);
 
     // Create test newsletters
     testNewsletters = await newsletterRepository.save([
-      { 
-        title: 'Tech Weekly', 
+      {
+        title: 'Tech Weekly',
         description: 'Latest tech news',
         interests: [testInterests[0]],
-        averageRating: 4.5
+        averageRating: 4.5,
       },
-      { 
-        title: 'Science Digest', 
+      {
+        title: 'Science Digest',
         description: 'Scientific discoveries',
         interests: [testInterests[1]],
-        averageRating: 4.7
-      }
+        averageRating: 4.7,
+      },
     ]);
 
     // Create test user with preferences
     testUser = await userRepository.save({
       email: 'test.recommendations@example.com',
       password: 'testpassword123',
-      preferences: [testInterests[0]]
+      preferences: [testInterests[0]],
     });
 
     // Generate JWT token
@@ -87,7 +87,7 @@ describe('Recommendation Controller Integration Tests', () => {
       // Create a user without preferences
       const noPreferencesUser = await AppDataSource.getRepository(User).save({
         email: 'no.preferences@example.com',
-        password: 'testpassword123'
+        password: 'testpassword123',
       });
       const noPreferencesToken = generateJwtToken(noPreferencesUser);
 

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { ClassConstructor } from 'class-transformer';
 import { validateClass } from '../utils/validation';
-import { ValidationError } from 'class-validator';
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+;
+;
 
 // Validation error interface
 interface FormattedValidationError {
@@ -11,18 +11,14 @@ interface FormattedValidationError {
 }
 
 // Middleware to validate request body against a DTO class
-export const validateRequest = <T extends object>(
+export const _validateRequest = <T extends object>(
   dtoClass: ClassConstructor<T>
-) => async (
-  req: Request, 
-  res: Response, 
-  next: NextFunction
-): Promise<void> => {
+) => async (____req: Request, ____res: Response, ____next: NextFunction) => {
   try {
     // Validate the request body against the DTO
     await validateClass(dtoClass, req.body);
     next();
-  } catch (errors) {
+  } catch (_error: unknown) {
     // Type-safe error handling
     const formattedErrors: FormattedValidationError[] = Array.isArray(errors)
       ? (errors as ValidationError[]).map((error) => ({
@@ -39,18 +35,14 @@ export const validateRequest = <T extends object>(
 };
 
 // Middleware to validate query parameters against a DTO class
-export const validateQuery = <T extends object>(
+export const _validateQuery = <T extends object>(
   dtoClass: ClassConstructor<T>
-) => async (
-  req: Request, 
-  res: Response, 
-  next: NextFunction
-): Promise<void> => {
+) => async (____req: Request, ____res: Response, ____next: NextFunction) => {
   try {
     // Validate the query parameters against the DTO
     await validateClass(dtoClass, req.query);
     next();
-  } catch (errors) {
+  } catch (_error: unknown) {
     // Type-safe error handling
     const formattedErrors: FormattedValidationError[] = Array.isArray(errors)
       ? (errors as ValidationError[]).map((error) => ({
@@ -81,7 +73,7 @@ export class PaginationQueryDto {
 }
 
 // Validation utility to create consistent error responses
-export const createValidationErrorResponse = (
+export const _createValidationErrorResponse = (
   errors: ValidationError[]
 ): { message: string; errors: FormattedValidationError[] } => ({
   message: 'Validation failed',

@@ -5,26 +5,28 @@
 - MySQL (v8.0+)
 - Redis
 
-## Setup
+## Development Setup
 
-1. Clone the repository
-2. Install dependencies
-```bash
-npm install
-```
+### Prerequisites
+- Node.js
+- Git
+- PowerShell (Windows) or Bash (Mac/Linux)
 
-3. Create a `.env` file in the root directory with the following contents:
-```
-PORT=5000
-DATABASE_URL=mysql://username:password@localhost:3306/newsletter_discovery
-NODE_ENV=development
-JWT_SECRET=your_jwt_secret_here
-```
+### Getting Started
+- Run `npm install` to install dependencies
+- Use `npm run dev` to start the development server
+- Use `npm run commit` to commit changes (works on Windows and Unix-like systems)
 
-4. Start the development server
-```bash
-npm run dev
-```
+### Platform-Specific Notes
+- Windows users: Ensure PowerShell execution policy allows script running
+- Mac/Linux users: Ensure bash scripts have execute permissions
+
+### Available Scripts
+- `npm start`: Run production server
+- `npm run dev`: Start development server
+- `npm run build`: Compile TypeScript
+- `npm run commit`: Cross-platform git commit
+- `npm test`: Run tests
 
 ## Database Migrations
 
@@ -37,6 +39,34 @@ npm run dev
 - `DATABASE_URL`: MySQL connection string
 - `NODE_ENV`: Application environment (development/production)
 - `JWT_SECRET`: Secret for JWT token generation
+
+## Code Quality, Testing, and Security
+
+### Code Quality
+- Run `npm run lint` to check code quality
+- Run `npm run lint:fix` to automatically fix linting issues
+- Run `npm run format` to format code
+
+### Testing
+- Run `npm test` to execute all tests
+- Run `npm run test:watch` for watch mode
+- Run `npm run test:coverage` to generate coverage report
+- Aim for 80%+ test coverage
+
+### Security Practices
+- Never commit sensitive information
+- Use environment variables for configuration
+- Implement input validation
+- Use rate limiting
+- Set secure HTTP headers
+- Validate and sanitize user inputs
+
+### Development Workflow
+1. Write code
+2. Run linter: `npm run lint`
+3. Format code: `npm run format`
+4. Run tests: `npm test`
+5. Commit changes
 
 ## Testing
 
@@ -81,6 +111,9 @@ To stop the test database:
 ```bash
 docker-compose down
 ```
+
+## Deployment
+TBD
 
 ## Project Structure
 - `src/models/`: TypeORM entity definitions

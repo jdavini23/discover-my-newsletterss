@@ -75,7 +75,7 @@ export class NewsletterController {
       : newsletters;
   }
 
-  createNewsletter = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+  _createNewsletter = asyncHandler(async (_____req: Request, _____res: Response): Promise<Response> => {
     const queryRunner = this.newsletterRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -110,7 +110,7 @@ export class NewsletterController {
       await redisClient.del('newsletter:all');
 
       return res.status(201).json(fullNewsletter || savedNewsletter);
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       await queryRunner.rollbackTransaction();
       
       if (error instanceof ValidationError) {
@@ -129,7 +129,7 @@ export class NewsletterController {
     }
   });
 
-  fetchNewsletters = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+  _fetchNewsletters = asyncHandler(async (_____req: Request, _____res: Response): Promise<Response> => {
     try {
       const { 
         page = 1, 
@@ -185,7 +185,7 @@ export class NewsletterController {
       await redisClient.set(cacheKey, JSON.stringify(response), 'EX', 3600);
 
       return res.status(200).json(response);
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       return res.status(500).json({
         message: 'Internal server error',
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -193,7 +193,7 @@ export class NewsletterController {
     }
   });
 
-  getNewsletterById = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+  _getNewsletterById = asyncHandler(async (_____req: Request, _____res: Response): Promise<Response> => {
     try {
       const { id } = req.params;
       const cacheKey = this.generateCacheKey('newsletter', { id });
@@ -217,7 +217,7 @@ export class NewsletterController {
       await redisClient.set(cacheKey, JSON.stringify(newsletter), 'EX', 3600);
 
       return res.status(200).json(newsletter);
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       if (error instanceof NotFoundError) {
         return res.status(404).json({ 
           message: `Newsletter not found with ID: ${req.params.id}` 

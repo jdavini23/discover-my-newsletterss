@@ -1,21 +1,15 @@
-import { initializeDatabase } from '../config/database';
-import { 
-  initializeRedis, 
-  redisClient, 
-  cacheNewsletter, 
-  getCachedNewsletter,
-  closeRedisConnection 
-} from '../config/redis';
+import { initializeDatabase, AppDataSource } from '../config/database';
+import { initializeRedis, ___redisClient, cacheNewsletter, getCachedNewsletter, closeRedisConnection,  } from '../config/redis';
 import { Newsletter, NewsletterFrequency } from '../models/Newsletter';
-import { AppDataSource } from '../config/database';
+;
 
-async function testRedisCaching() {
+async function testRedisCaching(): Promise<void> {
   console.log('🚀 Starting Redis Caching Test...');
-  
+
   try {
     console.log('1️⃣ Initializing Database...');
     await initializeDatabase();
-    
+
     console.log('2️⃣ Initializing Redis...');
     await initializeRedis();
 
@@ -23,8 +17,8 @@ async function testRedisCaching() {
     const newsletterRepository = AppDataSource.getRepository(Newsletter);
 
     console.log('4️⃣ Finding or Creating Test Newsletter...');
-    let newsletter = await newsletterRepository.findOne({ 
-      where: { name: 'Test Newsletter' }
+    let newsletter = await newsletterRepository.findOne({
+      where: { name: 'Test Newsletter' },
     });
 
     if (!newsletter) {
@@ -34,7 +28,7 @@ async function testRedisCaching() {
         description: 'A newsletter for testing Redis caching',
         authorName: 'Test Author',
         url: 'https://test-newsletter.com',
-        frequency: NewsletterFrequency.WEEKLY
+        frequency: NewsletterFrequency.WEEKLY,
       });
       await newsletterRepository.save(newsletter);
       console.log('   4b. Newsletter created successfully');
@@ -56,7 +50,7 @@ async function testRedisCaching() {
       console.error('❌ Failed to retrieve cached newsletter');
       return false;
     }
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('❌ Redis Caching Test Failed:', error);
     return false;
   } finally {

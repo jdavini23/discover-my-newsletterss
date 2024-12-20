@@ -42,29 +42,29 @@ export const initializeTestDatabase = async (): Promise<DataSource> => {
     console.log('Current Interests in Database:', interests.length);
 
     return dataSource;
-  } catch (_error) {
+  } catch (_error: unknown) {
     console.error('Test database initialization failed');
     throw new Error('Failed to initialize test database');
   }
 };
 
 // Close test database connection with explicit return type
-export const closeTestDatabase = async (dataSource?: DataSource): Promise<void> => {
+export const closeTestDatabase = async (__req: Request, __res: Response): Promise<void> => {
   if (dataSource && dataSource.isInitialized) {
     try {
       await dataSource.destroy();
       console.log('Test database connection closed');
-    } catch (_error) {
+    } catch (_error: unknown) {
       console.error('Error closing test database');
     }
   }
 };
 
 // Get test data source with memoization
-export const getTestDataSource = (() => {
+export const getTestDataSource = async (): void {
   let testDataSource: DataSource | null = null;
 
-  return (): DataSource => {
+  return (): DataSource | null => {
     if (!testDataSource) {
       testDataSource = createTestDataSource();
     }
@@ -72,7 +72,7 @@ export const getTestDataSource = (() => {
   };
 })();
 
-export const setupTestDatabase = async (): Promise<void> => {
+export const _setupTestDatabase = async (__req: Request, __res: Response): Promise<void> => {
   try {
     const dataSource = await initializeTestDatabase();
 
@@ -85,13 +85,13 @@ export const setupTestDatabase = async (): Promise<void> => {
     await initializeTestDatabase();
 
     console.log('Test database reinitialized successfully');
-  } catch (_error) {
+  } catch (_error: unknown) {
     console.error('Error reinitializing test database');
     throw new Error('Failed to reinitialize test database');
   }
 };
 
-export const destroyTestDatabase = async (): Promise<void> => {
+export const _destroyTestDatabase = async (__req: Request, __res: Response): Promise<void> => {
   try {
     const dataSource = getTestDataSource();
 
@@ -99,7 +99,7 @@ export const destroyTestDatabase = async (): Promise<void> => {
       await closeTestDatabase(dataSource);
       console.log('Test database destroyed successfully');
     }
-  } catch (_error) {
+  } catch (_error: unknown) {
     console.error('Error destroying test database');
   }
 };

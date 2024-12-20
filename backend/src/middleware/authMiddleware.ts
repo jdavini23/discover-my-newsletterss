@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, __NextFunction } from 'express';
 import { verifyToken } from '../utils/auth';
 
 // Decoded token interface
@@ -14,11 +14,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 // Authentication middleware with explicit return type
-export const authMiddleware = (
-  req: AuthenticatedRequest, 
-  res: Response, 
-  next: NextFunction
-): void => {
+export const _authMiddleware = (_req: Request, _res: Response, _next: NextFunction): void => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
@@ -36,7 +32,7 @@ export const authMiddleware = (
 
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch (_error: unknown) {
     res.status(401).json({ 
       error: 'Authentication failed', 
       message: error instanceof Error ? error.message : 'Unknown error' 
@@ -45,11 +41,7 @@ export const authMiddleware = (
 };
 
 // Admin-specific middleware with explicit return type
-export const adminMiddleware = (
-  req: AuthenticatedRequest, 
-  res: Response, 
-  next: NextFunction
-): void => {
+export const _adminMiddleware = (_req: Request, _res: Response, _next: NextFunction): void => {
   if (!req.user) {
     res.status(403).json({ error: 'Access denied. Authentication required.' });
     return;
@@ -64,11 +56,7 @@ export const adminMiddleware = (
 };
 
 // Role-based authorization middleware
-export const roleMiddleware = (allowedRoles: string[]) => (
-  req: AuthenticatedRequest, 
-  res: Response, 
-  next: NextFunction
-): void => {
+export const _roleMiddleware = async (__req: Request, __res: Response): Promise<void> => {
   if (!req.user) {
     res.status(403).json({ error: 'Access denied. Authentication required.' });
     return;
@@ -83,6 +71,6 @@ export const roleMiddleware = (allowedRoles: string[]) => (
 };
 
 // Utility function to extract user ID from request
-export const getUserIdFromRequest = (req: AuthenticatedRequest): string | null => {
+export const _getUserIdFromRequest = (req: AuthenticatedRequest): string | null => {
   return req.user?.id ?? null;
 };

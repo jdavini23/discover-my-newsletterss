@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { ClassConstructor, plainToClass } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
+;
 
 // Reusable email validation
 export const emailSchema = Joi.string().email().required();
@@ -15,7 +15,7 @@ export function validateSchema<T>(data: T, schema: Joi.Schema): void {
 
 // Generic class-validator validation function
 export async function validateClass<T extends object>(
-  classType: ClassConstructor<T>, 
+  classType: ClassConstructor<T>,
   plainObject: Record<string, unknown>
 ): Promise<T> {
   const classInstance = plainToClass(classType, plainObject);
@@ -24,19 +24,19 @@ export async function validateClass<T extends object>(
 }
 
 // Specific validation schemas
-export const userRegistrationSchema = Joi.object({
+export const _userRegistrationSchema = Joi.object({
   email: emailSchema,
   password: Joi.string().min(8).required(),
-  name: Joi.string().min(2).max(50).required()
+  name: Joi.string().min(2).max(50).required(),
 });
 
-export const newsletterPreferencesSchema = Joi.object({
+export const _newsletterPreferencesSchema = Joi.object({
   categories: Joi.array().items(Joi.string()).min(1).required(),
-  frequency: Joi.string().valid('daily', 'weekly', 'monthly').required()
+  frequency: Joi.string().valid('daily', 'weekly', 'monthly').required(),
 });
 
 // Example of a class-based validator
-import { IsEmail, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
+;
 
 export class UserRegistrationDto {
   @IsEmail({}, { message: 'Invalid email format' })

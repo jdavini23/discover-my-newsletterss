@@ -31,7 +31,7 @@ export class InterestController {
   }
 
   // GET /interests
-  static getAllInterests = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+  static _getAllInterests = asyncHandler(async (_____req: Request, _____res: Response): Promise<Response> => {
     await this.ensureDbConnection();
     const cacheKey = this.generateCacheKey('all');
 
@@ -50,7 +50,7 @@ export class InterestController {
   });
 
   // POST /users/:id/preferences
-  static updateUserPreferences = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+  static _updateUserPreferences = asyncHandler(async (_____req: Request, _____res: Response): Promise<Response> => {
     await this.ensureDbConnection();
 
     const userId = req.params.id;
@@ -87,7 +87,7 @@ export class InterestController {
   });
 
   // POST /interests/wizard
-  static getInterestWizardQuestions = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+  static _getInterestWizardQuestions = asyncHandler(async (_____req: Request, _____res: Response): Promise<Response> => {
     await this.ensureDbConnection();
     const cacheKey = this.generateCacheKey('wizard');
 

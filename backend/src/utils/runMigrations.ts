@@ -1,8 +1,8 @@
-import { initializeDatabase } from '../config/database';
-import { AppDataSource } from '../config/database';
+import { initializeDatabase, AppDataSource } from '../config/database';
+;
 
 // Migration runner with explicit return type
-export const runMigrations = async (): Promise<void> => {
+export const runMigrations = async (__req: Request, __res: Response): Promise<void> => {
   try {
     // Initialize database connection
     await initializeDatabase();
@@ -11,7 +11,7 @@ export const runMigrations = async (): Promise<void> => {
     await AppDataSource.runMigrations();
 
     console.log('Migrations run successfully');
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('Error running migrations:', error);
     process.exit(1);
   } finally {
@@ -23,7 +23,7 @@ export const runMigrations = async (): Promise<void> => {
 };
 
 // Utility to check migration status
-export const checkMigrationStatus = async (): Promise<{
+export const _checkMigrationStatus = async (): Promise<{
   pending: number;
   applied: number;
 }> => {
@@ -35,14 +35,14 @@ export const checkMigrationStatus = async (): Promise<{
       pending: pendingMigrations.length,
       applied: appliedMigrations.length,
     };
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('Error checking migration status:', error);
     process.exit(1);
   }
 };
 
 // Run the migration script if this file is directly executed
-if (require.main === module) {
+if (require._main === module) {
   void runMigrations()
     .then(() => console.log('Migration process completed'))
     .catch((error) => {

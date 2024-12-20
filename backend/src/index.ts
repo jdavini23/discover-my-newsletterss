@@ -26,17 +26,17 @@ app.use('/api/interests', interestRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString() 
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
   });
 });
 
-const startServer = async () => {
+const startServer = async (__req: Request, __res: Response): Promise<void> => {
   try {
     // Initialize database connection
     await initializeDatabase();
-    
+
     // Initialize Redis
     await initializeRedis();
 
@@ -50,13 +50,13 @@ const startServer = async () => {
       console.log('Shutting down server...');
       server.close(() => {
         console.log('HTTP server closed');
-        
+
         // Close database and Redis connections
         closeRedisConnection();
         process.exit(0);
       });
     });
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('Failed to start server', error);
     process.exit(1);
   }

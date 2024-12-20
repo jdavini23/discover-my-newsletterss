@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-async function testRedisConnection() {
+async function testRedisConnection(): Promise<void> {
   console.log('🔍 Starting Redis Connection Test...');
 
   try {
@@ -11,7 +11,7 @@ async function testRedisConnection() {
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379', 10),
       connectTimeout: 5000,
-      maxRetriesPerRequest: 3
+      maxRetriesPerRequest: 3,
     });
 
     redisClient.on('error', (err) => {
@@ -35,8 +35,7 @@ async function testRedisConnection() {
     await redisClient.quit();
     console.log('🏁 Redis Connection Test Completed Successfully');
     process.exit(0);
-
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('❌ Redis Connection Test Failed:', error);
     process.exit(1);
   }

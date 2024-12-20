@@ -1,4 +1,4 @@
-/// <reference types="jest" />
+/// <reference _types="jest" / />
 
 import { Request, Response } from 'express';
 import { Newsletter, NewsletterFrequency } from '../models/Newsletter';
@@ -10,14 +10,14 @@ import { AppDataSource } from '../config/database';
 // Mock the entire AppDataSource
 jest.mock('../config/database', () => ({
   AppDataSource: {
-    getRepository: jest.fn()
-  }
+    getRepository: jest.fn(),
+  },
 }));
 
 describe('NewsletterController', () => {
   let controller: NewsletterController;
-  let mockNewsletterRepo: any;
-  let mockInterestRepo: any;
+  let mockNewsletterRepo: unknown;
+  let mockInterestRepo: unknown;
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNext: jest.Mock;
@@ -33,13 +33,13 @@ describe('NewsletterController', () => {
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
         getManyAndCount: jest.fn(),
-        getMany: jest.fn()
-      })
+        getMany: jest.fn(),
+      }),
     };
 
     mockInterestRepo = {
       findByIds: jest.fn(),
-      findOne: jest.fn()
+      findOne: jest.fn(),
     };
 
     // Mock the AppDataSource to return our mock repositories
@@ -50,16 +50,16 @@ describe('NewsletterController', () => {
     });
 
     controller = new NewsletterController();
-    
+
     mockRequest = {
       body: {},
       params: {},
-      query: {}
+      query: {},
     };
 
     mockResponse = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
 
     mockNext = jest.fn();
@@ -71,7 +71,7 @@ describe('NewsletterController', () => {
         name: '',
         description: '',
         authorName: '',
-        url: ''
+        url: '',
       };
 
       const wrappedHandler = controller.createNewsletter as any;
@@ -88,18 +88,22 @@ describe('NewsletterController', () => {
         authorName: 'Test Author',
         url: 'http://test.com',
         frequency: NewsletterFrequency.WEEKLY,
-        interestIds: [1, 2]
+        interestIds: [1, 2],
       };
 
       mockRequest.body = newsletterData;
-      
+
       const mockInterests = [
         { id: 1, name: 'Interest 1' },
-        { id: 2, name: 'Interest 2' }
+        { id: 2, name: 'Interest 2' },
       ];
 
       mockInterestRepo.findByIds.mockResolvedValue(mockInterests);
-      mockNewsletterRepo.save.mockResolvedValue({ id: 1, ...newsletterData, interests: mockInterests });
+      mockNewsletterRepo.save.mockResolvedValue({
+        id: 1,
+        ...newsletterData,
+        interests: mockInterests,
+      });
 
       const wrappedHandler = controller.createNewsletter as any;
       await wrappedHandler(mockRequest, mockResponse, mockNext);
@@ -118,11 +122,15 @@ describe('NewsletterController', () => {
       const mockInterest = { id: 1, name: 'Test Interest' };
       const mockNewsletters = [
         { id: 1, name: 'Newsletter 1' },
-        { id: 2, name: 'Newsletter 2' }
+        { id: 2, name: 'Newsletter 2' },
       ];
 
       mockInterestRepo.findOne.mockResolvedValue(mockInterest);
-      mockNewsletterRepo.createQueryBuilder().innerJoinAndSelect().where().getMany.mockResolvedValue(mockNewsletters);
+      mockNewsletterRepo
+        .createQueryBuilder()
+        .innerJoinAndSelect()
+        .where()
+        .getMany.mockResolvedValue(mockNewsletters);
 
       const wrappedHandler = controller.getNewslettersByInterest as any;
       await wrappedHandler(mockRequest, mockResponse, mockNext);
@@ -130,7 +138,7 @@ describe('NewsletterController', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
         status: 'success',
-        data: mockNewsletters
+        data: mockNewsletters,
       });
     });
 

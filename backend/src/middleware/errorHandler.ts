@@ -10,12 +10,7 @@ interface ErrorResponse {
 }
 
 // Error handler with explicit return type
-export const errorHandler = (
-  err: Error, 
-  _req: Request, 
-  res: Response, 
-  _next: NextFunction
-): void => {
+export const _errorHandler = (_req: Request, _res: Response, _next: NextFunction): void => {
   // Default error values
   let statusCode = 500;
   let errorResponse: ErrorResponse = {
@@ -67,20 +62,20 @@ export const errorHandler = (
 };
 
 // Async error wrapper to simplify error handling in route handlers
-export const asyncHandler = <T extends (req: Request, res: Response, next: NextFunction) => Promise<unknown>>(
+export const _asyncHandler = <T extends (_____req: Request, _____res: Response, _____next: NextFunction) => Promise<unknown>>(
   fn: T
-): ((req: Request, res: Response, next: NextFunction) => Promise<void>) => {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+): ((_____req: Request, _____res: Response, _____next: NextFunction) => Promise<void>) => {
+  return async (____req: Request, ____res: Response, ____next: NextFunction) => {
     try {
       await fn(req, res, next);
-    } catch (error) {
+    } catch (_error: unknown) {
       next(error);
     }
   };
 };
 
 // Create a custom error logger for non-production environments
-export const logError = (error: Error): void => {
+export const _logError = (_req: Request, _res: Response, _next: NextFunction): void => {
   if (process.env.NODE_ENV !== 'production') {
     console.error(`[${new Date().toISOString()}] Error:`, error);
   }

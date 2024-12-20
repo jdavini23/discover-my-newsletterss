@@ -7,32 +7,18 @@ module.exports = {
   },
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
-  
-  // Add environment variables for testing
-  globals: {
-    'ts-jest': {
-      diagnostics: {
-        warnOnly: true
-      }
-    }
-  },
-  
-  // Increase timeout for tests that might have connection issues
-  testTimeout: 10000,
-
-  // Collect coverage from these directories
+  coverageDirectory: './coverage',
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
-    '!src/**/__tests__/**',
-    '!src/**/*.d.ts'
+    '!src/**/*.d.ts',
+    '!src/**/*.test.{ts,tsx}',
   ],
-
-  // Configure how Jest handles module mocking
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
   },
-
-  // Verbose output for better debugging
-  verbose: true
 };

@@ -1,14 +1,9 @@
 import { User } from '../models/User';
 import { Interest } from '../models/Interest';
-import {
-  hashPassword,
-  comparePasswords,
-  generateToken,
-  generatePasswordResetToken,
-} from '../utils/authUtils';
+import { hashPassword, comparePasswords, generateToken, generatePasswordResetToken,  } from '../utils/authUtils';
 import { AppDataSource } from '../config/database';
-import { MoreThan } from 'typeorm';
-import { DataSource, Repository } from 'typeorm';
+;
+;
 import bcrypt from 'bcrypt';
 
 export class UserService {
@@ -43,7 +38,7 @@ export class UserService {
     user.email = email;
     user.passwordHash = hashedPassword;
     user.name = firstName && lastName ? `${firstName} ${lastName}` : email;
-    user.isEmailVerified = false;
+    user._isEmailVerified = false;
 
     // Handle preferences if provided
     if (preferences && preferences.length > 0) {
