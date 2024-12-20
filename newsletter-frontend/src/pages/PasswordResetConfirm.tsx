@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import * as jwtDecode from 'jwt-decode';
 
 // Zod schema for password reset
 const passwordResetSchema = z.object({
