@@ -42,67 +42,69 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <Suspense fallback={<LoadingFallback />}>
-        <div className="min-h-screen bg-gray-50">
-          <Toaster position="top-right" />
-          <NotificationCenter />
-          <Routes>
-            {/* Public Routes */}
-            <Route
-              path="/"
-              element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Home />}
-            />
-            <Route
-              path="/login"
-              element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />}
-            />
-            <Route
-              path="/register"
-              element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />}
-            />
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="/password-reset" element={<PasswordResetRequest />} />
-            <Route
-              path="/password-reset-confirm"
-              element={<PasswordResetConfirm />}
-            />
-            <Route path="/discover/interests" element={<InterestWizard />} />
-            <Route path="/discover/newsletters" element={<NewsletterSearch />} />
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <div className="min-h-screen bg-gray-50">
+            <Toaster position="top-right" />
+            <NotificationCenter />
+            <Routes>
+              {/* Public Routes */}
+              <Route
+                path="/"
+                element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Home />}
+              />
+              <Route
+                path="/login"
+                element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />}
+              />
+              <Route
+                path="/register"
+                element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />}
+              />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/password-reset" element={<PasswordResetRequest />} />
+              <Route
+                path="/password-reset-confirm"
+                element={<PasswordResetConfirm />}
+              />
+              <Route path="/discover/interests" element={<InterestWizard />} />
+              <Route path="/discover/newsletters" element={<NewsletterSearch />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
+              {/* Protected Routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Role-based Protected Routes */}
-            <Route
-              path="/newsletters"
-              element={
-                <RoleProtectedRoute allowedRoles={['admin']}>
-                  <NewsletterList />
-                </RoleProtectedRoute>
-              }
-            />
+              {/* Role-based Protected Routes */}
+              <Route
+                path="/newsletters"
+                element={
+                  <RoleProtectedRoute allowedRoles={['admin']}>
+                    <NewsletterList />
+                  </RoleProtectedRoute>
+                }
+              />
 
-            {/* 404 Not Found Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </Suspense>
+              {/* 404 Not Found Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </Suspense>
+      </ErrorBoundary>
     </ErrorBoundary>
   );
 };
