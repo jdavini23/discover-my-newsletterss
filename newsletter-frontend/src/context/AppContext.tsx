@@ -1,20 +1,20 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import * as React from 'react';
 
 // Define the shape of the context state
 interface AppContextType {
   user: { id: string | null; name: string | null };
-  setUser: (user: { id: string | null; name: string | null }) => void;
+  setUser: React.Dispatch<React.SetStateAction<{ id: string | null; name: string | null }>>;
 }
 
 // Create the context with a default value
-const AppContext = createContext<AppContextType>({
+const AppContext = React.createContext<AppContextType>({
   user: { id: null, name: null },
   setUser: () => {},
 });
 
 // Create a provider component
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState({ id: null, name: null });
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = React.useState<{ id: string | null; name: string | null }>({ id: null, name: null });
 
   return (
     <AppContext.Provider value={{ user, setUser }}>
@@ -25,7 +25,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
 // Custom hook to use the app context
 export const useAppContext = () => {
-  const context = useContext(AppContext);
+  const context = React.useContext(AppContext);
   if (!context) {
     throw new Error('useAppContext must be used within an AppProvider');
   }
