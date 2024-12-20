@@ -14,13 +14,12 @@ const AppContext = React.createContext<AppContextType>({
 
 // Create a provider component
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = React.useState<{ id: string | null; name: string | null }>({ id: null, name: null });
+  const [user, setUser] = React.useState<{ id: string | null; name: string | null }>({
+    id: null,
+    name: null,
+  });
 
-  return (
-    <AppContext.Provider value={{ user, setUser }}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={{ user, setUser }}>{children}</AppContext.Provider>;
 };
 
 // Custom hook to use the app context
