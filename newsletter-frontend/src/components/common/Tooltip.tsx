@@ -18,9 +18,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <RadixTooltip.Provider>
       <RadixTooltip.Root>
-        <RadixTooltip.Trigger asChild>
-          {children}
-        </RadixTooltip.Trigger>
+        <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
           <RadixTooltip.Content
             side={side}

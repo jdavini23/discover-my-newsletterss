@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  InfoCircledIcon, 
-  CheckCircledIcon, 
-  CrossCircledIcon, 
-  ExclamationTriangleIcon 
+import {
+  InfoCircledIcon,
+  CheckCircledIcon,
+  CrossCircledIcon,
+  ExclamationTriangleIcon,
 } from '@radix-ui/react-icons';
 import { useNotificationStore } from '../../stores/rootStore';
 

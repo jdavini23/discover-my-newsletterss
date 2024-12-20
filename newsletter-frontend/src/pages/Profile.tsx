@@ -17,9 +17,7 @@ const Profile: React.FC = () => {
           <p className="text-gray-900">{user?.email}</p>
         </div>
         {/* Add more profile fields as needed */}
-        <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
+        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           Edit Profile
         </button>
       </div>

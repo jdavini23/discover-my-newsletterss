@@ -4,32 +4,37 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import * as jwtDecode from 'jwt-decode';
 
 // Enhanced Zod schema for password reset with comprehensive validation
-const passwordResetSchema = z.object({
-  password: z.string()
-    .min(12, 'Password must be at least 12 characters long')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Password must contain at least one special character')
-    .refine((password) => {
-      // Additional complexity check
-      const complexityScore = [
-        /[A-Z]/.test(password),
-        /[a-z]/.test(password),
-        /[0-9]/.test(password),
-        /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
-      ].filter(Boolean).length;
-      
-      return complexityScore >= 3;
-    }, 'Password must include at least 3 of the following: uppercase, lowercase, number, special character'),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword']
-});
+const passwordResetSchema = z
+  .object({
+    password: z
+      .string()
+      .min(12, 'Password must be at least 12 characters long')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number')
+      .regex(
+        /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+        'Password must contain at least one special character'
+      )
+      .refine((password) => {
+        // Additional complexity check
+        const complexityScore = [
+          /[A-Z]/.test(password),
+          /[a-z]/.test(password),
+          /[0-9]/.test(password),
+          /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+        ].filter(Boolean).length;
+
+        return complexityScore >= 3;
+      }, 'Password must include at least 3 of the following: uppercase, lowercase, number, special character'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 type PasswordResetFormData = z.infer<typeof passwordResetSchema>;
 
@@ -49,13 +54,13 @@ export const PasswordResetConfirm: React.FC = () => {
     }
   }, [token]);
 
-  const { 
-    register, 
-    handleSubmit, 
+  const {
+    register,
+    handleSubmit,
     watch,
-    formState: { errors, isSubmitting } 
+    formState: { errors, isSubmitting },
   } = useForm<PasswordResetFormData>({
-    resolver: zodResolver(passwordResetSchema)
+    resolver: zodResolver(passwordResetSchema),
   });
 
   // Calculate password strength
@@ -88,11 +93,11 @@ export const PasswordResetConfirm: React.FC = () => {
     try {
       setError(null);
       setSuccess(null);
-      
+
       await resetPassword(token, data.password);
-      
+
       setSuccess('Password reset successfully');
-      
+
       // Redirect to login after a short delay
       setTimeout(() => {
         navigate('/login');
@@ -104,11 +109,11 @@ export const PasswordResetConfirm: React.FC = () => {
 
   // Password strength color mapping
   const strengthColors = [
-    'bg-red-500',   // Very weak
+    'bg-red-500', // Very weak
     'bg-orange-500', // Weak
     'bg-yellow-500', // Medium
-    'bg-green-500',  // Strong
-    'bg-green-700'   // Very strong
+    'bg-green-500', // Strong
+    'bg-green-700', // Very strong
   ];
 
   if (!token) {
@@ -130,7 +135,9 @@ export const PasswordResetConfirm: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="password" className="sr-only">New Password</label>
+              <label htmlFor="password" className="sr-only">
+                New Password
+              </label>
               <input
                 {...register('password')}
                 id="password"
@@ -141,20 +148,16 @@ export const PasswordResetConfirm: React.FC = () => {
                 placeholder="New Password"
               />
               {errors.password && (
-                <p className="mt-2 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
+                <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
               )}
-              
+
               {/* Password Strength Indicator */}
               <div className="mt-2 flex">
                 {[...Array(5)].map((_, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className={`h-1 flex-1 mx-1 ${
-                      index < passwordStrength 
-                        ? strengthColors[index] 
-                        : 'bg-gray-300'
+                      index < passwordStrength ? strengthColors[index] : 'bg-gray-300'
                     }`}
                   />
                 ))}
@@ -169,7 +172,9 @@ export const PasswordResetConfirm: React.FC = () => {
               </p>
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="sr-only">Confirm New Password</label>
+              <label htmlFor="confirmPassword" className="sr-only">
+                Confirm New Password
+              </label>
               <input
                 {...register('confirmPassword')}
                 id="confirmPassword"
@@ -180,24 +185,14 @@ export const PasswordResetConfirm: React.FC = () => {
                 placeholder="Confirm New Password"
               />
               {errors.confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">
-                  {errors.confirmPassword.message}
-                </p>
+                <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>
               )}
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-          {success && (
-            <div className="text-green-500 text-sm text-center">
-              {success}
-            </div>
-          )}
+          {success && <div className="text-green-500 text-sm text-center">{success}</div>}
 
           <div>
             <button

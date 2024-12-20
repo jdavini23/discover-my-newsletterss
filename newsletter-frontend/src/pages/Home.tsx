@@ -3,32 +3,41 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
 const Home: React.FC = () => {
-  const { user, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Welcome to Your Newsletter Discovery Platform
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Discover newsletters that match your interests. We&#39;ll help you find the perfect reads.
+        </p>
+      </div>
+
       <header className="bg-white shadow-md">
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">Newsletter Discovery</h1>
           <nav className="space-x-4">
             {!isAuthenticated() ? (
               <>
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/register"
                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                 >
                   Register
                 </Link>
               </>
             ) : (
-              <Link 
-                to="/dashboard" 
+              <Link
+                to="/dashboard"
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
               >
                 Dashboard
@@ -56,9 +65,7 @@ const Home: React.FC = () => {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold mb-4">Easy Tracking</h3>
-              <p className="text-gray-600">
-                Keep track of your favorite newsletters in one place.
-              </p>
+              <p className="text-gray-600">Keep track of your favorite newsletters in one place.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold mb-4">Personalized Recommendations</h3>
@@ -68,13 +75,19 @@ const Home: React.FC = () => {
             </div>
           </div>
 
+          <div className="mt-8 text-center">
+            <p className="text-lg text-gray-700">
+              We&#39;ll help you curate the perfect newsletter collection.
+            </p>
+          </div>
+
           {!isAuthenticated() && (
             <div className="mt-12">
-              <Link 
-                to="/register" 
+              <Link
+                to="/register"
                 className="bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-indigo-700 transition duration-300"
               >
-                Get Started - It's Free!
+                Get Started - It&#39;s Free!
               </Link>
             </div>
           )}

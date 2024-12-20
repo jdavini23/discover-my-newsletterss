@@ -7,7 +7,7 @@ import { useAuthStore } from '../stores/authStore';
 
 // Zod schema for password reset request
 const passwordResetRequestSchema = z.object({
-  email: z.string().email('Invalid email address')
+  email: z.string().email('Invalid email address'),
 });
 
 type PasswordResetRequestFormData = z.infer<typeof passwordResetRequestSchema>;
@@ -18,23 +18,23 @@ export const PasswordResetRequest: React.FC = () => {
   const navigate = useNavigate();
   const { requestPasswordReset } = useAuthStore();
 
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors, isSubmitting } 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
   } = useForm<PasswordResetRequestFormData>({
-    resolver: zodResolver(passwordResetRequestSchema)
+    resolver: zodResolver(passwordResetRequestSchema),
   });
 
   const onSubmit = async (data: PasswordResetRequestFormData) => {
     try {
       setError(null);
       setSuccess(null);
-      
+
       await requestPasswordReset(data.email);
-      
+
       setSuccess('Password reset link sent to your email. Check your inbox.');
-      
+
       // Redirect to login after a short delay
       setTimeout(() => {
         navigate('/login');
@@ -55,7 +55,9 @@ export const PasswordResetRequest: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+              <label htmlFor="email" className="sr-only">
+                Email address
+              </label>
               <input
                 {...register('email')}
                 id="email"
@@ -65,25 +67,13 @@ export const PasswordResetRequest: React.FC = () => {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
               />
-              {errors.email && (
-                <p className="mt-2 text-sm text-red-600">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-          {success && (
-            <div className="text-green-500 text-sm text-center">
-              {success}
-            </div>
-          )}
+          {success && <div className="text-green-500 text-sm text-center">{success}</div>}
 
           <div>
             <button

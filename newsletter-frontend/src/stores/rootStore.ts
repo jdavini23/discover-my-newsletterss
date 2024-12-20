@@ -47,15 +47,17 @@ export const useUserStore = create<UserState>()(
           isAuthenticated: false,
           mfaEnabled: false,
         },
-        setUser: (userData) => set((state) => ({ 
-          user: { ...state.user, ...userData } 
-        })),
-        clearUser: () => set({ 
-          user: { 
-            isAuthenticated: false, 
-            mfaEnabled: false 
-          } 
-        }),
+        setUser: (userData) =>
+          set((state) => ({
+            user: { ...state.user, ...userData },
+          })),
+        clearUser: () =>
+          set({
+            user: {
+              isAuthenticated: false,
+              mfaEnabled: false,
+            },
+          }),
       }),
       { name: 'user-storage' }
     )
@@ -64,30 +66,25 @@ export const useUserStore = create<UserState>()(
 
 // Create Newsletter Store
 export const useNewsletterStore = create<NewsletterState>()(
-  devtools(
-    (set) => ({
-      newsletters: [],
-      selectedNewsletter: null,
-      setNewsletters: (newsletters) => set({ newsletters }),
-      selectNewsletter: (id) => set({ selectedNewsletter: id }),
-    })
-  )
+  devtools((set) => ({
+    newsletters: [],
+    selectedNewsletter: null,
+    setNewsletters: (newsletters) => set({ newsletters }),
+    selectNewsletter: (id) => set({ selectedNewsletter: id }),
+  }))
 );
 
 // Create Notification Store
 export const useNotificationStore = create<NotificationState>()(
-  devtools(
-    (set) => ({
-      notifications: [],
-      addNotification: (notification) => set((state) => ({ 
-        notifications: [
-          ...state.notifications, 
-          { ...notification, id: Date.now().toString() }
-        ] 
+  devtools((set) => ({
+    notifications: [],
+    addNotification: (notification) =>
+      set((state) => ({
+        notifications: [...state.notifications, { ...notification, id: Date.now().toString() }],
       })),
-      removeNotification: (id) => set((state) => ({
-        notifications: state.notifications.filter(n => n.id !== id)
+    removeNotification: (id) =>
+      set((state) => ({
+        notifications: state.notifications.filter((n) => n.id !== id),
       })),
-    })
-  )
+  }))
 );

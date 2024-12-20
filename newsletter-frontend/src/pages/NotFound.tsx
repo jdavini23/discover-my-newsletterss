@@ -11,14 +11,11 @@ const NotFound: React.FC = () => {
           The page you are looking for does not exist or has been moved.
         </p>
         <div className="flex justify-center space-x-4">
-          <Link 
-            to="/" 
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
+          <Link to="/" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             Go to Home
           </Link>
-          <Link 
-            to="/dashboard" 
+          <Link
+            to="/dashboard"
             className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
           >
             Dashboard

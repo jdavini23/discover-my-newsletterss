@@ -22,8 +22,15 @@ export const NewsletterSearch: React.FC = () => {
 
   // Mock newsletter data - replace with actual API call
   const NEWSLETTER_CATEGORIES = [
-    'Technology', 'Business', 'Science', 'Arts', 'Finance', 
-    'Health', 'Politics', 'Sports', 'Entertainment'
+    'Technology',
+    'Business',
+    'Science',
+    'Arts',
+    'Finance',
+    'Health',
+    'Politics',
+    'Sports',
+    'Entertainment',
   ];
 
   useEffect(() => {
@@ -35,7 +42,7 @@ export const NewsletterSearch: React.FC = () => {
         description: 'Latest trends in technology and innovation',
         category: 'Technology',
         subscriptionCount: 5000,
-        rating: 4.5
+        rating: 4.5,
       },
       {
         id: '2',
@@ -43,7 +50,7 @@ export const NewsletterSearch: React.FC = () => {
         description: 'Insights for entrepreneurs and business leaders',
         category: 'Business',
         subscriptionCount: 3500,
-        rating: 4.2
+        rating: 4.2,
       },
       // Add more mock newsletters
     ];
@@ -54,23 +61,22 @@ export const NewsletterSearch: React.FC = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    const filtered = newsletters.filter(newsletter => 
-      newsletter.name.toLowerCase().includes(term.toLowerCase()) ||
-      newsletter.description.toLowerCase().includes(term.toLowerCase())
+    const filtered = newsletters.filter(
+      (newsletter) =>
+        newsletter.name.toLowerCase().includes(term.toLowerCase()) ||
+        newsletter.description.toLowerCase().includes(term.toLowerCase())
     );
     setFilteredNewsletters(filtered);
   };
 
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
 
-    const filtered = newsletters.filter(newsletter => 
-      selectedCategories.length === 0 || 
-      selectedCategories.includes(newsletter.category)
+    const filtered = newsletters.filter(
+      (newsletter) =>
+        selectedCategories.length === 0 || selectedCategories.includes(newsletter.category)
     );
     setFilteredNewsletters(filtered);
   };
@@ -78,13 +84,13 @@ export const NewsletterSearch: React.FC = () => {
   const handleSubscribe = (newsletter: Newsletter) => {
     addNotification({
       message: `Subscribed to ${newsletter.name}`,
-      type: 'success'
+      type: 'success',
     });
     // TODO: Implement actual subscription logic
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg"
@@ -101,7 +107,7 @@ export const NewsletterSearch: React.FC = () => {
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        {NEWSLETTER_CATEGORIES.map(category => (
+        {NEWSLETTER_CATEGORIES.map((category) => (
           <Tooltip key={category} content={`Filter by ${category}`}>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -109,9 +115,10 @@ export const NewsletterSearch: React.FC = () => {
               onClick={() => toggleCategory(category)}
               className={`
                 px-4 py-2 rounded-full text-sm font-medium transition-all
-                ${selectedCategories.includes(category) 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ${
+                  selectedCategories.includes(category)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }
               `}
             >
@@ -121,11 +128,8 @@ export const NewsletterSearch: React.FC = () => {
         ))}
       </div>
 
-      <motion.div 
-        layout 
-        className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
-      >
-        {filteredNewsletters.map(newsletter => (
+      <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredNewsletters.map((newsletter) => (
           <motion.div
             key={newsletter.id}
             layout
@@ -135,7 +139,7 @@ export const NewsletterSearch: React.FC = () => {
           >
             <h3 className="text-lg font-bold mb-2">{newsletter.name}</h3>
             <p className="text-sm text-gray-600 mb-4">{newsletter.description}</p>
-            
+
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <StarIcon className="text-yellow-500 mr-1" />

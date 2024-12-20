@@ -32,30 +32,30 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       token: null,
-      
+
       login: async (email: string, password: string) => {
         try {
           const response = await api.post('/auth/login', { email, password });
           const { token } = response.data;
-          
+
           // Decode token to extract user info
           const decodedUser = jwtDecode.default(token) as JWTPayload;
-          
+
           // Set secure HTTP-only cookie
-          Cookies.set('authToken', token, { 
+          Cookies.set('authToken', token, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: new Date(decodedUser.exp * 1000)
+            expires: new Date(decodedUser.exp * 1000),
           });
 
-          set({ 
+          set({
             user: {
               id: decodedUser.id,
               email: decodedUser.email,
               name: decodedUser.name,
-              roles: decodedUser.roles
+              roles: decodedUser.roles,
             },
-            token 
+            token,
           });
         } catch (error) {
           throw new Error('Login failed. Please check your credentials.');
@@ -64,31 +64,31 @@ export const useAuthStore = create<AuthState>()(
 
       register: async (email: string, password: string, name?: string) => {
         try {
-          const response = await api.post('/auth/register', { 
-            email, 
-            password, 
-            name 
+          const response = await api.post('/auth/register', {
+            email,
+            password,
+            name,
           });
           const { token } = response.data;
-          
+
           // Decode token to extract user info
           const decodedUser = jwtDecode.default(token) as JWTPayload;
-          
+
           // Set secure HTTP-only cookie
-          Cookies.set('authToken', token, { 
+          Cookies.set('authToken', token, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: new Date(decodedUser.exp * 1000)
+            expires: new Date(decodedUser.exp * 1000),
           });
 
-          set({ 
+          set({
             user: {
               id: decodedUser.id,
               email: decodedUser.email,
               name: decodedUser.name,
-              roles: decodedUser.roles
+              roles: decodedUser.roles,
             },
-            token 
+            token,
           });
         } catch (error) {
           throw new Error('Registration failed. Please try again.');
@@ -102,7 +102,7 @@ export const useAuthStore = create<AuthState>()(
 
       isAuthenticated: () => {
         const token = Cookies.get('authToken');
-        
+
         if (!token) return false;
 
         try {
@@ -118,25 +118,25 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await api.post('/auth/refresh-token');
           const { token } = response.data;
-          
+
           // Decode token to extract user info
           const decodedUser = jwtDecode.default(token) as JWTPayload;
-          
+
           // Set secure HTTP-only cookie
-          Cookies.set('authToken', token, { 
+          Cookies.set('authToken', token, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: new Date(decodedUser.exp * 1000)
+            expires: new Date(decodedUser.exp * 1000),
           });
 
-          set({ 
+          set({
             user: {
               id: decodedUser.id,
               email: decodedUser.email,
               name: decodedUser.name,
-              roles: decodedUser.roles
+              roles: decodedUser.roles,
             },
-            token 
+            token,
           });
         } catch (error) {
           // If refresh fails, log out the user
@@ -159,7 +159,7 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           throw new Error('Failed to reset password. Please try again.');
         }
-      }
+      },
     }),
     {
       name: 'auth-storage', // unique name
@@ -173,8 +173,8 @@ export const useAuthStore = create<AuthState>()(
         },
         removeItem: (name) => {
           localStorage.removeItem(name);
-        }
-      }
+        },
+      },
     }
   )
 );

@@ -15,7 +15,6 @@ import { PasswordResetConfirm } from './pages/PasswordResetConfirm';
 // New Imports
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { NotificationCenter } from './components/common/Notification';
-import { Tooltip } from './components/common/Tooltip';
 import { InterestWizard } from './components/discovery/InterestWizard';
 import { NewsletterSearch } from './components/discovery/NewsletterSearch';
 
@@ -41,7 +40,7 @@ const App: React.FC = () => {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
-            
+
             {/* Role-based Protected Routes */}
             <Route element={<RoleProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/newsletters" element={<NewsletterList />} />

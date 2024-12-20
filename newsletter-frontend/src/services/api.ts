@@ -62,10 +62,10 @@ api.interceptors.response.use(
         const { token } = response.data;
 
         // Update cookie with new token
-        Cookies.set('authToken', token, { 
+        Cookies.set('authToken', token, {
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
-          expires: 7 // 7 days
+          expires: 7, // 7 days
         });
 
         // Retry the original request with new token
@@ -109,7 +109,7 @@ export const newsletterService = {
   async deleteNewsletter(id: string) {
     const response = await api.delete<void>(`/newsletters/${id}`);
     return response.data;
-  }
+  },
 };
 
 export default api;
