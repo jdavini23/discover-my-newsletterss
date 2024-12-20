@@ -1,28 +1,34 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Cookies from 'js-cookie';
-import * as jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { api } from '../services/api';
 
-export interface User {
+interface JWTPayload {
   id: string;
   email: string;
-  name?: string;
+  name: string;
   roles?: string[];
-}
-
-interface JWTPayload extends User {
   exp: number;
 }
 
 interface AuthState {
-  user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    roles?: string[];
+  } | null;
+  isAuthenticated: () => boolean;
+  login: (token: string) => void;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => void;
-  isAuthenticated: () => boolean;
-  refreshToken: () => Promise<void>;
+  decodeToken: (token: string) => { 
+    id: string; 
+    email: string; 
+    name: string;
+    roles?: string[];
+  } | null;
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
@@ -30,36 +36,41 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      user: null,
       token: null,
+      user: null,
 
-      login: async (email: string, password: string) => {
+      isAuthenticated: () => {
+        const { token } = get();
+        if (!token) return false;
+
         try {
-          const response = await api.post('/auth/login', { email, password });
-          const { token } = response.data;
-
-          // Decode token to extract user info
-          const decodedUser = jwtDecode.default(token) as JWTPayload;
-
-          // Set secure HTTP-only cookie
-          Cookies.set('authToken', token, {
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            expires: new Date(decodedUser.exp * 1000),
-          });
-
-          set({
-            user: {
-              id: decodedUser.id,
-              email: decodedUser.email,
-              name: decodedUser.name,
-              roles: decodedUser.roles,
-            },
-            token,
-          });
-        } catch (error) {
-          throw new Error('Login failed. Please check your credentials.');
+          const decodedToken = jwtDecode<JWTPayload>(token);
+          return decodedToken.exp > Date.now() / 1000;
+        } catch {
+          return false;
         }
+      },
+
+      decodeToken: (token: string) => {
+        try {
+          const decoded = jwtDecode<JWTPayload>(token);
+          return {
+            id: decoded.id,
+            email: decoded.email,
+            name: decoded.name,
+            roles: decoded.roles
+          };
+        } catch {
+          return null;
+        }
+      },
+
+      login: (token: string) => {
+        const userInfo = get().decodeToken(token);
+        set({ 
+          token, 
+          user: userInfo 
+        });
       },
 
       register: async (email: string, password: string, name?: string) => {
@@ -70,25 +81,11 @@ export const useAuthStore = create<AuthState>()(
             name,
           });
           const { token } = response.data;
-
-          // Decode token to extract user info
-          const decodedUser = jwtDecode.default(token) as JWTPayload;
-
-          // Set secure HTTP-only cookie
-          Cookies.set('authToken', token, {
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            expires: new Date(decodedUser.exp * 1000),
-          });
-
-          set({
-            user: {
-              id: decodedUser.id,
-              email: decodedUser.email,
-              name: decodedUser.name,
-              roles: decodedUser.roles,
-            },
-            token,
+          
+          const userInfo = get().decodeToken(token);
+          set({ 
+            token, 
+            user: userInfo 
           });
         } catch (error) {
           throw new Error('Registration failed. Please try again.');
@@ -96,53 +93,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        Cookies.remove('authToken');
-        set({ user: null, token: null });
-      },
-
-      isAuthenticated: () => {
-        const token = Cookies.get('authToken');
-
-        if (!token) return false;
-
-        try {
-          // Check token expiration
-          const decoded = jwtDecode.default(token) as JWTPayload;
-          return decoded.exp > Date.now() / 1000;
-        } catch {
-          return false;
-        }
-      },
-
-      refreshToken: async () => {
-        try {
-          const response = await api.post('/auth/refresh-token');
-          const { token } = response.data;
-
-          // Decode token to extract user info
-          const decodedUser = jwtDecode.default(token) as JWTPayload;
-
-          // Set secure HTTP-only cookie
-          Cookies.set('authToken', token, {
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            expires: new Date(decodedUser.exp * 1000),
-          });
-
-          set({
-            user: {
-              id: decodedUser.id,
-              email: decodedUser.email,
-              name: decodedUser.name,
-              roles: decodedUser.roles,
-            },
-            token,
-          });
-        } catch (error) {
-          // If refresh fails, log out the user
-          get().logout();
-          throw new Error('Session expired. Please log in again.');
-        }
+        set({ token: null, user: null });
       },
 
       requestPasswordReset: async (email: string) => {
@@ -159,10 +110,10 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           throw new Error('Failed to reset password. Please try again.');
         }
-      },
+      }
     }),
     {
-      name: 'auth-storage', // unique name
+      name: 'auth-storage',
       storage: {
         getItem: (name) => {
           const item = localStorage.getItem(name);
@@ -174,7 +125,7 @@ export const useAuthStore = create<AuthState>()(
         removeItem: (name) => {
           localStorage.removeItem(name);
         },
-      },
+      }
     }
   )
 );

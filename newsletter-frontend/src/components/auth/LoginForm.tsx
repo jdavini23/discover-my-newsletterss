@@ -1,39 +1,34 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthStore } from '../../stores/authStore';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useAuthStore } from '../../stores/authStore';
+import { api } from '../../services/api';
 
-// Validation schema
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
 export const LoginForm: React.FC = () => {
-  const { login } = useAuthStore();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-  });
+  const { login } = useAuthStore();
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
-      setError(null);
-      await login(data.email, data.password);
-      // Redirect to dashboard or home page
+      const response = await api.post('/auth/login', data);
+      const { token } = response.data;
+      
+      login(token);
+      toast.success('Login successful');
       navigate('/dashboard');
     } catch (error) {
-      setError('Login failed. Please check your credentials.');
+      toast.error('Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,27 +36,23 @@ export const LoginForm: React.FC = () => {
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
-
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
             id="email"
-            {...register('email')}
             type="email"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="you@example.com"
+            {...register('email', { 
+              required: 'Email is required', 
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: 'Invalid email address'
+              }
+            })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
-          {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
         </div>
 
         <div>
@@ -70,22 +61,33 @@ export const LoginForm: React.FC = () => {
           </label>
           <input
             id="password"
-            {...register('password')}
             type="password"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Password"
+            {...register('password', { 
+              required: 'Password is required',
+              minLength: {
+                value: 8,
+                message: 'Password must be at least 8 characters'
+              }
+            })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
-          {errors.password && (
-            <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
-          )}
+          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
         </div>
 
         <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <input
+              id="remember-me"
+              type="checkbox"
+              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            />
+            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              Remember me
+            </label>
+          </div>
+
           <div className="text-sm">
-            <Link
-              to="/forgot-password"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
+            <Link to="/password-reset" className="font-medium text-indigo-600 hover:text-indigo-500">
               Forgot your password?
             </Link>
           </div>
@@ -94,17 +96,17 @@ export const LoginForm: React.FC = () => {
         <div>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isLoading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </div>
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
-            Don&apos;t have an account?{' '}
-            <Link to="/register" className="text-blue-500 hover:underline">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
               Sign up
             </Link>
           </p>

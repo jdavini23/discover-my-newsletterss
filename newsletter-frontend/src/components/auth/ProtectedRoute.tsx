@@ -2,17 +2,30 @@ import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 
-export const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
-  const location = useLocation();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredRoles?: string[];
+}
+
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  requiredRoles 
+}) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  const hasRequiredRoles = requiredRoles ? 
+    user?.roles?.some(role => requiredRoles.includes(role)) : 
+    true;
 
   if (!isAuthenticated()) {
-    // Redirect to login page, saving the current location they were trying to access
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // If authenticated, render the child routes
-  return <Outlet />;
+  if (requiredRoles && !hasRequiredRoles) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 // Higher-order component for role-based access control

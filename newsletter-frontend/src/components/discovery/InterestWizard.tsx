@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotificationStore } from '../../stores/rootStore';
 import { Tooltip } from '../common/Tooltip';
 
-// Mock interests - replace with actual backend call
-const INTERESTS_CATEGORIES = [
+// Memoize interest categories to prevent unnecessary re-renders
+const interestCategories = [
   {
     category: 'Technology',
     interests: ['AI', 'Web Development', 'Cybersecurity', 'Blockchain', 'Cloud Computing'],
@@ -27,22 +27,21 @@ export const InterestWizard: React.FC = () => {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const { addNotification } = useNotificationStore();
 
-  const handleInterestSelect = (interest: string) => {
+  // Memoize interest selection handler to prevent unnecessary re-renders
+  const handleInterestSelect = useCallback((interest: string) => {
     setSelectedInterests(prevInterests =>
       prevInterests.includes(interest)
         ? prevInterests.filter(i => i !== interest)
         : [...prevInterests, interest]
     );
-  };
+  }, []);
 
-  const handleSubmit = async () => {
+  // Memoize submit handler
+  const handleSubmit = useCallback(async () => {
     try {
-      // TODO: Replace with actual API call to save user interests
-      console.log('Selected Interests:', selectedInterests);
-
-      // Simulated backend call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      // Simulated API call or store update
+      await updateUserInterests(selectedInterests);
+      
       addNotification({
         message: 'Interests updated successfully!',
         type: 'success',
@@ -53,7 +52,37 @@ export const InterestWizard: React.FC = () => {
         type: 'error',
       });
     }
-  };
+  }, [selectedInterests, addNotification]);
+
+  // Memoize rendered interests to optimize performance
+  const renderedInterestCategories = useMemo(() => (
+    <div className="space-y-6">
+      {interestCategories.map((category) => (
+        <div key={category.category} className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold mb-4">{category.category}</h3>
+          <div className="flex flex-wrap gap-3">
+            {category.interests.map((interest, _index) => (
+              <Tooltip key={interest} content={`Select ${interest}`}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleInterestSelect(interest)}
+                  className={`
+                    px-4 py-2 rounded-full text-sm font-medium transition-all
+                    ${selectedInterests.includes(interest) 
+                      ? 'bg-indigo-600 text-white' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
+                  `}
+                >
+                  {interest}
+                </motion.button>
+              </Tooltip>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  ), [interestCategories, selectedInterests, handleInterestSelect]);
 
   return (
     <motion.div
@@ -64,38 +93,7 @@ export const InterestWizard: React.FC = () => {
       <h2 className="text-2xl font-bold mb-6 text-center">Discover Your Perfect Newsletters</h2>
 
       <AnimatePresence>
-        {INTERESTS_CATEGORIES.map((category, index) => (
-          <motion.div
-            key={category.category}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-6"
-          >
-            <h3 className="text-xl font-semibold mb-4">{category.category}</h3>
-            <div className="flex flex-wrap gap-3">
-              {category.interests.map((interest, _index) => (
-                <Tooltip key={interest} content={`Select ${interest}`}>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleInterestSelect(interest)}
-                    className={`
-                      px-4 py-2 rounded-full text-sm font-medium transition-all
-                      ${
-                        selectedInterests.includes(interest)
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }
-                    `}
-                  >
-                    {interest}
-                  </motion.button>
-                </Tooltip>
-              ))}
-            </div>
-          </motion.div>
-        ))}
+        {renderedInterestCategories}
       </AnimatePresence>
 
       <div className="mt-6 flex justify-center">
@@ -119,3 +117,10 @@ export const InterestWizard: React.FC = () => {
     </motion.div>
   );
 };
+
+// Simulated API function (replace with actual implementation)
+async function updateUserInterests(interests: string[]) {
+  // Placeholder for actual API call or store update
+  console.log('Updating user interests:', interests);
+  return Promise.resolve();
+}
