@@ -35,20 +35,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-<<<<<<< HEAD
-    "types": ["node", "jest"]
-=======
-    
-    // Performance and Debugging
     "removeComments": true,
     "sourceMap": true,
-    
-    // Type Checking
     "types": ["jest", "node"],
-    
-    // Error Reporting
     "pretty": true
->>>>>>> a35d6363ec074b43f6cab64a9bd555555cc4a592
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts"]
