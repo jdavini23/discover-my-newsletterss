@@ -10,27 +10,23 @@ import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
-import { PasswordResetRequest } from './pages/PasswordResetRequest';
-import { PasswordResetConfirm } from './pages/PasswordResetConfirm';
+import PasswordResetRequest from './pages/PasswordResetRequest';
+import PasswordResetConfirm from './pages/PasswordResetConfirm';
 import NewsletterSearch from './pages/NewsletterSearch';
 import Profile from './pages/Profile';
 import NewsletterList from './pages/NewsletterList';
 import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
-import { InterestWizard } from './components/discovery/InterestWizard';
-import { NotificationCenter } from './components/common/Notification';
+import InterestWizard from './components/discovery/InterestWizard';
+import NotificationCenter from './components/common/Notification';
 
-// Role-based Protected Route
-const RoleProtectedRoute: React.FC<{ 
-  children: React.ReactNode; 
-  allowedRoles: string[] 
-}> = ({ children, allowedRoles }) => {
-  return (
-    <ProtectedRoute requiredRoles={allowedRoles}>
-      {children}
-    </ProtectedRoute>
-  );
-};
+// Role-based Protected Route Component
+const RoleProtectedRoute: React.FC<{
+  children: React.ReactNode;
+  allowedRoles: string[];
+}> = ({ children, allowedRoles }) => (
+  <ProtectedRoute requiredRoles={allowedRoles}>{children}</ProtectedRoute>
+);
 
 const App: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
@@ -43,44 +39,47 @@ const App: React.FC = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Home />} />
-          <Route path="/login" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />} />
-          <Route path="/register" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />} />
+          <Route
+            path="/login"
+            element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />}
+          />
+          <Route
+            path="/register"
+            element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />}
+          />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/password-reset" element={<PasswordResetRequest />} />
-          <Route 
-            path="/password-reset-confirm" 
-            element={<PasswordResetConfirm />} 
-          />
+          <Route path="/password-reset-confirm" element={<PasswordResetConfirm />} />
           <Route path="/discover/interests" element={<InterestWizard />} />
           <Route path="/discover/newsletters" element={<NewsletterSearch />} />
 
           {/* Protected Routes */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/profile" 
+
+          <Route
+            path="/profile"
             element={
               <ProtectedRoute>
                 <Profile />
               </ProtectedRoute>
-            } 
+            }
           />
 
           {/* Role-based Protected Routes */}
-          <Route 
-            path="/newsletters" 
+          <Route
+            path="/newsletters"
             element={
               <RoleProtectedRoute allowedRoles={['admin']}>
                 <NewsletterList />
               </RoleProtectedRoute>
-            } 
+            }
           />
 
           {/* 404 Not Found Route */}

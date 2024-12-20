@@ -11,7 +11,11 @@ interface LoginFormData {
 }
 
 export const LoginForm: React.FC = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthStore();
@@ -21,7 +25,7 @@ export const LoginForm: React.FC = () => {
     try {
       const response = await api.post('/auth/login', data);
       const { token } = response.data;
-      
+
       login(token);
       toast.success('Login successful');
       navigate('/dashboard');
@@ -43,12 +47,12 @@ export const LoginForm: React.FC = () => {
           <input
             id="email"
             type="email"
-            {...register('email', { 
-              required: 'Email is required', 
+            {...register('email', {
+              required: 'Email is required',
               pattern: {
                 value: /\S+@\S+\.\S+/,
-                message: 'Invalid email address'
-              }
+                message: 'Invalid email address',
+              },
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
@@ -62,16 +66,18 @@ export const LoginForm: React.FC = () => {
           <input
             id="password"
             type="password"
-            {...register('password', { 
+            {...register('password', {
               required: 'Password is required',
               minLength: {
                 value: 8,
-                message: 'Password must be at least 8 characters'
-              }
+                message: 'Password must be at least 8 characters',
+              },
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
-          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
@@ -87,7 +93,10 @@ export const LoginForm: React.FC = () => {
           </div>
 
           <div className="text-sm">
-            <Link to="/password-reset" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link
+              to="/password-reset"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
               Forgot your password?
             </Link>
           </div>
@@ -105,8 +114,11 @@ export const LoginForm: React.FC = () => {
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Don&apos;t have an account?{' '}
+            <Link 
+              to="/register" 
+              className="text-blue-500 hover:underline"
+            >
               Sign up
             </Link>
           </p>

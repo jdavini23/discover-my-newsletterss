@@ -23,9 +23,9 @@ interface AuthState {
   login: (token: string) => void;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => void;
-  decodeToken: (token: string) => { 
-    id: string; 
-    email: string; 
+  decodeToken: (token: string) => {
+    id: string;
+    email: string;
     name: string;
     roles?: string[];
   } | null;
@@ -58,7 +58,7 @@ export const useAuthStore = create<AuthState>()(
             id: decoded.id,
             email: decoded.email,
             name: decoded.name,
-            roles: decoded.roles
+            roles: decoded.roles,
           };
         } catch {
           return null;
@@ -67,9 +67,9 @@ export const useAuthStore = create<AuthState>()(
 
       login: (token: string) => {
         const userInfo = get().decodeToken(token);
-        set({ 
-          token, 
-          user: userInfo 
+        set({
+          token,
+          user: userInfo,
         });
       },
 
@@ -81,11 +81,11 @@ export const useAuthStore = create<AuthState>()(
             name,
           });
           const { token } = response.data;
-          
+
           const userInfo = get().decodeToken(token);
-          set({ 
-            token, 
-            user: userInfo 
+          set({
+            token,
+            user: userInfo,
           });
         } catch (error) {
           throw new Error('Registration failed. Please try again.');
@@ -110,7 +110,7 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           throw new Error('Failed to reset password. Please try again.');
         }
-      }
+      },
     }),
     {
       name: 'auth-storage',
@@ -125,7 +125,7 @@ export const useAuthStore = create<AuthState>()(
         removeItem: (name) => {
           localStorage.removeItem(name);
         },
-      }
+      },
     }
   )
 );
