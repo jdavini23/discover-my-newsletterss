@@ -12,31 +12,41 @@ import Unauthorized from './pages/Unauthorized';
 import { PasswordResetRequest } from './pages/PasswordResetRequest';
 import { PasswordResetConfirm } from './pages/PasswordResetConfirm';
 
+// New Imports
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { NotificationCenter } from './components/common/Notification';
+import { Tooltip } from './components/common/Tooltip';
+
 const App: React.FC = () => {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/register" element={<RegisterForm />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/forgot-password" element={<PasswordResetRequest />} />
-      <Route path="/reset-password" element={<PasswordResetConfirm />} />
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-50">
+        <NotificationCenter />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/forgot-password" element={<PasswordResetRequest />} />
+          <Route path="/reset-password" element={<PasswordResetConfirm />} />
 
-      {/* Protected Routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
-        
-        {/* Role-based Protected Routes */}
-        <Route element={<RoleProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="/newsletters" element={<NewsletterList />} />
-        </Route>
-      </Route>
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            
+            {/* Role-based Protected Routes */}
+            <Route element={<RoleProtectedRoute allowedRoles={['admin']} />}>
+              <Route path="/newsletters" element={<NewsletterList />} />
+            </Route>
+          </Route>
 
-      {/* 404 Not Found */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+          {/* 404 Not Found */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </ErrorBoundary>
   );
 };
 
