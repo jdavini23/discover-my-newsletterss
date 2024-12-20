@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 // Import database initialization
-import { initializeDatabase, closeDatabaseConnection } from './config/database';
+import { _initializeDatabase as initializeDatabase, closeDatabaseConnection } from './config/database';
 import { initializeRedis, _closeRedisConnection as closeRedisConnection } from './config/redis';
 
 // Import routes
