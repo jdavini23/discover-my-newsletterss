@@ -2,106 +2,83 @@
 
 ## Table of Contents
 1. [Code of Conduct](#code-of-conduct)
-2. [Getting Started](#getting-started)
+2. [Development Setup](#development-setup)
 3. [Development Workflow](#development-workflow)
-4. [Coding Standards](#coding-standards)
-5. [Commit Message Guidelines](#commit-message-guidelines)
-6. [Pull Request Process](#pull-request-process)
-7. [Reporting Bugs](#reporting-bugs)
+4. [Commit Guidelines](#commit-guidelines)
+5. [Pull Request Process](#pull-request-process)
+6. [Performance Monitoring](#performance-monitoring)
+7. [Troubleshooting](#troubleshooting)
+8. [Additional Resources](#additional-resources)
+9. [Questions?](#questions)
 
 ## Code of Conduct
 - Be respectful and inclusive
 - Collaborate constructively
 - Prioritize the project's goals
 
-## Getting Started
-### Prerequisites
-- Node.js (v18+)
-- npm (v9+)
-- Git
+## Development Setup
 
-### Setup
-1. Fork the repository
-2. Clone your fork
-```bash
-git clone https://github.com/your-username/discover-my-newsletters.git
-cd newsletter-frontend
-npm install
-```
+### Prerequisites
+- Node.js (v16+ recommended)
+- npm (v8+)
+- PowerShell 7+
+
+### Initial Setup
+1. Clone the repository
+2. Run `npm install`
+3. Create a `.env` file based on `.env.example`
 
 ## Development Workflow
-1. Create a new branch for your feature/fix
-```bash
-git checkout -b feature/your-feature-name
-```
 
-2. Make your changes
-3. Run linting and formatting
-```bash
-npm run lint
-npm run format
-```
+### Running the Project
+- `npm run dev`: Start development server
+- `npm run build`: Build for production
+- `npm run build:perf`: Build with performance monitoring
 
-4. Commit your changes following our [Commit Message Guidelines](#commit-message-guidelines)
+### Code Quality Tools
+- ESLint: `npm run lint`
+- Prettier: `npm run format`
+- Run both: `npm run lint:fix`
 
-## Coding Standards
-### TypeScript
-- Use TypeScript strict mode
-- Avoid `any` types
-- Use meaningful variable and function names
-- Add type annotations
-- Use interfaces and type aliases
+## Commit Guidelines
 
-### React
-- Use functional components
-- Prefer hooks over class components
-- Keep components small and focused
-- Use prop types or TypeScript interfaces
-
-### Styling
-- Use Tailwind CSS utility classes
-- Keep styles consistent
-- Avoid inline styles when possible
-
-## Commit Message Guidelines
+### Conventional Commits
 Use the following format:
 ```
-<type>: <subject>
+<type>(optional scope): <description>
 
 [optional body]
+
+[optional footer(s)]
 ```
 
-### Types
+#### Commit Types
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
-- `style`: Formatting, missing semicolons
-- `refactor`: Code restructure without changing behavior
+- `style`: Code formatting
+- `refactor`: Code restructuring
 - `test`: Adding or modifying tests
 - `chore`: Maintenance tasks
 
-### Example
-```
-feat: Add user authentication flow
-
-- Implement login and registration components
-- Add error handling for authentication requests
-```
+### Pre-Commit Checks
+- Linting will run automatically
+- Commit messages are validated
+- Formatting is applied before commit
 
 ## Pull Request Process
-1. Ensure all tests pass
+1. Ensure code passes all linting and formatting checks
 2. Update documentation if needed
-3. Get at least one code review approval
-4. Squash and merge
+3. Describe changes in PR description
 
-## Reporting Bugs
-1. Check existing issues
-2. Use the bug report template
-3. Provide:
-   - Steps to reproduce
-   - Expected behavior
-   - Actual behavior
-   - Environment details
+## Performance Monitoring
+- Use `npm run build:perf` to analyze build performance
+- Keep bundle sizes under 5MB
+- Build times should be under 1 minute
+
+## Troubleshooting
+- Clear npm cache: `npm cache clean --force`
+- Reinstall dependencies: `rm -rf node_modules && npm install`
 
 ## Additional Resources
 - [React Documentation](https://react.dev)
