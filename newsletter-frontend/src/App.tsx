@@ -16,6 +16,8 @@ import { PasswordResetConfirm } from './pages/PasswordResetConfirm';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { NotificationCenter } from './components/common/Notification';
 import { Tooltip } from './components/common/Tooltip';
+import { InterestWizard } from './components/discovery/InterestWizard';
+import { NewsletterSearch } from './components/discovery/NewsletterSearch';
 
 const App: React.FC = () => {
   return (
@@ -30,6 +32,10 @@ const App: React.FC = () => {
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/forgot-password" element={<PasswordResetRequest />} />
           <Route path="/reset-password" element={<PasswordResetConfirm />} />
+
+          {/* Discovery Routes */}
+          <Route path="/discover/interests" element={<InterestWizard />} />
+          <Route path="/discover/newsletters" element={<NewsletterSearch />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
