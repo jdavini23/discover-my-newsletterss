@@ -1,13 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import Cookies from 'js-cookie';
-import jwtDecode from 'jsonwebtoken/decode';
+import jwtDecode from 'jwt-decode';
 import { api } from '../services/api';
 
 export interface User {
   id: string;
   email: string;
   name?: string;
+  roles?: string[];
+}
+
+interface JWTPayload extends User {
+  exp: number;
 }
 
 interface AuthState {
@@ -28,17 +33,25 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         try {
           const response = await api.post('/auth/login', { email, password });
-          const { token, user } = response.data;
+          const { token } = response.data;
+          
+          // Decode token to extract user info
+          const decodedUser = jwtDecode<JWTPayload>(token);
           
           // Set secure HTTP-only cookie
           Cookies.set('authToken', token, { 
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: 7 // 7 days
+            expires: new Date(decodedUser.exp * 1000)
           });
 
           set({ 
-            user, 
+            user: {
+              id: decodedUser.id,
+              email: decodedUser.email,
+              name: decodedUser.name,
+              roles: decodedUser.roles
+            }, 
             token 
           });
         } catch (error) {
@@ -54,17 +67,25 @@ export const useAuthStore = create<AuthState>()(
             password, 
             name 
           });
-          const { token, user } = response.data;
+          const { token } = response.data;
+          
+          // Decode token to extract user info
+          const decodedUser = jwtDecode<JWTPayload>(token);
           
           // Set secure HTTP-only cookie
           Cookies.set('authToken', token, { 
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: 7 // 7 days
+            expires: new Date(decodedUser.exp * 1000)
           });
 
           set({ 
-            user, 
+            user: {
+              id: decodedUser.id,
+              email: decodedUser.email,
+              name: decodedUser.name,
+              roles: decodedUser.roles
+            }, 
             token 
           });
         } catch (error) {
@@ -89,7 +110,7 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           // Check token expiration
-          const decoded = jwtDecode(token) as { exp: number };
+          const decoded = jwtDecode<JWTPayload>(token);
           return decoded.exp > Date.now() / 1000;
         } catch {
           return false;
