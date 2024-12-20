@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 // Import database initialization
 import { initializeDatabase, closeDatabaseConnection } from './config/database';
-import { initializeRedis, closeRedisConnection } from './config/redis';
+import { initializeRedis, _closeRedisConnection as closeRedisConnection } from './config/redis';
 
 // Import routes
 import authRoutes from './routes/authRoutes';
@@ -60,13 +60,8 @@ const startServer = async (): Promise<void> => {
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-<<<<<<< HEAD
       console.log('Shutting down server...');
       server.close(async () => {
-=======
-      console.log('SIGINT signal received: closing HTTP server');
-      server.close(() => {
->>>>>>> a35d6363ec074b43f6cab64a9bd555555cc4a592
         console.log('HTTP server closed');
         // Close database and Redis connections
         await Promise.all([
