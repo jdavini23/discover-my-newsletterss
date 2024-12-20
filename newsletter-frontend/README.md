@@ -6,48 +6,84 @@ A React TypeScript frontend for the Newsletter Discovery application, designed t
 ## Prerequisites
 - Node.js (v18+)
 - npm (v9+)
+- Git
 
 ## Setup
-1. Clone the repository
-2. Navigate to the project directory
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
 
-## Development
-Start the development server:
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/discover-my-newsletters.git
+cd newsletter-frontend
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+## Development Workflow
+
+### Start Development Server
 ```bash
 npm run dev
 ```
 
-## Build
-Create a production build:
+### Build for Production
 ```bash
 npm run build
+```
+
+### Linting and Formatting
+```bash
+# Run linter
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Format code
+npm run format
 ```
 
 ## Project Structure
 ```
 src/
+├── assets/      # Static assets (images, icons)
 ├── components/  # Reusable UI components
-├── pages/       # Main application pages
+├── context/     # Global state management
 ├── hooks/       # Custom React hooks
-├── utils/       # Utility functions
+├── pages/       # Main application pages
 ├── services/    # API interaction logic
 ├── styles/      # Global and modular styles
-├── context/     # Global state management
-└── assets/      # Images, icons, etc.
+└── utils/       # Utility functions
 ```
 
 ## Technologies
-- React.js
+- React.js (v18)
 - TypeScript
 - Vite
-- CSS Modules
+- Tailwind CSS
+- Axios
+- ESLint
+- Prettier
 
-## Features (Planned)
+## Features
 - Newsletter discovery
+- User authentication
 - Personalized recommendations
-- Newsletter management
-- Search and filter capabilities
+- Responsive design
+
+## Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+- Project Maintainer: [Your Name]
+- Project Link: [https://github.com/your-username/discover-my-newsletters](https://github.com/your-username/discover-my-newsletters)
+
+## Acknowledgments
+- React Community
+- TypeScript Team
+- Vite Contributors
