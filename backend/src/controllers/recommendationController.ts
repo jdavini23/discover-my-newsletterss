@@ -43,6 +43,20 @@ export class RecommendationController {
     return `recommendations:${type}:${userId}:page:${page}:limit:${limit}`;
   }
 
+  private getCacheExpiration(type: 'newsletters' | 'interests'): number {
+    // Dynamic cache expiration based on recommendation type
+    switch (type) {
+      case 'newsletters':
+        // Newsletters change less frequently, cache for longer
+        return 24 * 60 * 60; // 24 hours
+      case 'interests':
+        // Interests might change more often
+        return 4 * 60 * 60; // 4 hours
+      default:
+        return 1 * 60 * 60; // Default 1 hour
+    }
+  }
+
   private parseQueryParams(query: RecommendationQuery): { page: number; limit: number } {
     return {
       page: Math.max(1, Number(query.page || 1)),
@@ -68,11 +82,17 @@ export class RecommendationController {
       const userId = (req as AuthenticatedRequest).user.id;
       const { page, limit } = this.parseQueryParams(req.query);
       const cacheKey = this.generateCacheKey('newsletters', userId, { page, limit });
+      const cacheExpiration = this.getCacheExpiration('newsletters');
 
-      // Check cache first
+      // Check cache first with more robust caching
       const cachedRecommendations = await redisClient.get(cacheKey);
       if (cachedRecommendations) {
-        res.json(JSON.parse(cachedRecommendations));
+        const parsedRecommendations = JSON.parse(cachedRecommendations);
+        
+        // Optional: Add cache hit tracking
+        await redisClient.incr(`cache:hits:${cacheKey}`);
+        
+        res.json(parsedRecommendations);
         return;
       }
 
@@ -106,8 +126,16 @@ export class RecommendationController {
         matchedInterests: user.preferences,
       };
 
-      // Cache the result
-      await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+      // Cache the result with dynamic expiration
+      await redisClient.set(
+        cacheKey, 
+        JSON.stringify(result), 
+        'EX', 
+        cacheExpiration
+      );
+
+      // Optional: Track cache misses
+      await redisClient.incr(`cache:misses:${cacheKey}`);
 
       res.json(result);
     } catch (error: unknown) {
@@ -120,11 +148,17 @@ export class RecommendationController {
       const userId = (req as AuthenticatedRequest).user.id;
       const { limit } = this.parseQueryParams(req.query);
       const cacheKey = this.generateCacheKey('interests', userId, { limit });
+      const cacheExpiration = this.getCacheExpiration('interests');
 
-      // Check cache first
+      // Check cache first with more robust caching
       const cachedInterests = await redisClient.get(cacheKey);
       if (cachedInterests) {
-        res.json(JSON.parse(cachedInterests));
+        const parsedInterests = JSON.parse(cachedInterests);
+        
+        // Optional: Add cache hit tracking
+        await redisClient.incr(`cache:hits:${cacheKey}`);
+        
+        res.json(parsedInterests);
         return;
       }
 
@@ -146,8 +180,16 @@ export class RecommendationController {
         currentInterests: user.preferences,
       };
 
-      // Cache the result
-      await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+      // Cache the result with dynamic expiration
+      await redisClient.set(
+        cacheKey, 
+        JSON.stringify(result), 
+        'EX', 
+        cacheExpiration
+      );
+
+      // Optional: Track cache misses
+      await redisClient.incr(`cache:misses:${cacheKey}`);
 
       res.json(result);
     } catch (error: unknown) {
