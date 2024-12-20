@@ -6,14 +6,25 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import * as jwtDecode from 'jwt-decode';
 
-// Zod schema for password reset
+// Enhanced Zod schema for password reset with comprehensive validation
 const passwordResetSchema = z.object({
   password: z.string()
-    .min(8, 'Password must be at least 8 characters long')
+    .min(12, 'Password must be at least 12 characters long')
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(/[!@#$%^&*()]/, 'Password must contain at least one special character'),
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Password must contain at least one special character')
+    .refine((password) => {
+      // Additional complexity check
+      const complexityScore = [
+        /[A-Z]/.test(password),
+        /[a-z]/.test(password),
+        /[0-9]/.test(password),
+        /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+      ].filter(Boolean).length;
+      
+      return complexityScore >= 3;
+    }, 'Password must include at least 3 of the following: uppercase, lowercase, number, special character'),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
@@ -26,6 +37,7 @@ export const PasswordResetConfirm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState(0);
   const navigate = useNavigate();
   const { resetPassword } = useAuthStore();
 
@@ -40,10 +52,32 @@ export const PasswordResetConfirm: React.FC = () => {
   const { 
     register, 
     handleSubmit, 
+    watch,
     formState: { errors, isSubmitting } 
   } = useForm<PasswordResetFormData>({
     resolver: zodResolver(passwordResetSchema)
   });
+
+  // Calculate password strength
+  const calculatePasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 12) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength++;
+    return strength;
+  };
+
+  // Watch password to calculate strength
+  const passwordValue = watch('password');
+  useEffect(() => {
+    if (passwordValue) {
+      setPasswordStrength(calculatePasswordStrength(passwordValue));
+    } else {
+      setPasswordStrength(0);
+    }
+  }, [passwordValue]);
 
   const onSubmit = async (data: PasswordResetFormData) => {
     if (!token) {
@@ -67,6 +101,15 @@ export const PasswordResetConfirm: React.FC = () => {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     }
   };
+
+  // Password strength color mapping
+  const strengthColors = [
+    'bg-red-500',   // Very weak
+    'bg-orange-500', // Weak
+    'bg-yellow-500', // Medium
+    'bg-green-500',  // Strong
+    'bg-green-700'   // Very strong
+  ];
 
   if (!token) {
     return (
@@ -102,6 +145,28 @@ export const PasswordResetConfirm: React.FC = () => {
                   {errors.password.message}
                 </p>
               )}
+              
+              {/* Password Strength Indicator */}
+              <div className="mt-2 flex">
+                {[...Array(5)].map((_, index) => (
+                  <div 
+                    key={index} 
+                    className={`h-1 flex-1 mx-1 ${
+                      index < passwordStrength 
+                        ? strengthColors[index] 
+                        : 'bg-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-gray-600">
+                {passwordStrength === 0 && 'Password strength'}
+                {passwordStrength === 1 && 'Very weak'}
+                {passwordStrength === 2 && 'Weak'}
+                {passwordStrength === 3 && 'Medium'}
+                {passwordStrength === 4 && 'Strong'}
+                {passwordStrength === 5 && 'Very Strong'}
+              </p>
             </div>
             <div>
               <label htmlFor="confirmPassword" className="sr-only">Confirm New Password</label>
