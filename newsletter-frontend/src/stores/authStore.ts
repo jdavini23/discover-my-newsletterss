@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode';
+import jwtDecode from 'jwt-decode'; // Import jwtDecode correctly
 import { api } from '../services/api';
 
 export interface User {
@@ -37,7 +37,7 @@ export const useAuthStore = create<AuthState>()(
           const { token } = response.data;
           
           // Decode token to extract user info
-          const decodedUser = jwtDecode<JWTPayload>(token);
+          const decodedUser = jwtDecode(token) as JWTPayload; // Use jwtDecode correctly
           
           // Set secure HTTP-only cookie
           Cookies.set('authToken', token, { 
@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthState>()(
           const { token } = response.data;
           
           // Decode token to extract user info
-          const decodedUser = jwtDecode<JWTPayload>(token);
+          const decodedUser = jwtDecode(token) as JWTPayload; // Use jwtDecode correctly
           
           // Set secure HTTP-only cookie
           Cookies.set('authToken', token, { 
@@ -111,7 +111,7 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           // Check token expiration
-          const decoded = jwtDecode<JWTPayload>(token);
+          const decoded = jwtDecode(token) as JWTPayload; // Use jwtDecode correctly
           return decoded.exp > Date.now() / 1000;
         } catch {
           return false;
@@ -124,7 +124,7 @@ export const useAuthStore = create<AuthState>()(
           const { token } = response.data;
           
           // Decode token to extract user info
-          const decodedUser = jwtDecode<JWTPayload>(token);
+          const decodedUser = jwtDecode(token) as JWTPayload; // Use jwtDecode correctly
           
           // Set secure HTTP-only cookie
           Cookies.set('authToken', token, { 
