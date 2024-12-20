@@ -38,7 +38,7 @@ const passwordResetSchema = z
 
 type PasswordResetFormData = z.infer<typeof passwordResetSchema>;
 
-export const PasswordResetConfirm: React.FC = () => {
+const PasswordResetConfirm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -208,3 +208,5 @@ export const PasswordResetConfirm: React.FC = () => {
     </div>
   );
 };
+
+export default PasswordResetConfirm;

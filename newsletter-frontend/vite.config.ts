@@ -14,12 +14,32 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'build',
-      // Prevent generation of .js files during TypeScript compilation
+      sourcemap: mode === 'production' ? false : true,
+      minify: mode === 'production' ? 'terser' : false,
       rollupOptions: {
         output: {
+          manualChunks(id) {
+            // Split node_modules into separate chunks
+            if (id.includes('node_modules')) {
+              // Group large libraries into their own chunks
+              if (id.includes('@mui') || id.includes('react-router')) {
+                return 'vendor-ui'
+              }
+              if (id.includes('react-hot-toast') || id.includes('zustand')) {
+                return 'vendor-libs'
+              }
+              return 'vendor'
+            }
+            
+            // Split pages into separate chunks
+            if (id.includes('/src/pages/')) {
+              return 'pages'
+            }
+          },
           format: 'es'
         }
-      }
+      },
+      chunkSizeWarningLimit: 500 // Increase chunk size warning limit
     },
     // Add environment variable support
     define: {

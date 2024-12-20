@@ -12,7 +12,7 @@ const passwordResetRequestSchema = z.object({
 
 type PasswordResetRequestFormData = z.infer<typeof passwordResetRequestSchema>;
 
-export const PasswordResetRequest: React.FC = () => {
+const PasswordResetRequest: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -89,3 +89,5 @@ export const PasswordResetRequest: React.FC = () => {
     </div>
   );
 };
+
+export default PasswordResetRequest;

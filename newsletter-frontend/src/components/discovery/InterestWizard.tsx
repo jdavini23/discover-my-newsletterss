@@ -23,7 +23,7 @@ const interestCategories = [
   },
 ];
 
-export const InterestWizard: React.FC = () => {
+const InterestWizard: React.FC = () => {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const { addNotification } = useNotificationStore();
 
@@ -127,3 +127,5 @@ async function updateUserInterests(interests: string[]) {
   console.log('Updating user interests:', interests);
   return Promise.resolve();
 }
+
+export default InterestWizard;
