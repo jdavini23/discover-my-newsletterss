@@ -4,14 +4,19 @@
   "private": true,
   "dependencies": {
     "@types/express": "^5.0.0",
+    "@types/ioredis": "^4.28.10",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "bcryptjs": "^2.4.3",
     "express": "^4.21.2",
+    "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "redis": "^4.7.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20",
     "typescript": "^5.0.0"
   },
   "scripts": {
@@ -19,5 +24,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14"
   }
 }

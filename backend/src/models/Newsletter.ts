@@ -12,6 +12,12 @@ import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
 
+export enum NewsletterFrequency {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly'
+}
+
 @Entity('newsletters')
 export class Newsletter {
   @PrimaryGeneratedColumn('uuid')

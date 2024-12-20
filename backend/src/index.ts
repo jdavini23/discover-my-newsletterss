@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 // Import database initialization
-import { initializeDatabase } from './config/database';
+import { initializeDatabase, closeDatabaseConnection } from './config/database';
 import { initializeRedis, closeRedisConnection } from './config/redis';
 
 // Import routes
@@ -48,11 +48,14 @@ const startServer = async () => {
     // Graceful shutdown
     process.on('SIGINT', () => {
       console.log('Shutting down server...');
-      server.close(() => {
+      server.close(async () => {
         console.log('HTTP server closed');
         
         // Close database and Redis connections
-        closeRedisConnection();
+        await Promise.all([
+          closeRedisConnection(),
+          closeDatabaseConnection()
+        ]);
         process.exit(0);
       });
     });

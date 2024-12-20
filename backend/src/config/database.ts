@@ -30,3 +30,12 @@ export const initializeDatabase = async () => {
     throw error;
   }
 };
+
+export const closeDatabaseConnection = async () => {
+  try {
+    await AppDataSource.destroy();
+    console.log('Database connection closed');
+  } catch (error) {
+    console.error('Error closing database connection:', error);
+  }
+};
