@@ -13,10 +13,17 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md}\""
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
+    "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.9",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.0.2"
+    "react-hook-form": "^7.54.1",
+    "react-router-dom": "^7.0.2",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
