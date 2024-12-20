@@ -1,0 +1,49 @@
+{
+  "testScopes": [
+    "authentication",
+    "authorization",
+    "input_validation",
+    "api_endpoints",
+    "database_interactions"
+  ],
+  "vulnerabilityChecks": [
+    "sql_injection",
+    "xss",
+    "csrf",
+    "rate_limiting",
+    "authentication_bypass",
+    "sensitive_data_exposure"
+  ],
+  "testEnvironments": [
+    "development",
+    "staging"
+  ],
+  "excludedRoutes": [
+    "/health",
+    "/metrics",
+    "/version"
+  ],
+  "testingTools": [
+    "OWASP ZAP",
+    "Burp Suite",
+    "SQLMap",
+    "Postman"
+  ],
+  "reportingConfig": {
+    "format": ["json", "html"],
+    "severityLevels": {
+      "critical": 9,
+      "high": 7,
+      "medium": 5,
+      "low": 3
+    }
+  },
+  "scheduleConfig": {
+    "frequency": "quarterly",
+    "preferredTime": "off-peak hours",
+    "notificationEmails": [
+      "security@yourdomain.com",
+      "devops@yourdomain.com"
+    ]
+  }
+}
