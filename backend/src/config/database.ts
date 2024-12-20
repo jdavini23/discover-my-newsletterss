@@ -26,7 +26,7 @@ export const _initializeDatabase = async (__req: Request, __res: Response): Prom
     await AppDataSource.initialize();
     console.log('Database connection established successfully');
   } catch (_error: unknown) {
-    console.error('Error connecting to the database:', error);
-    throw error;
+    console.error('Error connecting to the database:', _error);
+    throw _error;
   }
 };

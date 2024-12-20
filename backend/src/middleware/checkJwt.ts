@@ -1,7 +1,7 @@
-import { ___Request, ___Response, ___NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-export const _checkJwt = async (): void {
+export const checkJwt = (req: Request, res: Response, next: NextFunction): void => {
   // For now, we'll create a mock middleware that always allows access
   // In a real application, this would verify the JWT token
   console.log('JWT middleware called (mock implementation)');
@@ -17,10 +17,9 @@ export const _checkJwt = async (): void {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || '');
-    // @ts-ignore
-    req._user = decoded;
+    (req as any).user = decoded;
     next();
-  } catch (_error: unknown) {
+  } catch (error: unknown) {
     res.status(401).json({ message: 'Token is not valid' });
   }
   */

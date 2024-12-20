@@ -1,43 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { UserPreferencesController } from '../controllers/userPreferencesController';
 import { authMiddleware } from '../middleware/authMiddleware';
-;
 
 const router = express.Router();
 const userPreferencesController = new UserPreferencesController();
 
-// Extend Request type to include user property
-interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-  };
-}
+// Update user preferences handler
+const updatePreferences = (req: Request, res: Response, next: NextFunction) => {
+  userPreferencesController.updateUserPreferences(req, res).catch(next);
+};
 
-// Update user preferences
-router.put(
-  '/preferences',
-  authMiddleware,
-  async (req: AuthenticatedRequest, _____res: Response, _____next: NextFunction) => {
-    try {
-      await userPreferencesController.updateUserPreferences(req as any, res);
-    } catch (_error: unknown) {
-      next(error);
-    }
-  }
-);
+// Get user preferences handler
+const getPreferences = (req: Request, res: Response, next: NextFunction) => {
+  userPreferencesController.getUserPreferences(req, res).catch(next);
+};
 
-// Get user preferences
-router.get(
-  '/preferences',
-  authMiddleware,
-  async (req: AuthenticatedRequest, _____res: Response, _____next: NextFunction) => {
-    try {
-      await userPreferencesController.getUserPreferences(req as any, res);
-    } catch (_error: unknown) {
-      next(error);
-    }
-  }
-);
+// Routes
+router.put('/preferences', [authMiddleware, updatePreferences]);
+router.get('/preferences', [authMiddleware, getPreferences]);
 
 export default router;

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -9,6 +9,8 @@ import { initializeRedis, closeRedisConnection } from './config/redis';
 // Import routes
 import authRoutes from './routes/authRoutes';
 import interestRoutes from './routes/interestRoutes';
+import recommendationRoutes from './routes/recommendationRoutes';
+import userPreferencesRoutes from './routes/userPreferencesRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +25,8 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/interests', interestRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/user', userPreferencesRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
@@ -32,7 +36,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-const startServer = async (__req: Request, __res: Response): Promise<void> => {
+// Global error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled Error:', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message || 'An unexpected error occurred'
+  });
+});
+
+const startServer = async (): Promise<void> => {
   try {
     // Initialize database connection
     await initializeDatabase();
@@ -47,17 +60,16 @@ const startServer = async (__req: Request, __res: Response): Promise<void> => {
 
     // Graceful shutdown
     process.on('SIGINT', () => {
-      console.log('Shutting down server...');
+      console.log('SIGINT signal received: closing HTTP server');
       server.close(() => {
         console.log('HTTP server closed');
-
         // Close database and Redis connections
         closeRedisConnection();
         process.exit(0);
       });
     });
-  } catch (_error: unknown) {
-    console.error('Failed to start server', error);
+  } catch (error) {
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 };

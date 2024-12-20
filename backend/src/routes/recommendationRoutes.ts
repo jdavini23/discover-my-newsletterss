@@ -1,9 +1,9 @@
+import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import { RecommendationController } from '../controllers/recommendationController';
 import { authMiddleware } from '../middleware/authMiddleware';
-;
-;
-;
+import { validateQuery } from '../middleware/validationMiddleware';
+import { PaginationQueryDto } from '../dtos/paginationQueryDto';
 
 const router = express.Router();
 const recommendationController = new RecommendationController();
@@ -13,8 +13,8 @@ router.get(
   '/newsletters',
   authMiddleware,
   validateQuery(PaginationQueryDto),
-  (_____req: Request, _____res: Response, _____next: NextFunction) => {
-    recommendationController.getPersonalizedRecommendations(req as any, res).catch(next);
+  (req: Request, res: Response, next: NextFunction) => {
+    recommendationController.getPersonalizedRecommendations(req, res).catch(next);
   }
 );
 
@@ -23,8 +23,8 @@ router.get(
   '/interests',
   authMiddleware,
   validateQuery(PaginationQueryDto),
-  (_____req: Request, _____res: Response, _____next: NextFunction) => {
-    recommendationController.getRecommendedInterests(req as any, res).catch(next);
+  (req: Request, res: Response, next: NextFunction) => {
+    recommendationController.getRecommendedInterests(req, res).catch(next);
   }
 );
 

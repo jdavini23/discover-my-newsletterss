@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:3000"
+  target: "http://localhost:5000"
   phases:
     - duration: 60
       arrivalRate: 5
@@ -10,7 +10,7 @@ config:
       name: Sustained load
   defaults:
     headers:
-      Authorization: "Bearer ${TOKEN}"
+      Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJlbWFpbCI6InRlc3RAdXNlci5jb20ifQ.example_token"
 
 scenarios:
   - name: "Get Newsletter Recommendations"

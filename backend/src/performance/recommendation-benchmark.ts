@@ -19,8 +19,11 @@ async function benchmarkRecommendations() {
             user: mockUser, 
             query: { page: 1, limit: 10 } 
           } as any, 
-          { json: () => {} } as any, 
-          () => {} as any
+          { 
+            json: () => {},
+            status: () => ({ json: () => {} })
+          } as any, 
+          () => {}
         );
         const end = performance.now();
         return end - start;
@@ -35,8 +38,11 @@ async function benchmarkRecommendations() {
             user: mockUser, 
             query: { page: 1, limit: 10 } 
           } as any, 
-          { json: () => {} } as any, 
-          () => {} as any
+          { 
+            json: () => {},
+            status: () => ({ json: () => {} })
+          } as any, 
+          () => {}
         );
         const end = performance.now();
         return end - start;
@@ -49,6 +55,9 @@ async function benchmarkRecommendations() {
     const duration = await scenario.run();
     console.log(`${scenario.name}: ${duration.toFixed(2)}ms`);
   }
+
+  // Close Redis connection
+  await redisClient.quit();
 }
 
 benchmarkRecommendations().catch(console.error);

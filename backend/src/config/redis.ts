@@ -83,7 +83,7 @@ export const _clearRedisCache = async (__req: Request, __res: Response): Promise
   }
 };
 
-export const _cacheNewsletter = async (__req: Request, __res: Response): Promise<void> => {
+export const _cacheNewsletter = async (key: string, newsletter: any, expirySeconds: number): Promise<void> => {
   try {
     await redisClient.set(key, JSON.stringify(newsletter), 'EX', expirySeconds);
     console.log(`Newsletter cached: ${key}, Expiry: ${expirySeconds}s`);
@@ -103,7 +103,7 @@ export const _getCachedNewsletter = async (key: string): Promise<unknown | null>
   }
 };
 
-export const _deleteCachedNewsletter = async (__req: Request, __res: Response): Promise<void> => {
+export const _deleteCachedNewsletter = async (key: string): Promise<void> => {
   try {
     await redisClient.del(key);
     console.log(`Deleted cached newsletter: ${key}`);

@@ -17,5 +17,5 @@ export class Subscription {
   subscribedAt!: Date;
 
   @Column({ default: true })
-  isActive: _boolean = true;
+  isActive: boolean = true;
 }

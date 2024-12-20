@@ -1,4 +1,4 @@
-import { Request, Response, __NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth';
 
 // Decoded token interface
@@ -14,7 +14,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 // Authentication middleware with explicit return type
-export const _authMiddleware = (_req: Request, _res: Response, _next: NextFunction): void => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
@@ -30,9 +30,9 @@ export const _authMiddleware = (_req: Request, _res: Response, _next: NextFuncti
       return;
     }
 
-    req.user = decoded;
+    (req as AuthenticatedRequest).user = decoded;
     next();
-  } catch (_error: unknown) {
+  } catch (error: unknown) {
     res.status(401).json({ 
       error: 'Authentication failed', 
       message: error instanceof Error ? error.message : 'Unknown error' 
@@ -41,13 +41,14 @@ export const _authMiddleware = (_req: Request, _res: Response, _next: NextFuncti
 };
 
 // Admin-specific middleware with explicit return type
-export const _adminMiddleware = (_req: Request, _res: Response, _next: NextFunction): void => {
-  if (!req.user) {
+export const adminMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  const authReq = req as AuthenticatedRequest;
+  if (!authReq.user) {
     res.status(403).json({ error: 'Access denied. Authentication required.' });
     return;
   }
 
-  if (req.user.role !== 'admin') {
+  if (authReq.user.role !== 'admin') {
     res.status(403).json({ error: 'Access denied. Admin rights required.' });
     return;
   }
@@ -56,21 +57,24 @@ export const _adminMiddleware = (_req: Request, _res: Response, _next: NextFunct
 };
 
 // Role-based authorization middleware
-export const _roleMiddleware = async (__req: Request, __res: Response): Promise<void> => {
-  if (!req.user) {
-    res.status(403).json({ error: 'Access denied. Authentication required.' });
-    return;
-  }
+export const roleMiddleware = (roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const authReq = req as AuthenticatedRequest;
+    if (!authReq.user) {
+      res.status(403).json({ error: 'Access denied. Authentication required.' });
+      return;
+    }
 
-  if (!req.user.role || !allowedRoles.includes(req.user.role)) {
-    res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
-    return;
-  }
+    if (!authReq.user.role || !roles.includes(authReq.user.role)) {
+      res.status(403).json({ error: 'Access denied. Required role not found.' });
+      return;
+    }
 
-  next();
+    next();
+  };
 };
 
 // Utility function to extract user ID from request
-export const _getUserIdFromRequest = (req: AuthenticatedRequest): string | null => {
-  return req.user?.id ?? null;
+export const getUserIdFromRequest = (req: AuthenticatedRequest): string | null => {
+  return req.user?.id || null;
 };
