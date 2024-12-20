@@ -10,10 +10,14 @@ export class AuthService {
    * @param email User's email address
    * @returns Promise resolving to success status
    */
-  static async requestPasswordReset(email: string): Promise<boolean> {
+  static async requestPasswordReset(email: string): Promise<string> {
+    const session = await mongoose.startSession();
+    
     try {
+      session.startTransaction();
+
       // Find user by email
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).session(session);
       
       if (!user) {
         throw new Error('User not found');
@@ -23,31 +27,40 @@ export class AuthService {
       await PasswordResetToken.deleteMany({ 
         userId: user._id, 
         isUsed: false 
-      });
+      }).session(session);
 
-      // Generate a new reset token
-      const resetToken = PasswordResetToken.generateToken(user._id);
+      // Generate a new reset token with hashing
+      const { token, hashedToken, salt } = PasswordResetToken.generateToken(user._id);
       
       // Create and save the reset token document
       const passwordResetToken = new PasswordResetToken({
         userId: user._id,
-        token: resetToken,
+        hashedToken,
+        salt,
         expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes from now
         isUsed: false
       });
       
-      await passwordResetToken.save();
+      await passwordResetToken.save({ session });
 
-      // Send reset email
+      // Send reset email with unhashed token
       await sendPasswordResetEmail(
         user.email, 
-        `http://localhost:3000/reset-password?token=${resetToken}`
+        `http://localhost:3000/reset-password?token=${token}`
       );
 
-      return true;
+      // Commit transaction
+      await session.commitTransaction();
+
+      return token;
     } catch (error) {
+      // Abort transaction
+      await session.abortTransaction();
+      
       console.error('Password reset request failed:', error);
       throw error;
+    } finally {
+      session.endSession();
     }
   }
 
@@ -65,13 +78,17 @@ export class AuthService {
 
       // Find the token and validate it
       const resetTokenDoc = await PasswordResetToken.findOne({ 
-        token, 
         isUsed: false,
         expiresAt: { $gt: new Date() }
       }).session(session);
 
       if (!resetTokenDoc) {
         throw new Error('Invalid or expired reset token');
+      }
+
+      // Verify the token using the stored salt
+      if (!resetTokenDoc.verifyToken(token)) {
+        throw new Error('Invalid reset token');
       }
 
       // Find the associated user
@@ -112,4 +129,4 @@ export class AuthService {
       session.endSession();
     }
   }
-};
+}
