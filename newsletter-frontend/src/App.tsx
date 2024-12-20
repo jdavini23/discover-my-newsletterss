@@ -9,6 +9,8 @@ import NewsletterList from './pages/NewsletterList';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
+import { PasswordResetRequest } from './pages/PasswordResetRequest';
+import { PasswordResetConfirm } from './pages/PasswordResetConfirm';
 
 const App: React.FC = () => {
   return (
@@ -18,6 +20,8 @@ const App: React.FC = () => {
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/forgot-password" element={<PasswordResetRequest />} />
+      <Route path="/reset-password" element={<PasswordResetConfirm />} />
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>

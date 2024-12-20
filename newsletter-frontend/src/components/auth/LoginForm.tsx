@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '../../stores/authStore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Validation schema
 const loginSchema = z.object({
@@ -79,6 +79,14 @@ export const LoginForm: React.FC = () => {
           )}
         </div>
         
+        <div className="flex items-center justify-between">
+          <div className="text-sm">
+            <Link to="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+              Forgot your password?
+            </Link>
+          </div>
+        </div>
+
         <div>
           <button 
             type="submit" 
