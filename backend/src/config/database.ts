@@ -30,7 +30,6 @@ export const _initializeDatabase = async (__req: Request, __res: Response): Prom
     throw _error;
   }
 };
-<<<<<<< HEAD
 
 export const closeDatabaseConnection = async () => {
   try {
@@ -40,5 +39,3 @@ export const closeDatabaseConnection = async () => {
     console.error('Error closing database connection:', error);
   }
 };
-=======
->>>>>>> a35d6363ec074b43f6cab64a9bd555555cc4a592
