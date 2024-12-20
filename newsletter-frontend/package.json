@@ -8,8 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "echo \"No tests configured yet\"",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --config eslint.config.mjs",
+    "lint:fix": "eslint . --config eslint.config.mjs --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md}\""
   },
   "dependencies": {

@@ -1,5 +1,19 @@
 import axios from 'axios';
 
+// Define types for newsletter and other data
+interface Newsletter {
+  id: string;
+  title: string;
+  description?: string;
+  // Add other newsletter properties as needed
+}
+
+interface NewsletterCreateData {
+  title: string;
+  description?: string;
+  // Add other properties required for newsletter creation
+}
+
 // Create an axios instance with base configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -46,23 +60,21 @@ api.interceptors.response.use(
 
 // Example service methods
 export const authService = {
-  login: (email: string, password: string) => 
-    api.post('/auth/login', { email, password }),
-  
-  register: (email: string, password: string) => 
-    api.post('/auth/register', { email, password }),
+  login: (email: string, password: string) => api.post('/auth/login', { email, password }),
+
+  register: (email: string, password: string) => api.post('/auth/register', { email, password }),
 };
 
 export const newsletterService = {
-  getNewsletters: () => api.get('/newsletters'),
-  
-  getNewsletter: (id: string) => api.get(`/newsletters/${id}`),
-  
-  createNewsletter: (data: any) => api.post('/newsletters', data),
-  
-  updateNewsletter: (id: string, data: any) => api.put(`/newsletters/${id}`, data),
-  
-  deleteNewsletter: (id: string) => api.delete(`/newsletters/${id}`),
+  getNewsletters: () => api.get<Newsletter[]>('/newsletters'),
+
+  getNewsletter: (id: string) => api.get<Newsletter>(`/newsletters/${id}`),
+
+  createNewsletter: (data: NewsletterCreateData) => api.post<Newsletter>('/newsletters', data),
+
+  updateNewsletter: (id: string, data: NewsletterCreateData) => api.put<Newsletter>(`/newsletters/${id}`, data),
+
+  deleteNewsletter: (id: string) => api.delete<void>(`/newsletters/${id}`),
 };
 
 export default api;
