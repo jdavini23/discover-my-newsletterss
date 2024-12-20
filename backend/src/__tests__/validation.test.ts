@@ -1,10 +1,4 @@
-import { 
-  validateSchema, 
-  userRegistrationSchema, 
-  newsletterPreferencesSchema,
-  UserRegistrationDto,
-  validateClass 
-} from '../utils/validation';
+import { validateSchema, userRegistrationSchema, newsletterPreferencesSchema, UserRegistrationDto, validateClass,  } from '../utils/validation';
 import { validate, ValidationError } from 'class-validator';
 
 jest.mock('../config/testDatabase', () => ({}));
@@ -16,9 +10,9 @@ describe('Validation Utility', () => {
       const validData = {
         email: 'test@example.com',
         password: 'securePassword123',
-        name: 'John Doe'
+        name: 'John Doe',
       };
-      
+
       expect(() => validateSchema(validData, userRegistrationSchema)).not.toThrow();
     });
 
@@ -26,9 +20,9 @@ describe('Validation Utility', () => {
       const invalidData = {
         email: 'invalid-email',
         password: 'securePassword123',
-        name: 'John Doe'
+        name: 'John Doe',
       };
-      
+
       expect(() => validateSchema(invalidData, userRegistrationSchema)).toThrow('Validation Error');
     });
 
@@ -36,19 +30,21 @@ describe('Validation Utility', () => {
     it('should pass valid newsletter preferences', () => {
       const validPreferences = {
         categories: ['technology', 'science'],
-        frequency: 'weekly'
+        frequency: 'weekly',
       };
-      
+
       expect(() => validateSchema(validPreferences, newsletterPreferencesSchema)).not.toThrow();
     });
 
     it('should throw error for invalid newsletter preferences', () => {
       const invalidPreferences = {
         categories: [],
-        frequency: 'yearly'
+        frequency: 'yearly',
       };
-      
-      expect(() => validateSchema(invalidPreferences, newsletterPreferencesSchema)).toThrow('Validation Error');
+
+      expect(() => validateSchema(invalidPreferences, newsletterPreferencesSchema)).toThrow(
+        'Validation Error'
+      );
     });
   });
 
@@ -57,9 +53,9 @@ describe('Validation Utility', () => {
       const validUserData = {
         email: 'test@example.com',
         password: 'securePassword123',
-        name: 'John Doe'
+        name: 'John Doe',
       };
-      
+
       const result = await validateClass(UserRegistrationDto, validUserData);
       expect(result).toBeTruthy();
       expect(result.email).toBe('test@example.com');
@@ -69,23 +65,25 @@ describe('Validation Utility', () => {
       const invalidUserData = {
         email: 'invalid-email',
         password: '123',
-        name: 'J'
+        name: 'J',
       };
-      
+
       const userDto = await validateClass(UserRegistrationDto, invalidUserData);
       const errors: ValidationError[] = await validate(userDto);
-      
+
       expect(errors.length).toBe(3);
-      
-      const emailError = errors.find(error => error.property === 'email');
+
+      const emailError = errors.find((error) => error.property === 'email');
       expect(emailError).toBeTruthy();
       expect(emailError?.constraints?.isEmail).toBe('Invalid email format');
-      
-      const passwordError = errors.find(error => error.property === 'password');
+
+      const passwordError = errors.find((error) => error.property === 'password');
       expect(passwordError).toBeTruthy();
-      expect(passwordError?.constraints?.minLength).toBe('Password must be at least 8 characters long');
-      
-      const nameError = errors.find(error => error.property === 'name');
+      expect(passwordError?.constraints?.minLength).toBe(
+        'Password must be at least 8 characters long'
+      );
+
+      const nameError = errors.find((error) => error.property === 'name');
       expect(nameError).toBeTruthy();
       expect(nameError?.constraints?.minLength).toBe('Name must be at least 2 characters long');
     });

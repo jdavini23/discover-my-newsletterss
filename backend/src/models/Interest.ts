@@ -1,9 +1,4 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
-  ManyToMany 
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import { User } from './User';
 
 @Entity('interests')
@@ -20,6 +15,6 @@ export class Interest {
   @Column({ nullable: true })
   icon?: string;
 
-  @ManyToMany(() => User, user => user.preferences)
+  @ManyToMany(() => User, (user) => user.preferences)
   users!: User[];
 }

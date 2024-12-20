@@ -23,11 +23,11 @@ app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/users', userRouter);
 
 // 404 handler for undefined routes
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((_____req: Request, _____res: Response, _____next: NextFunction) => {
   res.status(404).json({
     status: 'error',
     statusCode: 404,
-    message: `Route ${req.originalUrl} not found`
+    message: `Route ${req.originalUrl} not found`,
   });
 });
 

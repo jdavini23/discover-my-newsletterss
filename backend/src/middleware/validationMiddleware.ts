@@ -1,63 +1,60 @@
 import { Request, Response, NextFunction } from 'express';
 import { ClassConstructor, plainToClass } from 'class-transformer';
-import { validateClass } from '../utils/validation';
-import { ValidationError } from 'class-validator';
+import { validate, ValidationError, IsOptional, IsInt, Min, Max } from 'class-validator';
+
+// Validation error interface
+interface FormattedValidationError {
+  property: string;
+  constraints: string[];
+}
 
 // Middleware to validate request body against a DTO class
-export function validateRequest<T extends object>(
+export const validateRequest = <T extends object>(
   dtoClass: ClassConstructor<T>
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // Validate the request body against the DTO
-      await validateClass(dtoClass, req.body);
-      next();
-    } catch (errors) {
-      // Type-safe error handling
-      const formattedErrors = Array.isArray(errors) 
-        ? (errors as ValidationError[]).map((error) => ({
-            property: error.property,
-            constraints: error.constraints ? Object.values(error.constraints) : []
-          }))
-        : [];
+) => async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const dtoObject = plainToClass(dtoClass, req.body);
+    const errors = await validate(dtoObject);
 
-      res.status(400).json({
-        message: 'Validation failed',
-        errors: formattedErrors
-      });
+    if (errors.length > 0) {
+      const formattedErrors = createValidationErrorResponse(errors);
+      return res.status(400).json(formattedErrors);
     }
-  };
-}
+
+    req.body = dtoObject;
+    next();
+  } catch (error: unknown) {
+    return res.status(500).json({
+      message: 'Internal server error during validation',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
 
 // Middleware to validate query parameters against a DTO class
-export function validateQuery<T extends object>(
+export const validateQuery = <T extends object>(
   dtoClass: ClassConstructor<T>
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // Validate the query parameters against the DTO
-      await validateClass(dtoClass, req.query);
-      next();
-    } catch (errors) {
-      // Type-safe error handling
-      const formattedErrors = Array.isArray(errors) 
-        ? (errors as ValidationError[]).map((error) => ({
-            property: error.property,
-            constraints: error.constraints ? Object.values(error.constraints) : []
-          }))
-        : [];
+) => async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const dtoObject = plainToClass(dtoClass, req.query);
+    const errors = await validate(dtoObject);
 
-      res.status(400).json({
-        message: 'Query validation failed',
-        errors: formattedErrors
-      });
+    if (errors.length > 0) {
+      const formattedErrors = createValidationErrorResponse(errors);
+      return res.status(400).json(formattedErrors);
     }
-  };
-}
 
-// Example DTO for query validation
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+    req.query = dtoObject as any;
+    next();
+  } catch (error: unknown) {
+    return res.status(500).json({
+      message: 'Internal server error during validation',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
 
+// Pagination query DTO with strict validation
 export class PaginationQueryDto {
   @IsOptional()
   @IsInt({ message: 'Page must be an integer' })
@@ -69,4 +66,19 @@ export class PaginationQueryDto {
   @Min(1, { message: 'Limit must be at least 1' })
   @Max(100, { message: 'Limit cannot exceed 100' })
   limit?: number = 10;
+}
+
+// Validation utility to create consistent error responses
+function createValidationErrorResponse(
+  errors: ValidationError[]
+): { message: string; errors: FormattedValidationError[] } {
+  const formattedErrors = errors.map(error => ({
+    property: error.property,
+    constraints: error.constraints ? Object.values(error.constraints) : []
+  }));
+
+  return {
+    message: 'Validation failed',
+    errors: formattedErrors
+  };
 }

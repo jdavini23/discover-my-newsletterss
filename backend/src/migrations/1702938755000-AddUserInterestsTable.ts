@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddUserInterestsTable1702938755000 implements MigrationInterface {
-    name = 'AddUserInterestsTable1702938755000'
+  name = 'AddUserInterestsTable1702938755000';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // Ensure users table exists
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Ensure users table exists
+    await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS \`users\` (
                 \`id\` varchar(36) NOT NULL,
                 \`name\` varchar(100) NOT NULL,
@@ -23,8 +23,8 @@ export class AddUserInterestsTable1702938755000 implements MigrationInterface {
             ) ENGINE=InnoDB
         `);
 
-        // Ensure interests table exists
-        await queryRunner.query(`
+    // Ensure interests table exists
+    await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS \`interests\` (
                 \`id\` varchar(36) NOT NULL,
                 \`name\` varchar(100) NOT NULL,
@@ -35,8 +35,8 @@ export class AddUserInterestsTable1702938755000 implements MigrationInterface {
             ) ENGINE=InnoDB
         `);
 
-        // Create user_interests join table
-        await queryRunner.query(`
+    // Create user_interests join table
+    await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS \`user_interests\` (
                 \`userId\` varchar(36) NOT NULL,
                 \`interestId\` varchar(36) NOT NULL,
@@ -47,11 +47,11 @@ export class AddUserInterestsTable1702938755000 implements MigrationInterface {
                 FOREIGN KEY (\`interestId\`) REFERENCES \`interests\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE
             ) ENGINE=InnoDB
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE IF EXISTS \`user_interests\``);
-        await queryRunner.query(`DROP TABLE IF EXISTS \`interests\``);
-        await queryRunner.query(`DROP TABLE IF EXISTS \`users\``);
-    }
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS \`user_interests\``);
+    await queryRunner.query(`DROP TABLE IF EXISTS \`interests\``);
+    await queryRunner.query(`DROP TABLE IF EXISTS \`users\``);
+  }
 }

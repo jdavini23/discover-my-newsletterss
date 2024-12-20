@@ -1,4 +1,4 @@
-import { Repository, ObjectLiteral, DeepPartial } from 'typeorm';
+import { Repository, ObjectLiteral, DeepPartial, FindOptionsWhere } from 'typeorm';
 
 export class BaseRepository<T extends ObjectLiteral> {
   protected repository: Repository<T>;
@@ -12,16 +12,18 @@ export class BaseRepository<T extends ObjectLiteral> {
   }
 
   async findById(id: string): Promise<T | null> {
-    return this.repository.findOne({ where: { id } as any });
+    return this.repository.findOne({ 
+      where: { id } as FindOptionsWhere<T> 
+    });
   }
 
   async create(data: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(data);
-    return this.repository.save(entity as T);
+    return this.repository.save(entity);
   }
 
   async update(id: string, data: DeepPartial<T>): Promise<T | null> {
-    await this.repository.update(id, data as any);
+    await this.repository.update(id, data);
     return this.findById(id);
   }
 
@@ -31,6 +33,8 @@ export class BaseRepository<T extends ObjectLiteral> {
   }
 
   async findBy(conditions: Partial<T>): Promise<T[]> {
-    return this.repository.find({ where: conditions as any });
+    return this.repository.find({ 
+      where: conditions as FindOptionsWhere<T> 
+    });
   }
 }

@@ -9,46 +9,46 @@ const interests = [
   {
     name: 'Technology',
     description: 'Latest tech news, innovations, and trends',
-    icon: 'computer'
+    icon: 'computer',
   },
   {
     name: 'Science',
     description: 'Scientific discoveries, research, and breakthroughs',
-    icon: 'microscope'
+    icon: 'microscope',
   },
   {
     name: 'Business',
     description: 'Startup news, entrepreneurship, and market insights',
-    icon: 'briefcase'
+    icon: 'briefcase',
   },
   {
     name: 'Health & Wellness',
     description: 'Fitness, nutrition, mental health, and medical advances',
-    icon: 'heart'
+    icon: 'heart',
   },
   {
     name: 'Arts & Culture',
     description: 'Music, art, literature, and cultural events',
-    icon: 'palette'
+    icon: 'palette',
   },
   {
     name: 'Travel',
     description: 'Destinations, travel tips, and adventure stories',
-    icon: 'airplane'
+    icon: 'airplane',
   },
   {
     name: 'Sports',
     description: 'Sports news, athlete stories, and game highlights',
-    icon: 'football'
+    icon: 'football',
   },
   {
     name: 'Environment',
     description: 'Climate change, sustainability, and conservation',
-    icon: 'leaf'
-  }
+    icon: 'leaf',
+  },
 ];
 
-async function seedInterests() {
+async function seedInterests(): Promise<void> {
   try {
     console.log('Initializing database connection...');
 
@@ -72,20 +72,20 @@ async function seedInterests() {
       interest.name = interestData.name;
       interest.description = interestData.description;
       interest.icon = interestData.icon;
-      
+
       await interestRepository.save(interest);
       console.log(`Saved interest: ${interest.name}`);
     }
 
     console.log('Interests seeded successfully!');
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('Error seeding interests:', error);
   } finally {
     // Close the connection
     try {
       await AppDataSource.destroy();
       console.log('Database connection closed');
-    } catch (closeError) {
+    } catch (_error: unknown) {
       console.error('Error closing database connection:', closeError);
     }
     process.exit(0);

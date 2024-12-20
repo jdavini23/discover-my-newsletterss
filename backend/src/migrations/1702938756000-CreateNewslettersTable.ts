@@ -1,8 +1,8 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, ___TableIndex, ___TableForeignKey } from 'typeorm';
 
 export class CreateNewslettersTable1702938756000 implements MigrationInterface {
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
             CREATE TABLE newsletters (
                 id VARCHAR(36) PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
@@ -16,12 +16,12 @@ export class CreateNewslettersTable1702938756000 implements MigrationInterface {
             )
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX IDX_newsletter_name ON newsletters (name)
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE IF EXISTS newsletters`);
-    }
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS newsletters`);
+  }
 }

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -9,6 +9,8 @@ import { initializeRedis, closeRedisConnection } from './config/redis';
 // Import routes
 import authRoutes from './routes/authRoutes';
 import interestRoutes from './routes/interestRoutes';
+import recommendationRoutes from './routes/recommendationRoutes';
+import userPreferencesRoutes from './routes/userPreferencesRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -23,20 +25,31 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/interests', interestRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/user', userPreferencesRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString() 
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
   });
 });
 
-const startServer = async () => {
+// Global error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled Error:', err);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: err.message || 'An unexpected error occurred'
+  });
+});
+
+const startServer = async (): Promise<void> => {
   try {
     // Initialize database connection
     await initializeDatabase();
-    
+
     // Initialize Redis
     await initializeRedis();
 
@@ -47,10 +60,14 @@ const startServer = async () => {
 
     // Graceful shutdown
     process.on('SIGINT', () => {
+<<<<<<< HEAD
       console.log('Shutting down server...');
       server.close(async () => {
+=======
+      console.log('SIGINT signal received: closing HTTP server');
+      server.close(() => {
+>>>>>>> a35d6363ec074b43f6cab64a9bd555555cc4a592
         console.log('HTTP server closed');
-        
         // Close database and Redis connections
         await Promise.all([
           closeRedisConnection(),
@@ -60,7 +77,7 @@ const startServer = async () => {
       });
     });
   } catch (error) {
-    console.error('Failed to start server', error);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 };

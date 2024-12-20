@@ -1,13 +1,4 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
-  CreateDateColumn, 
-  UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
-  OneToMany
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany,  } from 'typeorm';
 import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
@@ -38,7 +29,7 @@ export class Newsletter {
   @Column({
     type: 'varchar',
     length: 20,
-    default: 'weekly'
+    default: 'weekly',
   })
   frequency!: string;
 
@@ -49,10 +40,10 @@ export class Newsletter {
   @JoinTable()
   interests!: Interest[];
 
-  @OneToMany(() => Subscription, subscription => subscription.newsletter)
+  @OneToMany(() => Subscription, (subscription) => subscription.newsletter)
   subscriptions!: Subscription[];
 
-  @OneToMany(() => UserInteraction, interaction => interaction.newsletter)
+  @OneToMany(() => UserInteraction, (interaction) => interaction.newsletter)
   interactions!: UserInteraction[];
 
   @CreateDateColumn()

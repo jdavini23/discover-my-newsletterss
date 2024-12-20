@@ -1,9 +1,9 @@
-import { initializeDatabase } from '../config/database';
-import { AppDataSource } from '../config/database';
+import { initializeDatabase, AppDataSource } from '../config/database';
+;
 import { Newsletter, NewsletterFrequency } from '../models/Newsletter';
 import { Interest } from '../models/Interest';
 
-async function seedNewsletters() {
+async function seedNewsletters(): Promise<void> {
   try {
     // Initialize database
     await initializeDatabase();
@@ -25,7 +25,7 @@ async function seedNewsletters() {
           authorName: 'Tech Innovations Inc.',
           url: 'https://techinsights.com',
           frequency: NewsletterFrequency.WEEKLY,
-          interests: interests.slice(0, 1)
+          interests: interests.slice(0, 1),
         },
         {
           name: 'Science Frontiers Monthly',
@@ -33,8 +33,8 @@ async function seedNewsletters() {
           authorName: 'Global Science Research',
           url: 'https://sciencefrontiers.org',
           frequency: NewsletterFrequency.MONTHLY,
-          interests: interests.slice(1, 2)
-        }
+          interests: interests.slice(1, 2),
+        },
       ];
 
       for (const newsletterData of newslettersToSeed) {
@@ -54,7 +54,7 @@ async function seedNewsletters() {
     }
 
     console.log('Newsletter seeding completed successfully');
-  } catch (error) {
+  } catch (_error: unknown) {
     console.error('Error seeding newsletters:', error);
     throw error;
   } finally {
