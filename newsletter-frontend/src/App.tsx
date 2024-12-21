@@ -1,10 +1,21 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { useAuthStore } from './stores/authStore';
 import { NotificationCenter } from './components/common/Notification';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 // Lazy load page components
 const Home = lazy(() => import('./pages/Home'));
@@ -41,71 +52,73 @@ const App: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
 
   return (
-    <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          <div className="min-h-screen bg-gray-50">
-            <Toaster position="top-right" />
-            <NotificationCenter />
-            <Routes>
-              {/* Public Routes */}
-              <Route
-                path="/"
-                element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Home />}
-              />
-              <Route
-                path="/login"
-                element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />}
-              />
-              <Route
-                path="/register"
-                element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />}
-              />
-              <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route path="/password-reset" element={<PasswordResetRequest />} />
-              <Route
-                path="/password-reset-confirm"
-                element={<PasswordResetConfirm />}
-              />
-              <Route path="/discover/interests" element={<InterestWizard />} />
-              <Route path="/discover/newsletters" element={<NewsletterSearch />} />
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <div className="min-h-screen bg-gray-50">
+              <Toaster position="top-right" />
+              <NotificationCenter />
+              <Routes>
+                {/* Public Routes */}
+                <Route
+                  path="/"
+                  element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Home />}
+                />
+                <Route
+                  path="/login"
+                  element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />}
+                />
+                <Route
+                  path="/register"
+                  element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />}
+                />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route path="/password-reset" element={<PasswordResetRequest />} />
+                <Route
+                  path="/password-reset-confirm"
+                  element={<PasswordResetConfirm />}
+                />
+                <Route path="/discover/interests" element={<InterestWizard />} />
+                <Route path="/discover/newsletters" element={<NewsletterSearch />} />
 
-              {/* Protected Routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected Routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Role-based Protected Routes */}
-              <Route
-                path="/newsletters"
-                element={
-                  <RoleProtectedRoute allowedRoles={['admin']}>
-                    <NewsletterList />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Role-based Protected Routes */}
+                <Route
+                  path="/newsletters"
+                  element={
+                    <RoleProtectedRoute allowedRoles={['admin']}>
+                      <NewsletterList />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* 404 Not Found Route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </Suspense>
+                {/* 404 Not Found Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </Suspense>
+        </ErrorBoundary>
       </ErrorBoundary>
-    </ErrorBoundary>
+    </QueryClientProvider>
   );
 };
 
