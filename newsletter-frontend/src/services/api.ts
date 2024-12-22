@@ -2,22 +2,22 @@ import axios from 'axios';
 
 // Define types for newsletter and other data
 export interface Newsletter {
-  id: string;
-  name: string;
+  id?: string;
+  title: string;
   description: string;
   url: string;
-  category?: string;
-  tags?: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  tags: string[];
+  frequency?: string;
+  language?: string;
 }
 
 interface NewsletterCreateData {
-  name: string;
+  title: string;
   description: string;
   url: string;
-  category?: string;
-  tags?: string[];
+  tags: string[];
+  frequency?: string;
+  language?: string;
 }
 
 // Create axios instance
@@ -41,7 +41,7 @@ export const newsletterService = {
   },
 
   async updateNewsletter(id: string, data: Partial<Newsletter>) {
-    const response = await api.patch<Newsletter>(`/newsletters/${id}`, data);
+    const response = await api.put<Newsletter>(`/newsletters/${id}`, data);
     return response.data;
   },
 
