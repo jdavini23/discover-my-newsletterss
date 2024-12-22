@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import { initializeDatabase } from './config/database';
 import dotenv from 'dotenv';
+import adminRoutes from './routes/admin.routes';
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +17,9 @@ app.use(cors());
 app.use(helmet());
 app.use(hpp());
 app.use(express.json());
+
+// Routes
+app.use('/api/admin', adminRoutes);
 
 // Initialize database
 initializeDatabase().then(() => {

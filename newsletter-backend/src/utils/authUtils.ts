@@ -1,23 +1,25 @@
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { securityLogger } from './logger';
 
-const SALT_ROUNDS = 10;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const hashPassword = async (password: string): Promise<string> => {
   try {
-    return await bcrypt.hash(password, SALT_ROUNDS);
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    return `${salt}:${hash}`;
   } catch (error) {
     securityLogger.error('Error hashing password', { error });
     throw new Error('Error hashing password');
   }
 };
 
-export const comparePasswords = async (password: string, hash: string): Promise<boolean> => {
+export const comparePasswords = async (password: string, storedPassword: string): Promise<boolean> => {
   try {
-    return await bcrypt.compare(password, hash);
+    const [salt, storedHash] = storedPassword.split(':');
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    return storedHash === hash;
   } catch (error) {
     securityLogger.error('Error comparing passwords', { error });
     throw new Error('Error comparing passwords');

@@ -19,6 +19,7 @@ const NewsletterList = lazy(() => import('./pages/NewsletterList'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Unauthorized = lazy(() => import('./pages/Unauthorized'));
 const InterestWizard = lazy(() => import('./components/discovery/InterestWizard'));
+const SecurityDashboard = lazy(() => import('./components/SecurityDashboard'));
 
 // Loading Fallback Component
 const LoadingFallback: React.FC = () => (
@@ -77,6 +78,15 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/security"
+                element={
+                  <RoleProtectedRoute allowedRoles={['admin']}>
+                    <SecurityDashboard />
+                  </RoleProtectedRoute>
                 }
               />
 

@@ -15,7 +15,7 @@ export class User {
   email!: string;
 
   @Column({ nullable: true })
-  passwordHash!: string;
+  password!: string;
 
   @Column({
     type: 'varchar',
@@ -33,7 +33,7 @@ export class User {
   @Column({ type: 'datetime', nullable: true })
   passwordResetExpires!: Date | null;
 
-  @Column({ nullable: true, type: 'varchar' })
+  @Column({ nullable: true, unique: true })
   emailVerificationToken!: string | null;
 
   @Column({ nullable: true, unique: true })

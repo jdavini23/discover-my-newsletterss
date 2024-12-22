@@ -8,14 +8,14 @@ import { UserInteraction } from '../models/UserInteraction';
 export const initializeDatabase = async (): Promise<Connection> => {
   try {
     const connection = await createConnection({
-      type: 'postgres',
+      type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'newsletter_db',
+      port: parseInt(process.env.DB_PORT || '3306'),
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || 'root',
+      database: process.env.DB_NAME || 'newsletter_development',
       entities: [User, SecurityEvent, Interest, Subscription, UserInteraction],
-      synchronize: process.env.NODE_ENV !== 'production',
+      synchronize: true,  // This will create tables automatically
       logging: process.env.NODE_ENV !== 'production'
     });
 
