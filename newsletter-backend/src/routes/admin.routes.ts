@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { validateRequest } from '../middleware/validateRequest';
 import { UserService } from '../services/UserService';
@@ -15,7 +15,7 @@ router.post('/create-initial-admin', [
     .withMessage('Password must include uppercase, lowercase, number, and special character'),
   body('adminSecret').notEmpty().withMessage('Admin secret is required'),
   validateRequest
-], async (req, res) => {
+], async (req: Request, res: Response) => {
   try {
     const { email, password, adminSecret } = req.body;
 
@@ -25,17 +25,13 @@ router.post('/create-initial-admin', [
     }
 
     // Check if an admin already exists
-    const existingAdmin = await userService.findByEmail(email);
+    const existingAdmin = await userService.findUserByEmail(email);
     if (existingAdmin) {
       return res.status(400).json({ message: 'Admin user already exists' });
     }
 
     // Create initial admin user
-    const newAdmin = await userService.createUser({
-      email,
-      password,
-      role: 'ADMIN'
-    });
+    const newAdmin = await userService.createAdminUser(email, password);
 
     res.status(201).json({ 
       message: 'Initial admin user created successfully',

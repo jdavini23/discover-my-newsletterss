@@ -1,54 +1,75 @@
 import { getConnection, MoreThan } from 'typeorm';
 import { User } from '../models/User';
 import { SecurityEvent } from '../models/SecurityEvent';
+import { hashPassword } from '../utils/authUtils';
+import { AppDataSource } from '../config/database';
 import crypto from 'crypto';
 import { securityLogger } from '../utils/logger';
 
 export class UserService {
-  private get userRepository() {
-    return getConnection().getRepository(User);
+  private userRepository = AppDataSource.getRepository(User);
+
+  private securityEventRepository = AppDataSource.getRepository(SecurityEvent);
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { email } });
   }
 
-  private get securityEventRepository() {
-    return getConnection().getRepository(SecurityEvent);
-  }
-
-  private hashPassword(password: string): string {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-    return `${salt}:${hash}`;
-  }
-
-  private verifyPassword(storedPassword: string, suppliedPassword: string): boolean {
-    const [salt, storedHash] = storedPassword.split(':');
-    const hash = crypto.pbkdf2Sync(suppliedPassword, salt, 1000, 64, 'sha512').toString('hex');
-    return storedHash === hash;
-  }
-
-  async createUser(email: string, password: string, name: string): Promise<User> {
+  async findUserByRole(role: string): Promise<User | null> {
     try {
-      const existingUser = await this.userRepository.findOne({ where: { email } });
+      return await this.userRepository.findOne({ where: { role } });
+    } catch (error) {
+      securityLogger.error('Error finding user by role', { error, role });
+      throw error;
+    }
+  }
+
+  async createAdminUser(email: string, password: string, name: string, adminSecret: string): Promise<User> {
+    try {
+      if (adminSecret !== process.env.ADMIN_SECRET) {
+        throw new Error('Invalid admin secret');
+      }
+
+      const hashedPassword = await hashPassword(password);
+      
+      const adminUser = new User();
+      adminUser.email = email;
+      adminUser.password = hashedPassword;
+      adminUser.name = name;
+      adminUser.role = 'admin';
+
+      await this.logSecurityEvent('ADMIN_USER_CREATED', adminUser.id);
+      
+      return await this.userRepository.save(adminUser);
+    } catch (error) {
+      securityLogger.error('Error creating admin user', { error, email });
+      throw error;
+    }
+  }
+
+  async createUser(userData: Partial<User>): Promise<User> {
+    try {
+      const existingUser = await this.userRepository.findOne({ where: { email: userData.email } });
       if (existingUser) {
         throw new Error('User already exists');
       }
 
-      const hashedPassword = this.hashPassword(password);
+      const user = new User();
+      Object.assign(user, userData);
+      
+      if (userData.password) {
+        user.password = await hashPassword(userData.password);
+      }
+
       const emailVerificationToken = crypto.randomBytes(16).toString('hex');
+      user.emailVerificationToken = emailVerificationToken;
+      user.isEmailVerified = false;
 
-      const user = this.userRepository.create({
-        email,
-        password: hashedPassword,
-        name,
-        emailVerificationToken,
-        isEmailVerified: false
-      });
-
-      await this.userRepository.save(user);
       await this.logSecurityEvent('USER_CREATED', user.id);
 
-      return user;
+      return await this.userRepository.save(user);
     } catch (error) {
-      securityLogger.error('Error creating user', { error, email });
+      securityLogger.error('Error creating user', { error, email: userData.email });
       throw error;
     }
   }
@@ -60,7 +81,7 @@ export class UserService {
         throw new Error('Invalid credentials');
       }
 
-      const isValid = this.verifyPassword(user.password, password);
+      const isValid = await hashPassword(password) === user.password;
       if (!isValid) {
         await this.logSecurityEvent('FAILED_LOGIN_ATTEMPT', user.id);
         throw new Error('Invalid credentials');
@@ -96,7 +117,7 @@ export class UserService {
   }
 
   async resetPassword(token: string, newPassword: string): Promise<boolean> {
-    const userRepository = getConnection().getRepository(User);
+    const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({ 
       where: { 
         passwordResetToken: token,
@@ -108,7 +129,7 @@ export class UserService {
       return false;
     }
 
-    user.password = this.hashPassword(newPassword);
+    user.password = await hashPassword(newPassword);
     user.passwordResetToken = null;
     user.passwordResetExpires = null;
     await userRepository.save(user);
@@ -180,34 +201,6 @@ export class UserService {
       return user;
     } catch (error) {
       securityLogger.error('Error promoting user to admin', { error, userId });
-      throw error;
-    }
-  }
-
-  async findUserByRole(role: string): Promise<User | null> {
-    try {
-      return await this.userRepository.findOne({ where: { role } });
-    } catch (error) {
-      securityLogger.error('Error finding user by role', { error, role });
-      throw error;
-    }
-  }
-
-  async createAdminUser(email: string, password: string, name: string, adminSecret: string): Promise<User> {
-    try {
-      if (adminSecret !== process.env.ADMIN_SECRET) {
-        throw new Error('Invalid admin secret');
-      }
-
-      const user = await this.createUser(email, password, name);
-      user.role = 'admin';
-      await this.userRepository.save(user);
-      
-      await this.logSecurityEvent('ADMIN_USER_CREATED', user.id);
-      
-      return user;
-    } catch (error) {
-      securityLogger.error('Error creating admin user', { error, email });
       throw error;
     }
   }
