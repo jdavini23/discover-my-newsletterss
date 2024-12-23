@@ -1,0 +1,43 @@
+# Ignore all files in node_modules
+node_modules/
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore binary and generated files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.lock
+*.map
+*.avif
+
+# Ignore configuration and generated files
+package-lock.json
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore test and coverage files
+coverage/
+*.test.ts
+*.test.tsx
+
+# Ignore specific directories
+src/stories/assets/
+public/mockServiceWorker.js
+
+# Ignore markdown and documentation files
+*.md
+CONTRIBUTING.md
+README.md
+MAINTENANCE.md
+
+# Ignore workflow files
+.github/workflows/
