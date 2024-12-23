@@ -44,7 +44,7 @@ export const userPreferencesHandlers = [
   http.delete(`${API_URL}/user/preferences/favorites/:id`, ({ params }) => {
     const { id } = params;
     userPreferences.favoriteNewsletters = userPreferences.favoriteNewsletters.filter(
-      newsletterId => newsletterId !== id
+      (newsletterId) => newsletterId !== id
     );
     console.log('MSW Removed Favorite:', id);
     return HttpResponse.json(userPreferences);

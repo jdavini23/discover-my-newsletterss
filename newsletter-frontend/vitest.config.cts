@@ -10,26 +10,21 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     include: [
       'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
-      'src/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}'
+      'src/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}',
     ],
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/coverage/**'
-    ],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html']
+      reporter: ['text', 'json', 'html'],
     },
     // Add verbose logging
     logHeapUsage: true,
     maxConcurrency: 5,
-    reporters: ['verbose']
+    reporters: ['verbose'],
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
-    }
-  }
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
 });

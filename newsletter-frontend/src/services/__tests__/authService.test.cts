@@ -8,8 +8,8 @@ vi.mock('js-cookie', () => ({
   default: {
     set: vi.fn(),
     get: vi.fn(),
-    remove: vi.fn()
-  }
+    remove: vi.fn(),
+  },
 }));
 
 describe('AuthService', () => {
@@ -22,7 +22,7 @@ describe('AuthService', () => {
   it('should login successfully', async () => {
     const loginResult = await authService.login({
       email: 'test@example.com',
-      password: 'password123'
+      password: 'password123',
     });
 
     expect(loginResult.user.email).toBe('test@example.com');
@@ -34,7 +34,7 @@ describe('AuthService', () => {
     await expect(
       authService.login({
         email: 'wrong@example.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       })
     ).rejects.toThrow();
   });
@@ -43,7 +43,7 @@ describe('AuthService', () => {
     const registerResult = await authService.register({
       email: 'newuser@example.com',
       password: 'newpassword123',
-      name: 'New User'
+      name: 'New User',
     });
 
     expect(registerResult.user.email).toBe('newuser@example.com');
@@ -56,7 +56,7 @@ describe('AuthService', () => {
       authService.register({
         email: 'existing@example.com',
         password: 'password123',
-        name: 'Existing User'
+        name: 'Existing User',
       })
     ).rejects.toThrow();
   });
@@ -65,7 +65,7 @@ describe('AuthService', () => {
     await expect(
       authService.login({
         email: 'invalid-email',
-        password: '123' // Too short
+        password: '123', // Too short
       })
     ).rejects.toThrow();
   });
@@ -75,7 +75,7 @@ describe('AuthService', () => {
       authService.register({
         email: 'invalid-email',
         password: '123',
-        name: 'A' // Too short
+        name: 'A', // Too short
       })
     ).rejects.toThrow();
   });
@@ -95,7 +95,7 @@ describe('AuthService', () => {
       id: '1',
       email: 'test@example.com',
       name: 'Test User',
-      role: 'user'
+      role: 'user',
     });
 
     const user = authService.getCurrentUser();

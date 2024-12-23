@@ -37,7 +37,7 @@ describe('Newsletter Search Store', () => {
     await act(async () => {
       result.current.setSearchParams({
         query: 'Tech',
-        categories: ['Technology']
+        categories: ['Technology'],
       });
     });
 
@@ -63,7 +63,7 @@ describe('Newsletter Search Store', () => {
     expect(result.current.page).toBe(1);
     expect(result.current.searchParams).toEqual({
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     });
   });
 

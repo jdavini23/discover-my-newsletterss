@@ -7,24 +7,24 @@ export const UserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
-  role: z.enum(['user', 'admin'])
+  role: z.enum(['user', 'admin']),
 });
 
 // Authentication Schemas
 export const LoginRequestSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8),
 });
 
 export const RegisterRequestSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  name: z.string().min(2)
+  name: z.string().min(2),
 });
 
 export const AuthResponseSchema = z.object({
   user: UserSchema,
-  token: z.string()
+  token: z.string(),
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -46,7 +46,7 @@ class AuthService {
       LoginRequestSchema.parse(credentials);
 
       const response = await axios.post<AuthResponse>(`${this.baseURL}/auth/login`, credentials);
-      
+
       // Validate response
       const authData = AuthResponseSchema.parse(response.data);
 
@@ -67,7 +67,7 @@ class AuthService {
       RegisterRequestSchema.parse(userData);
 
       const response = await axios.post<AuthResponse>(`${this.baseURL}/auth/register`, userData);
-      
+
       // Validate response
       const authData = AuthResponseSchema.parse(response.data);
 
@@ -106,10 +106,10 @@ class AuthService {
   // Token management methods
   private setToken(token: string): void {
     // HttpOnly cookie for production
-    Cookies.set('auth_token', token, { 
+    Cookies.set('auth_token', token, {
       secure: import.meta.env.PROD,
       sameSite: 'strict',
-      expires: 7 // 7 days
+      expires: 7, // 7 days
     });
   }
 
@@ -138,7 +138,7 @@ class AuthService {
       console.error('Auth Error:', {
         message: error.message,
         status: error.response?.status,
-        data: error.response?.data
+        data: error.response?.data,
       });
     } else {
       console.error('Unexpected error:', error);

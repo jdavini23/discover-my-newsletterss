@@ -5,14 +5,12 @@ import { http, HttpResponse } from 'msw';
 const handler = http.get('/api/newsletters/search', ({ request }) => {
   console.log('Handler called with:', {
     method: request.method,
-    url: request.url
+    url: request.url,
   });
 
   return HttpResponse.json({
     message: 'Handler works!',
-    newsletters: [
-      { id: '1', title: 'Tech Insider' }
-    ]
+    newsletters: [{ id: '1', title: 'Tech Insider' }],
   });
 });
 

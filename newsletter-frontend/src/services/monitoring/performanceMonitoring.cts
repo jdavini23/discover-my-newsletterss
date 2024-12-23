@@ -26,7 +26,8 @@ class PerformanceMonitoringService {
 
     const metrics: PerformanceMetrics = {
       timeToFirstByte: navigation.responseStart - navigation.requestStart,
-      firstContentfulPaint: paint.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0,
+      firstContentfulPaint:
+        paint.find((entry) => entry.name === 'first-contentful-paint')?.startTime || 0,
       loadTime: navigation.loadEventEnd - navigation.navigationStart,
     };
 
@@ -46,7 +47,7 @@ class PerformanceMonitoringService {
     try {
       // TODO: Replace with your actual monitoring service endpoint
       console.log('[Staging] Performance Metrics:', metrics);
-      
+
       // Example implementation for sending to a monitoring service:
       // await fetch('your-monitoring-service-endpoint', {
       //   method: 'POST',

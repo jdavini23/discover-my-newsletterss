@@ -1,10 +1,5 @@
 import React from 'react';
-import { 
-  render, 
-  screen, 
-  waitFor, 
-  fireEvent 
-} from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { NewsletterSearch } from '../NewsletterSearch';
@@ -13,7 +8,7 @@ import { useNewsletterSearchStore } from '@/stores/newsletterSearchStore';
 
 // Mock the Zustand store
 vi.mock('@/stores/newsletterSearchStore', () => ({
-  useNewsletterSearchStore: vi.fn()
+  useNewsletterSearchStore: vi.fn(),
 }));
 
 const mockNewsletters = [
@@ -23,7 +18,7 @@ const mockNewsletters = [
     description: 'Latest trends in technology',
     categories: ['Technology'],
     frequency: 'weekly',
-    subscriberCount: 5000
+    subscriberCount: 5000,
   },
   {
     id: '2',
@@ -31,8 +26,8 @@ const mockNewsletters = [
     description: 'Insights for entrepreneurs',
     categories: ['Business'],
     frequency: 'monthly',
-    subscriberCount: 3500
-  }
+    subscriberCount: 3500,
+  },
 ];
 
 const mockStoreState = {
@@ -45,7 +40,7 @@ const mockStoreState = {
   fetchNewsletters: vi.fn(),
   setSearchParams: vi.fn(),
   fetchFilterOptions: vi.fn(),
-  resetSearch: vi.fn()
+  resetSearch: vi.fn(),
 };
 
 const renderComponent = () => {
@@ -95,7 +90,7 @@ describe('NewsletterSearch Component', () => {
       query: 'Tech',
       categories: undefined,
       tags: undefined,
-      frequency: undefined
+      frequency: undefined,
     });
   });
 
@@ -104,7 +99,7 @@ describe('NewsletterSearch Component', () => {
     renderComponent();
 
     const categorySelect = screen.getByText('Select Category').closest('select');
-    
+
     if (categorySelect) {
       await user.selectOptions(categorySelect, 'Technology');
       const searchButton = screen.getByText('Search');
@@ -114,7 +109,7 @@ describe('NewsletterSearch Component', () => {
         query: undefined,
         categories: ['Technology'],
         tags: undefined,
-        frequency: undefined
+        frequency: undefined,
       });
     }
   });
@@ -132,7 +127,7 @@ describe('NewsletterSearch Component', () => {
   it('displays loading spinner when loading', () => {
     (useNewsletterSearchStore as any).mockReturnValue({
       ...mockStoreState,
-      isLoading: true
+      isLoading: true,
     });
 
     renderComponent();
@@ -143,7 +138,7 @@ describe('NewsletterSearch Component', () => {
   it('displays error message when error occurs', () => {
     (useNewsletterSearchStore as any).mockReturnValue({
       ...mockStoreState,
-      error: 'Something went wrong'
+      error: 'Something went wrong',
     });
 
     renderComponent();

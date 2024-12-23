@@ -36,8 +36,8 @@ const NewsletterSearch = lazy(() => import('./pages/NewsletterSearch'));
 
 // Loading Fallback Component for improved UX
 const LoadingFallback: React.FC = () => (
-  <div className="flex justify-center items-center h-screen">
-    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-blue-500"></div>
+  <div className="flex h-screen items-center justify-center">
+    <div className="h-32 w-32 animate-spin rounded-full border-t-2 border-blue-500"></div>
   </div>
 );
 
@@ -69,10 +69,7 @@ const App: React.FC = () => {
                   />
                   <Route path="/unauthorized" element={<Unauthorized />} />
                   <Route path="/password-reset" element={<PasswordResetRequest />} />
-                  <Route
-                    path="/password-reset-confirm"
-                    element={<PasswordResetConfirm />}
-                  />
+                  <Route path="/password-reset-confirm" element={<PasswordResetConfirm />} />
                   <Route path="/discover/interests" element={<InterestWizard />} />
                   <Route path="/discover/newsletters" element={<NewsletterSearch />} />
 

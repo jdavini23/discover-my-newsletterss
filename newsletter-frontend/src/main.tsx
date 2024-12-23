@@ -7,7 +7,7 @@ import './styles/global.css';
 async function enableMocking() {
   if (import.meta.env.MODE !== 'production') {
     const { worker } = await import('./test/mocks/browser');
-    
+
     // Start the worker with specific options
     return worker.start({
       onUnhandledRequest(request, print) {
@@ -27,7 +27,7 @@ async function enableMocking() {
           /^\/static\//,
           /^\/sockjs-node\//,
           /^\/ws$/,
-        ].some(pattern => pattern.test(request.url));
+        ].some((pattern) => pattern.test(request.url));
 
         // Only print warnings for unhandled API requests
         if (!shouldIgnore && request.url.includes('/api/')) {
@@ -35,8 +35,8 @@ async function enableMocking() {
         }
       },
       serviceWorker: {
-        url: '/mockServiceWorker.js'
-      }
+        url: '/mockServiceWorker.js',
+      },
     });
   }
 }

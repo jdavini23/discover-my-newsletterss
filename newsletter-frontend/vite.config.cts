@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -9,20 +10,23 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [react()],
+    plugins: [react(), tsconfigPaths()],
     resolve: {
       alias: {
         '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
       },
     },
     server: {
-      port: 3000,
+      port: parseInt(env.VITE_PORT || '3000'),
       open: true,
     },
+    preview: {
+      port: parseInt(env.VITE_PREVIEW_PORT || '4173'),
+    },
     build: {
-      outDir: 'build',
-      sourcemap: mode === 'production' ? false : true,
-      minify: mode === 'production' ? 'terser' : false,
+      outDir: 'dist',
+      sourcemap: mode === 'development',
+      minify: mode === 'production',
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -48,10 +52,17 @@ export default defineConfig(({ mode }) => {
       },
       chunkSizeWarningLimit: 500, // Increase chunk size warning limit
     },
+    define: {
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(process.env.npm_package_version),
+    },
     test: {
       globals: true,
       environment: 'jsdom',
       setupFiles: './src/test/setup.ts',
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'html'],
+      },
       css: true,
     },
   };

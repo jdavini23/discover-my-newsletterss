@@ -30,7 +30,7 @@ export class StagingErrorBoundary extends Component<Props, State> {
     if (getCurrentConfig().ENABLE_LOGGING) {
       console.error('Uncaught error:', error);
       console.error('Component stack:', errorInfo.componentStack);
-      
+
       // TODO: Send to your error tracking service
       this.logError(error, errorInfo);
     }
@@ -51,7 +51,7 @@ export class StagingErrorBoundary extends Component<Props, State> {
 
       // TODO: Replace with your error tracking service endpoint
       console.log('[Staging] Error Data:', errorData);
-      
+
       // Example implementation:
       // await fetch('your-error-tracking-endpoint', {
       //   method: 'POST',
@@ -66,20 +66,16 @@ export class StagingErrorBoundary extends Component<Props, State> {
   public render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary p-4 m-4 border border-red-500 rounded-lg bg-red-50">
-          <h1 className="text-xl font-bold text-red-700 mb-2">
-            Something went wrong
-          </h1>
+        <div className="error-boundary m-4 rounded-lg border border-red-500 bg-red-50 p-4">
+          <h1 className="mb-2 text-xl font-bold text-red-700">Something went wrong</h1>
           {getCurrentConfig().ENV_NAME === 'staging' && (
             <details className="mt-2">
-              <summary className="cursor-pointer text-red-600">
-                Error Details
-              </summary>
-              <pre className="mt-2 p-2 bg-red-100 rounded overflow-auto">
+              <summary className="cursor-pointer text-red-600">Error Details</summary>
+              <pre className="mt-2 overflow-auto rounded bg-red-100 p-2">
                 {this.state.error?.toString()}
               </pre>
               {this.state.errorInfo && (
-                <pre className="mt-2 p-2 bg-red-100 rounded overflow-auto">
+                <pre className="mt-2 overflow-auto rounded bg-red-100 p-2">
                   {this.state.errorInfo.componentStack}
                 </pre>
               )}

@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { getCurrentConfig } from '../../config/environment';
-import type { Newsletter, NewsletterSearchFilters, NewsletterSearchResponse } from '../../types/newsletter';
+import type {
+  Newsletter,
+  NewsletterSearchFilters,
+  NewsletterSearchResponse,
+} from '../../types/newsletter';
 
 const config = getCurrentConfig();
 console.log('API Config:', config);

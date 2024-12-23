@@ -13,7 +13,7 @@ export const developmentConfig: EnvironmentConfig = {
 };
 
 export const stagingConfig: EnvironmentConfig = {
-  API_URL: 'http://localhost:3001/api',  // Using local API for now
+  API_URL: 'http://localhost:3001/api', // Using local API for now
   ENV_NAME: 'staging',
   ENABLE_LOGGING: true,
   PERFORMANCE_MONITORING: true,
@@ -21,7 +21,7 @@ export const stagingConfig: EnvironmentConfig = {
 
 export const getCurrentConfig = (): EnvironmentConfig => {
   const env = import.meta.env.MODE;
-  
+
   switch (env) {
     case 'development':
       return developmentConfig;

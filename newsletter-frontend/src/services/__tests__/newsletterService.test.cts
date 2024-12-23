@@ -12,7 +12,7 @@ describe('Newsletter Service', () => {
     const result = await newsletterService.searchNewsletters({
       query: 'tech',
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     });
 
     expect(result).toMatchObject({
@@ -37,7 +37,7 @@ describe('Newsletter Service', () => {
     const result = await newsletterService.searchNewsletters({
       query: 'tech',
       page: 2,
-      pageSize: 5
+      pageSize: 5,
     });
 
     expect(result.page).toBe(2);
@@ -52,7 +52,7 @@ describe('Newsletter Service', () => {
           total: 0,
           page: 1,
           pageSize: 10,
-          totalPages: 0
+          totalPages: 0,
         });
       })
     );
@@ -60,7 +60,7 @@ describe('Newsletter Service', () => {
     const result = await newsletterService.searchNewsletters({
       query: 'nonexistent',
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     });
 
     expect(result).toMatchObject({
@@ -68,7 +68,7 @@ describe('Newsletter Service', () => {
       total: 0,
       page: 1,
       pageSize: 10,
-      totalPages: 0
+      totalPages: 0,
     });
   });
 });
