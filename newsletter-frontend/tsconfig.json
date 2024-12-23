@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -19,9 +19,9 @@
     "noImplicitReturns": true,
     "allowJs": false,
     "checkJs": false,
-    "types": ["jest", "@testing-library/jest-dom"]
+    "types": ["node", "vite/client", "@testing-library/jest-dom"]
   },
-  "include": ["src", "src/vite-env.d.ts"],
+  "include": ["src"],
   "exclude": ["node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

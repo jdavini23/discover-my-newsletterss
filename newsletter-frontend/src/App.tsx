@@ -2,11 +2,13 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ErrorBoundary } from 'react-error-boundary';
+
+// Import components and stores
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { useAuthStore } from './stores/authStore';
 import { NotificationCenter } from './components/common/Notification';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { useAuthStore } from './stores/authStore';
 
 // Create a client following best practices for caching and retry
 const queryClient = new QueryClient({
@@ -24,7 +26,6 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Profile = lazy(() => import('./pages/Profile'));
 const NewsletterList = lazy(() => import('./pages/NewsletterList'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const Login = lazy(() => import('./pages/login'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const Unauthorized = lazy(() => import('./pages/Unauthorized'));
@@ -45,7 +46,7 @@ const App: React.FC = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <AuthProvider>
           <Suspense fallback={<LoadingFallback />}>
             <div className="min-h-screen bg-gray-50">
