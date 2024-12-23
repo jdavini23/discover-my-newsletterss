@@ -24,7 +24,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
             side={side}
             align={align}
             sideOffset={5}
-            className="z-50 bg-gray-800 text-white text-sm px-3 py-2 rounded-md shadow-lg"
+            className="z-50 rounded-md bg-gray-800 px-3 py-2 text-sm text-white shadow-lg"
             asChild
           >
             <motion.div

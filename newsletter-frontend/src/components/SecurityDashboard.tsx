@@ -58,24 +58,24 @@ const SecurityDashboard: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading security data...</div>;
+    return <div className="flex h-64 items-center justify-center">Loading security data...</div>;
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md">
+      <div className="rounded-md bg-red-50 p-4">
         <p className="text-red-700">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold mb-6">Security Dashboard</h1>
+    <div className="space-y-6 p-6">
+      <h1 className="mb-6 text-2xl font-bold">Security Dashboard</h1>
 
       {/* Active Alerts Section */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Active Alerts</h2>
+      <div className="rounded-lg bg-white p-6 shadow">
+        <h2 className="mb-4 text-xl font-semibold">Active Alerts</h2>
         {alerts.length === 0 ? (
           <p className="text-gray-500">No active alerts</p>
         ) : (
@@ -83,16 +83,16 @@ const SecurityDashboard: React.FC = () => {
             {alerts.map((alert, index) => (
               <div
                 key={index}
-                className="border-l-4 p-4 rounded-r-md"
+                className="rounded-r-md border-l-4 p-4"
                 style={{ borderColor: getSeverityColor(alert.severity) }}
               >
-                <div className="flex justify-between items-start">
+                <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold">{alert.type}</h3>
                     <p className="text-sm text-gray-600">{alert.message}</p>
                   </div>
                   <span
-                    className="px-2 py-1 text-xs rounded-full"
+                    className="rounded-full px-2 py-1 text-xs"
                     style={{
                       backgroundColor: `${getSeverityColor(alert.severity)}20`,
                       color: getSeverityColor(alert.severity),
@@ -111,35 +111,35 @@ const SecurityDashboard: React.FC = () => {
       </div>
 
       {/* Recent Events Section */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <h2 className="text-xl font-semibold p-6 pb-4">Recent Security Events</h2>
+      <div className="overflow-hidden rounded-lg bg-white shadow">
+        <h2 className="p-6 pb-4 text-xl font-semibold">Recent Security Events</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Severity
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   IP Address
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Timestamp
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 bg-white">
               {events.map((event, index) => (
                 <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span className="text-sm font-medium text-gray-900">{event.type}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span
-                      className="px-2 py-1 text-xs rounded-full"
+                      className="rounded-full px-2 py-1 text-xs"
                       style={{
                         backgroundColor: `${getSeverityColor(event.severity)}20`,
                         color: getSeverityColor(event.severity),
@@ -148,10 +148,10 @@ const SecurityDashboard: React.FC = () => {
                       {event.severity.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {event.details.ip || 'Unknown'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {new Date(event.timestamp).toLocaleString()}
                   </td>
                 </tr>

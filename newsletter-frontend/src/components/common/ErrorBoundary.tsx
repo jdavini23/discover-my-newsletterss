@@ -139,17 +139,17 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
           {/* Use custom fallback or default fallback UI */}
           {this.props.fallback || (
-            <div className="error-boundary min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-              <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8 text-center">
-                <h1 className="text-3xl font-bold text-red-600 mb-4">Oops! Something Went Wrong</h1>
-                <p className="text-gray-700 mb-6">{getErrorMessage(this.state.errorType)}</p>
+            <div className="error-boundary flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
+              <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-md">
+                <h1 className="mb-4 text-3xl font-bold text-red-600">Oops! Something Went Wrong</h1>
+                <p className="mb-6 text-gray-700">{getErrorMessage(this.state.errorType)}</p>
 
                 {this.state.error && (
-                  <details className="mb-6 text-left bg-gray-100 p-4 rounded">
-                    <summary className="cursor-pointer text-gray-800 font-semibold">
+                  <details className="mb-6 rounded bg-gray-100 p-4 text-left">
+                    <summary className="cursor-pointer font-semibold text-gray-800">
                       Error Details
                     </summary>
-                    <pre className="text-xs text-gray-600 overflow-x-auto">
+                    <pre className="overflow-x-auto text-xs text-gray-600">
                       {this.state.error.toString()}
                     </pre>
                   </details>
@@ -158,14 +158,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <div className="flex flex-col space-y-4">
                   <button
                     onClick={this.handleErrorReset}
-                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+                    className="w-full rounded bg-blue-500 py-2 text-white transition hover:bg-blue-600"
                   >
                     Try Again
                   </button>
 
                   <Link
                     to="/"
-                    className="w-full bg-gray-200 text-gray-800 py-2 rounded text-center hover:bg-gray-300 transition"
+                    className="w-full rounded bg-gray-200 py-2 text-center text-gray-800 transition hover:bg-gray-300"
                   >
                     Return to Home
                   </Link>

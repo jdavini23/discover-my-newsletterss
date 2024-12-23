@@ -36,7 +36,7 @@ export const NotificationCenter: React.FC = () => {
   }, [notifications, removeNotification]);
 
   return (
-    <div className="fixed top-4 right-4 z-[100] space-y-2">
+    <div className="fixed right-4 top-4 z-[100] space-y-2">
       <AnimatePresence>
         {notifications.map((notification) => {
           const Icon = NotificationIcon[notification.type];
@@ -49,13 +49,13 @@ export const NotificationCenter: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 100 }}
               transition={{ duration: 0.3 }}
-              className={`flex items-center p-4 rounded-lg shadow-lg text-white ${bgColor}`}
+              className={`flex items-center rounded-lg p-4 text-white shadow-lg ${bgColor}`}
             >
-              <Icon className="w-6 h-6 mr-3" />
+              <Icon className="mr-3 h-6 w-6" />
               <span>{notification.message}</span>
               <button
                 onClick={() => removeNotification(notification.id)}
-                className="ml-4 hover:bg-white/20 rounded-full p-1"
+                className="ml-4 rounded-full p-1 hover:bg-white/20"
               >
                 ✕
               </button>

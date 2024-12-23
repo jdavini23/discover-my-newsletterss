@@ -60,8 +60,8 @@ const InterestWizard: React.FC = () => {
     () => (
       <div className="space-y-6">
         {interestCategories.map((category) => (
-          <div key={category.category} className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">{category.category}</h3>
+          <div key={category.category} className="rounded-lg bg-white p-6 shadow-md">
+            <h3 className="mb-4 text-xl font-semibold">{category.category}</h3>
             <div className="flex flex-wrap gap-3">
               {category.interests.map((interest, _index) => (
                 <Tooltip key={interest} content={`Select ${interest}`}>
@@ -69,14 +69,11 @@ const InterestWizard: React.FC = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleInterestSelect(interest)}
-                    className={`
-                    px-4 py-2 rounded-full text-sm font-medium transition-all
-                    ${
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                       selectedInterests.includes(interest)
                         ? 'bg-indigo-600 text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }
-                  `}
+                    } `}
                   >
                     {interest}
                   </motion.button>
@@ -94,9 +91,9 @@ const InterestWizard: React.FC = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg"
+      className="mx-auto max-w-2xl rounded-xl bg-white p-6 shadow-lg"
     >
-      <h2 className="text-2xl font-bold mb-6 text-center">Discover Your Perfect Newsletters</h2>
+      <h2 className="mb-6 text-center text-2xl font-bold">Discover Your Perfect Newsletters</h2>
 
       <AnimatePresence>{renderedInterestCategories}</AnimatePresence>
 
@@ -106,14 +103,11 @@ const InterestWizard: React.FC = () => {
           whileTap={{ scale: 0.95 }}
           onClick={handleSubmit}
           disabled={selectedInterests.length === 0}
-          className={`
-            px-6 py-3 rounded-lg text-white font-bold transition-all
-            ${
-              selectedInterests.length > 0
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-gray-400 cursor-not-allowed'
-            }
-          `}
+          className={`rounded-lg px-6 py-3 font-bold text-white transition-all ${
+            selectedInterests.length > 0
+              ? 'bg-blue-600 hover:bg-blue-700'
+              : 'cursor-not-allowed bg-gray-400'
+          } `}
         >
           Save My Interests
         </motion.button>

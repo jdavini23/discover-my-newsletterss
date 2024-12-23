@@ -55,21 +55,21 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Create Initial Admin User</h2>
+    <div className="mx-auto max-w-md rounded-lg bg-white p-6 shadow-md">
+      <h2 className="mb-6 text-2xl font-bold">Create Initial Admin User</h2>
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+        <div className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
           {error}
         </div>
       )}
       {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+        <div className="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700">
           Admin user created successfully!
         </div>
       )}
       <form onSubmit={handleAdminUserCreation}>
         <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+          <label htmlFor="email" className="mb-2 block font-bold text-gray-700">
             Email
           </label>
           <input
@@ -77,12 +77,12 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg"
+            className="w-full rounded-lg border px-3 py-2"
             required
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
+          <label htmlFor="password" className="mb-2 block font-bold text-gray-700">
             Password
           </label>
           <input
@@ -90,14 +90,14 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg"
+            className="w-full rounded-lg border px-3 py-2"
             required
             minLength={8}
           />
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+          className="w-full rounded-lg bg-blue-500 py-2 text-white transition duration-300 hover:bg-blue-600"
         >
           Create Admin User
         </button>

@@ -35,7 +35,7 @@ const NewsletterList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="spinner-border text-primary" role="status">
           <span className="sr-only">Loading...</span>
         </div>
@@ -47,7 +47,7 @@ const NewsletterList: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
           role="alert"
         >
           {error}
@@ -58,23 +58,23 @@ const NewsletterList: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Newsletters</h1>
+      <h1 className="mb-6 text-3xl font-bold">Newsletters</h1>
 
       {newsletters.length === 0 ? (
-        <div className="bg-gray-100 p-6 rounded-lg text-center">
+        <div className="rounded-lg bg-gray-100 p-6 text-center">
           <p className="text-gray-600">No newsletters found.</p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {newsletters.map((newsletter) => (
             <div
               key={newsletter.id}
-              className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow"
+              className="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
             >
-              <h2 className="text-xl font-semibold mb-2">{newsletter.title}</h2>
-              <p className="text-gray-600 mb-4">{newsletter.description}</p>
+              <h2 className="mb-2 text-xl font-semibold">{newsletter.title}</h2>
+              <p className="mb-4 text-gray-600">{newsletter.description}</p>
 
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <a
                   href={newsletter.url}
                   target="_blank"
@@ -86,7 +86,7 @@ const NewsletterList: React.FC = () => {
 
                 <button
                   onClick={() => newsletter.id && handleDeleteNewsletter(newsletter.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                 >
                   Delete
                 </button>

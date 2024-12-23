@@ -6,9 +6,9 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Welcome, {user?.name || 'User'}!</h2>
+      <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
+      <div className="rounded-lg bg-white p-6 shadow-md">
+        <h2 className="mb-4 text-xl font-semibold">Welcome, {user?.name || 'User'}!</h2>
         <p className="mb-4">Email: {user?.email}</p>
 
         <div className="flex space-x-4">
@@ -16,13 +16,13 @@ const Dashboard: React.FC = () => {
             onClick={() => {
               /* Navigate to profile */
             }}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           >
             Edit Profile
           </button>
           <button
             onClick={logout}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
           >
             Logout
           </button>
