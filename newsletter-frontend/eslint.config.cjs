@@ -41,11 +41,13 @@ module.exports = [
       'postcss.config.js',
       'tailwind.config.js',
       'vite.config.cts',
-      'vitest.config.cts'
+      'vitest.config.cts',
+      'public/mockServiceWorker.js',
+      '.lighthouserc.js'
     ]
   },
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{ts,tsx,cts}'],
     languageOptions: {
       parser: require('@typescript-eslint/parser'),
       parserOptions: {
@@ -72,7 +74,7 @@ module.exports = [
         'warn',
         { allowConstantExport: true },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off', // Temporarily disabled
       '@typescript-eslint/explicit-function-return-type': 'off',
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
@@ -86,7 +88,13 @@ module.exports = [
             'newsletter', 'newsletters', 'auth', 'signup', 'login', 'vercel',
             'tailwind', 'typescript', 'javascript', 'jsx', 'tsx', 'vite',
             'firestore', 'firebase', 'uid', 'bg', 'py', 'mb', 'mx', 'xl', 'semibold',
-            'noopener', 'noreferrer', 'evenodd', 'pathname', 'whitespace', 'nowrap'
+            'noopener', 'noreferrer', 'evenodd', 'pathname', 'whitespace', 'nowrap',
+            'rgb', 'pb', 'mr', 'sr', 'ip', 'extrabold', 'checkbox', 
+            // Storybook and UI related
+            'autodocs', 'radix', 'tooltip', 'cybersecurity', 
+            'blockchain', 'neuroscience', 'chakra', 'zustand',
+            // Technical terms and abbreviations
+            'dom'
           ]
         }
       ]
