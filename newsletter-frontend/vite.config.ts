@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import { fileURLToPath } from 'url';
-import path from 'path';
-=======
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
->>>>>>> ade12b2f6031b48446df6ed2b184745fba3bdf82
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -15,6 +10,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    resolve: {
+      alias: {
+        '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
+      },
+    },
     server: {
       port: 3000,
       open: true,
@@ -51,51 +51,8 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'jsdom',
-      setupFiles: ['./src/test/setup.ts'],
-      coverage: {
-        provider: 'v8',
-        reporter: ['text', 'json', 'html'],
-        include: ['src/**/*.{ts,tsx}'],
-        exclude: [
-          '**/index.ts',
-          '**/*.d.ts',
-          '**/types/**',
-          '**/constants/**',
-          '**/test/**',
-          '**/*.config.{js,ts}'
-        ]
-      },
-      css: {
-        include: [/\.module\.css$/]
-      }
-    },
-    // Add environment variable support
-    define: {
-      'import.meta.env': JSON.stringify(env),
-      'process.env': env,
-    },
-    // Explicitly set TypeScript options
-    esbuild: {
-      jsx: 'automatic',
-      jsxImportSource: 'react',
-    },
-    // Ensure proper file extensions are handled
-    resolve: {
-<<<<<<< HEAD
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@components': path.resolve(__dirname, './src/components'),
-        '@services': path.resolve(__dirname, './src/services'),
-        '@stores': path.resolve(__dirname, './src/stores'),
-        '@utils': path.resolve(__dirname, './src/utils')
-      },
-      extensions: ['.tsx', '.ts', '.jsx', '.js']
-    }
-  }
-})
-=======
-      extensions: ['.tsx', '.ts', '.jsx', '.js'],
+      setupFiles: './src/test/setup.ts',
+      css: true,
     },
   };
 });
->>>>>>> ade12b2f6031b48446df6ed2b184745fba3bdf82
