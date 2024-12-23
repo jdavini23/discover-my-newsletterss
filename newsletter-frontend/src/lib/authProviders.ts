@@ -5,9 +5,8 @@ import {
   signInWithPopup,
   AuthProvider,
 } from 'firebase/auth';
-import { auth } from './firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { firestore } from './firebase';
+import { auth, firestore } from './firebase';
 
 export enum AuthProviderType {
   GOOGLE = 'google',

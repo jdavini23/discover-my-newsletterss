@@ -39,7 +39,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const db = collection(firestore, 'users');
 
-  const signUp = async (email: string, password: string, additionalInfo?: UserData) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    additionalInfo?: UserData
+  ): Promise<UserCredential> => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
     // Update profile if additional info provided
@@ -59,14 +63,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return userCredential;
   };
 
-  const logIn = (email: string, password: string) =>
+  const logIn = (email: string, password: string): Promise<UserCredential> =>
     signInWithEmailAndPassword(auth, email, password);
 
-  const logOut = () => signOut(auth);
+  const logOut = (): Promise<void> => signOut(auth);
 
-  const resetPassword = (email: string) => sendPasswordResetEmail(auth, email);
+  const resetPassword = (email: string): Promise<void> => sendPasswordResetEmail(auth, email);
 
-  const updateUserProfile = async (userData: UserData) => {
+  const updateUserProfile = async (userData: UserData): Promise<void> => {
     if (!user) throw new Error('No authenticated user');
 
     // Update Firebase Authentication profile
@@ -79,44 +83,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await setDoc(doc(db, user.uid), { ...userData }, { merge: true });
   };
 
-  const signInWithOAuthProvider = async (provider: AuthProviderType) => {
+  const signInWithOAuthProvider = async (provider: AuthProviderType): Promise<User> => {
     return await signInWithProvider(provider);
   };
 
-  const onAuthStateChange = useCallback(async (currentUser: User | null) => {
-    setUser(currentUser);
-    setLoading(false);
+  const onAuthStateChange = useCallback(
+    async (currentUser: User | null): Promise<void> => {
+      setUser(currentUser);
+      setLoading(false);
 
-    if (currentUser) {
-      // Fetch additional user data from Firestore
-      const userDocRef = doc(db, currentUser.uid);
-      const userDoc = await getDoc(userDocRef);
+      if (currentUser) {
+        // Fetch additional user data from Firestore
+        const userDocRef = doc(db, currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
 
-      if (userDoc.exists()) {
-        const additionalUserData = userDoc.data();
-        setUserData({
-          displayName: currentUser.displayName,
-          email: currentUser.email,
-          photoURL: currentUser.photoURL,
-          ...additionalUserData,
-        });
+        if (userDoc.exists()) {
+          const additionalUserData = userDoc.data();
+          setUserData({
+            displayName: currentUser.displayName,
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+            ...additionalUserData,
+          });
+        } else {
+          setUserData({
+            displayName: currentUser.displayName,
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+          });
+        }
       } else {
-        setUserData({
-          displayName: currentUser.displayName,
-          email: currentUser.email,
-          photoURL: currentUser.photoURL,
-        });
+        setUserData(null);
       }
-    } else {
-      setUserData(null);
-    }
-  }, []);
+    },
+    [db]
+  );
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, onAuthStateChange);
 
     return () => unsubscribe();
-  }, []);
+  }, [onAuthStateChange]);
 
   const value = {
     user,
@@ -133,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

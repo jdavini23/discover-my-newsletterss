@@ -2,7 +2,7 @@
   "name": "newsletter-frontend",
   "private": true,
   "version": "0.0.1",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -40,6 +40,7 @@
     "@chromatic-com/storybook": "^3.2.3",
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
+    "@eslint/create-config": "^1.4.0",
     "@eslint/js": "^9.17.0",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
