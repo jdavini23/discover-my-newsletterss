@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { beforeAll, afterAll, afterEach } from 'vitest';
-import { server } from './mocks/server';
+import { server } from './mocks/server.cts';
 
 // Establish API mocking before all tests
 beforeAll(() => server.listen());
@@ -57,10 +57,11 @@ const localStorageMock = (() => {
 })();
 
 Object.defineProperty(window, 'localStorage', {
+  writable: true,
   value: localStorageMock,
 });
 
-// Global error handler to catch unhandled promise rejections
+// Mock unhandledrejection event
 window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled Promise Rejection:', event.reason);
+  console.warn(`Unhandled promise rejection: ${event.reason}`);
 });
