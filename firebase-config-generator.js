@@ -8,15 +8,25 @@ function generateFirebaseConfig() {
     projectId: process.env.FIREBASE_PROJECT_ID,
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
+    appId: process.env.FIREBASE_APP_ID,
   };
 
   // Frontend config
-  const frontendConfigPath = path.resolve(__dirname, 'newsletter-frontend', 'src', 'firebaseConfig.ts');
+  const frontendConfigPath = path.resolve(
+    __dirname,
+    'newsletter-frontend',
+    'src',
+    'firebaseConfig.ts'
+  );
   const frontendConfigContent = `export const firebaseConfig = ${JSON.stringify(config, null, 2)};`;
-  
+
   // Backend config
-  const backendConfigPath = path.resolve(__dirname, 'newsletter-backend', 'src', 'firebaseConfig.ts');
+  const backendConfigPath = path.resolve(
+    __dirname,
+    'newsletter-backend',
+    'src',
+    'firebaseConfig.ts'
+  );
   const backendConfigContent = `export const firebaseConfig = ${JSON.stringify(config, null, 2)};`;
 
   fs.writeFileSync(frontendConfigPath, frontendConfigContent);

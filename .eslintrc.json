@@ -8,10 +8,7 @@
       "jsx": true
     }
   },
-  "plugins": [
-    "@typescript-eslint",
-    "react"
-  ],
+  "plugins": ["@typescript-eslint", "react"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -37,10 +34,5 @@
     "es2021": true,
     "jest": true
   },
-  "ignorePatterns": [
-    "node_modules",
-    "build",
-    "dist",
-    "coverage"
-  ]
+  "ignorePatterns": ["node_modules", "build", "dist", "coverage"]
 }

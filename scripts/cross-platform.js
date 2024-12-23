@@ -9,8 +9,8 @@ function runCommand(command, args, options = {}) {
   const cmd = isWindows && command === 'npm' ? 'npm.cmd' : command;
   return new Promise((resolve, reject) => {
     const proc = spawn(cmd, args, { stdio: 'inherit', ...options });
-    
-    proc.on('error', (error) => {
+
+    proc.on('error', error => {
       reject(new Error(`Failed to start command: ${error.message}`));
     });
 
@@ -21,7 +21,7 @@ function runCommand(command, args, options = {}) {
         resolve();
         return;
       }
-      
+
       // For npm outdated, exit code 1 means outdated packages found
       if (args[0] === 'outdated' && code === 1) {
         console.log('⚠️  Outdated packages found, but continuing...');
@@ -41,12 +41,12 @@ function runCommand(command, args, options = {}) {
 async function diagnoseNpm() {
   console.log('🔍 Running npm diagnostics...');
   let hasErrors = false;
-  
+
   try {
     // Check npm version
     console.log('\n📊 Checking npm version...');
     await runCommand('npm', ['--version']);
-    
+
     // Verify cache
     console.log('\n📦 Verifying npm cache...');
     try {
@@ -55,7 +55,7 @@ async function diagnoseNpm() {
       console.log('⚠️  Cache verification failed, but continuing...');
       hasErrors = true;
     }
-    
+
     // Check for outdated packages
     console.log('\n🔄 Checking for outdated packages...');
     try {
@@ -64,7 +64,7 @@ async function diagnoseNpm() {
       console.log('⚠️  Some packages are outdated, but continuing...');
       hasErrors = true;
     }
-    
+
     // Audit dependencies
     console.log('\n🛡️ Running security audit...');
     try {
@@ -73,13 +73,14 @@ async function diagnoseNpm() {
       console.log('⚠️  Security audit found issues, but continuing...');
       hasErrors = true;
     }
-    
+
     if (hasErrors) {
-      console.log('\n⚠️  Some non-critical issues were found. Run `npm run fix` to attempt to resolve them.');
+      console.log(
+        '\n⚠️  Some non-critical issues were found. Run `npm run fix` to attempt to resolve them.'
+      );
     } else {
       console.log('\n✅ All checks passed successfully!');
     }
-    
   } catch (error) {
     console.error('\n❌ Critical error:', error.message);
     process.exit(1);
@@ -88,7 +89,7 @@ async function diagnoseNpm() {
 
 async function fixNpm() {
   console.log('🔧 Attempting to fix npm issues...');
-  
+
   try {
     // Clean npm cache
     console.log('\n🧹 Cleaning npm cache...');
@@ -97,7 +98,7 @@ async function fixNpm() {
     } catch (error) {
       console.log('⚠️  Cache cleaning failed, but continuing...');
     }
-    
+
     // Remove node_modules and package-lock.json
     console.log('\n🗑️ Removing node_modules and package-lock.json...');
     if (fs.existsSync('node_modules')) {
@@ -106,11 +107,11 @@ async function fixNpm() {
     if (fs.existsSync('package-lock.json')) {
       fs.unlinkSync('package-lock.json');
     }
-    
+
     // Reinstall dependencies
     console.log('\n📥 Reinstalling dependencies...');
     await runCommand('npm', ['install']);
-    
+
     // Run audit fix
     console.log('\n🛠️ Running audit fix...');
     try {
@@ -119,9 +120,8 @@ async function fixNpm() {
       console.log('⚠️  Some vulnerabilities could not be fixed automatically.');
       console.log('   Please review the audit report and fix critical issues manually.');
     }
-    
+
     console.log('\n✅ Fix completed! Run `npm run diagnose` to verify the results.');
-    
   } catch (error) {
     console.error('\n❌ Critical error:', error.message);
     process.exit(1);

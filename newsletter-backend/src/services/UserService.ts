@@ -1,25 +1,93 @@
 import { MoreThan } from 'typeorm';
+import * as crypto from 'crypto';
 import { User } from '../models/User';
 import { SecurityEvent } from '../models/SecurityEvent';
-import { hashPassword } from '../utils/authUtils';
 import { AppDataSource } from '../config/database';
-import crypto from 'crypto';
 import { securityLogger } from '../utils/logger';
+import * as admin from 'firebase-admin';
+
+// Define custom error types for better error handling
+class UserNotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UserNotFoundError';
+  }
+}
+
+class InvalidCredentialsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidCredentialsError';
+  }
+}
+
+class AdminSecretError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AdminSecretError';
+  }
+}
+
+// Define interfaces for better type safety
+interface UserCreationData {
+  email: string;
+  password: string;
+  role: string;
+  name?: string;
+}
+
+interface SecurityEventOptions {
+  eventType: string;
+  userId?: number;
+}
 
 export class UserService {
   private userRepository = AppDataSource.getRepository(User);
-
   private securityEventRepository = AppDataSource.getRepository(SecurityEvent);
 
   async findUserByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { email } });
+    try {
+      await admin.auth().getUserByEmail(email);
+      return await this.userRepository.findOne({ where: { email } });
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        return null;
+      }
+      securityLogger.error('Error finding user by email', { error, email });
+      throw new UserNotFoundError(`User with email ${email} not found`);
+    }
   }
 
   async findUserByRole(role: string): Promise<User | null> {
     try {
       return await this.userRepository.findOne({ where: { role } });
-    } catch (error) {
+    } catch (error: any) {
       securityLogger.error('Error finding user by role', { error, role });
+      throw error;
+    }
+  }
+
+  async createUser(userData: UserCreationData): Promise<User> {
+    try {
+      const userRecord = await admin.auth().createUser({
+        email: userData.email,
+        password: userData.password,
+      });
+
+      const user =
+        (await this.userRepository.findOne({ where: { email: userData.email } })) || new User();
+
+      user.email = userData.email;
+      user.role = userData.role;
+      user.name = userData.name || '';
+      user.firebaseUid = userRecord.uid;
+
+      await this.userRepository.save(user);
+      await this.logSecurityEvent({ eventType: 'USER_CREATED', userId: user.id });
+
+      return user;
+    } catch (error: any) {
+      securityLogger.error('Error creating user', { error, email: userData.email });
       throw error;
     }
   }
@@ -32,49 +100,21 @@ export class UserService {
   ): Promise<User> {
     try {
       if (adminSecret !== process.env.ADMIN_SECRET) {
-        throw new Error('Invalid admin secret');
+        throw new AdminSecretError('Invalid admin secret');
       }
 
-      const hashedPassword = await hashPassword(password);
+      const adminUser = await this.createUser({
+        email,
+        password,
+        role: 'admin',
+        name,
+      });
 
-      const adminUser = new User();
-      adminUser.email = email;
-      adminUser.password = hashedPassword;
-      adminUser.name = name;
-      adminUser.role = 'admin';
+      await this.logSecurityEvent({ eventType: 'ADMIN_USER_CREATED', userId: adminUser.id });
 
-      await this.logSecurityEvent('ADMIN_USER_CREATED', adminUser.id);
-
-      return await this.userRepository.save(adminUser);
-    } catch (error) {
+      return adminUser;
+    } catch (error: any) {
       securityLogger.error('Error creating admin user', { error, email });
-      throw error;
-    }
-  }
-
-  async createUser(userData: Partial<User>): Promise<User> {
-    try {
-      const existingUser = await this.userRepository.findOne({ where: { email: userData.email } });
-      if (existingUser) {
-        throw new Error('User already exists');
-      }
-
-      const user = new User();
-      Object.assign(user, userData);
-
-      if (userData.password) {
-        user.password = await hashPassword(userData.password);
-      }
-
-      const emailVerificationToken = crypto.randomBytes(16).toString('hex');
-      user.emailVerificationToken = emailVerificationToken;
-      user.isEmailVerified = false;
-
-      await this.logSecurityEvent('USER_CREATED', user.id);
-
-      return await this.userRepository.save(user);
-    } catch (error) {
-      securityLogger.error('Error creating user', { error, email: userData.email });
       throw error;
     }
   }
@@ -82,19 +122,21 @@ export class UserService {
   async validateUser(email: string, password: string): Promise<User> {
     try {
       const user = await this.userRepository.findOne({ where: { email } });
-      if (!user || !user.password) {
-        throw new Error('Invalid credentials');
+      if (!user) {
+        throw new InvalidCredentialsError('Invalid credentials');
       }
 
-      const isValid = (await hashPassword(password)) === user.password;
+      await admin.auth().getUserByEmail(email);
+      const isValid = await admin.auth().signInWithEmailAndPassword(email, password);
+
       if (!isValid) {
-        await this.logSecurityEvent('FAILED_LOGIN_ATTEMPT', user.id);
-        throw new Error('Invalid credentials');
+        await this.logSecurityEvent({ eventType: 'FAILED_LOGIN_ATTEMPT', userId: user.id });
+        throw new InvalidCredentialsError('Invalid credentials');
       }
 
-      await this.logSecurityEvent('SUCCESSFUL_LOGIN', user.id);
+      await this.logSecurityEvent({ eventType: 'SUCCESSFUL_LOGIN', userId: user.id });
       return user;
-    } catch (error) {
+    } catch (error: any) {
       securityLogger.error('Error validating user', { error, email });
       throw error;
     }
@@ -104,7 +146,7 @@ export class UserService {
     try {
       const user = await this.userRepository.findOne({ where: { email } });
       if (!user) {
-        throw new Error('User not found');
+        throw new UserNotFoundError('User not found');
       }
 
       const resetToken = crypto.randomBytes(16).toString('hex');
@@ -114,8 +156,8 @@ export class UserService {
       user.passwordResetExpires = resetExpires;
       await this.userRepository.save(user);
 
-      await this.logSecurityEvent('PASSWORD_RESET_INITIATED', user.id);
-    } catch (error) {
+      await this.logSecurityEvent({ eventType: 'PASSWORD_RESET_INITIATED', userId: user.id });
+    } catch (error: any) {
       securityLogger.error('Error initiating password reset', { error, email });
       throw error;
     }
@@ -134,12 +176,15 @@ export class UserService {
       return false;
     }
 
-    user.password = await hashPassword(newPassword);
+    await admin.auth().updateUser(user.firebaseUid, {
+      password: newPassword,
+    });
+
     user.passwordResetToken = null;
     user.passwordResetExpires = null;
     await userRepository.save(user);
 
-    await this.logSecurityEvent('PASSWORD_RESET_COMPLETED', user.id);
+    await this.logSecurityEvent({ eventType: 'PASSWORD_RESET_COMPLETED', userId: user.id });
     return true;
   }
 
@@ -150,37 +195,29 @@ export class UserService {
       });
 
       if (!user) {
-        throw new Error('Invalid verification token');
+        throw new UserNotFoundError('Invalid verification token');
       }
 
       user.isEmailVerified = true;
       user.emailVerificationToken = null;
       await this.userRepository.save(user);
 
-      await this.logSecurityEvent('EMAIL_VERIFIED', user.id);
-    } catch (error) {
+      await this.logSecurityEvent({ eventType: 'EMAIL_VERIFIED', userId: user.id });
+    } catch (error: any) {
       securityLogger.error('Error verifying email', { error });
       throw error;
     }
   }
 
-  async logSecurityEvent(
-    eventType: string,
-    userId: string,
-    metadata?: Record<string, any>
-  ): Promise<void> {
+  async logSecurityEvent(options: SecurityEventOptions): Promise<void> {
     try {
-      const event = this.securityEventRepository.create({
-        eventType,
-        userId,
-        ipAddress: '0.0.0.0',
-        metadata,
-        isHighRisk: eventType.includes('FAILED') || eventType.includes('RESET'),
-      });
-      await this.securityEventRepository.save(event);
-    } catch (error) {
-      securityLogger.error('Error logging security event', { error, eventType, userId });
-      throw error;
+      const securityEvent = new SecurityEvent();
+      securityEvent.eventType = options.eventType;
+      securityEvent.userId = options.userId;
+
+      await this.securityEventRepository.save(securityEvent);
+    } catch (error: any) {
+      securityLogger.error('Error logging security event', { error, eventType: options.eventType });
     }
   }
 
@@ -188,7 +225,7 @@ export class UserService {
     try {
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
-        throw new Error('User not found');
+        throw new UserNotFoundError('User not found');
       }
 
       const promoter = await this.userRepository.findOne({ where: { id: promoterUserId } });
@@ -199,14 +236,15 @@ export class UserService {
       user.role = 'admin';
       await this.userRepository.save(user);
 
-      await this.logSecurityEvent('USER_PROMOTED_TO_ADMIN', user.id, {
-        promotedBy: promoterUserId,
-      });
+      await this.logSecurityEvent({ eventType: 'USER_PROMOTED_TO_ADMIN', userId: user.id });
 
       return user;
-    } catch (error) {
+    } catch (error: any) {
       securityLogger.error('Error promoting user to admin', { error, userId });
       throw error;
     }
   }
 }
+
+// Export custom error types for potential use in error handling
+export { UserNotFoundError, InvalidCredentialsError, AdminSecretError };

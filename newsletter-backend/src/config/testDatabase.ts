@@ -17,7 +17,7 @@ export const initializeTestDatabase = async (): Promise<Connection> => {
       entities: [User, SecurityEvent, Interest, Subscription, UserInteraction],
       synchronize: true,
       dropSchema: true,
-      logging: false
+      logging: false,
     });
 
     console.log('Test database connection established');

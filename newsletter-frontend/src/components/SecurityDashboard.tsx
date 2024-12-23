@@ -22,7 +22,7 @@ const SecurityDashboard: React.FC = () => {
     try {
       const [eventsData, alertsData] = await Promise.all([
         securityService.get<SecurityEvent[]>('/api/security/events'),
-        securityService.get<SecurityAlert[]>('/api/security/alerts')
+        securityService.get<SecurityAlert[]>('/api/security/alerts'),
       ]);
 
       setEvents(eventsData);
@@ -72,7 +72,7 @@ const SecurityDashboard: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Security Dashboard</h1>
-      
+
       {/* Active Alerts Section */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Active Alerts</h2>
@@ -95,7 +95,7 @@ const SecurityDashboard: React.FC = () => {
                     className="px-2 py-1 text-xs rounded-full"
                     style={{
                       backgroundColor: `${getSeverityColor(alert.severity)}20`,
-                      color: getSeverityColor(alert.severity)
+                      color: getSeverityColor(alert.severity),
                     }}
                   >
                     {alert.severity.toUpperCase()}
@@ -135,16 +135,14 @@ const SecurityDashboard: React.FC = () => {
               {events.map((event, index) => (
                 <tr key={index}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-gray-900">
-                      {event.type}
-                    </span>
+                    <span className="text-sm font-medium text-gray-900">{event.type}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className="px-2 py-1 text-xs rounded-full"
                       style={{
                         backgroundColor: `${getSeverityColor(event.severity)}20`,
-                        color: getSeverityColor(event.severity)
+                        color: getSeverityColor(event.severity),
                       }}
                     >
                       {event.severity.toUpperCase()}

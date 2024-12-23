@@ -30,24 +30,21 @@ router.post(
       // Check if an admin already exists
       const existingAdmin = await userService.findUserByEmail(email);
       if (existingAdmin) {
-        return res.status(400).json({ message: 'Admin user already exists' });
+        return res.status(400).json({ message: 'Admin already exists' });
       }
 
-      // Create initial admin user
-      const newAdmin = await userService.createAdminUser(
+      // Create new admin user
+      const newAdmin = await userService.createUser({
         email,
-        password,
-        'Admin', // Default name
-        process.env.ADMIN_SECRET || '' // Use environment variable for admin secret
-      );
-
-      res.status(201).json({
-        message: 'Initial admin user created successfully',
-        userId: newAdmin.id,
+        password: password, // pass plain password
+        role: 'admin',
       });
+
+      // Return success response
+      return res.status(201).json({ message: 'Admin created successfully', userId: newAdmin.id });
     } catch (error) {
       console.error('Error creating initial admin:', error);
-      res.status(500).json({ message: 'Failed to create initial admin user' });
+      return res.status(500).json({ message: 'Failed to create initial admin user' });
     }
   }
 );

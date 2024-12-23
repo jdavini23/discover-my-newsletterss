@@ -18,7 +18,7 @@ const ForgotPasswordPage: React.FC = () => {
     try {
       await resetPassword(email);
       setMessage('Password reset email sent. Check your inbox.');
-      
+
       // Optional: Redirect after a short delay
       setTimeout(() => {
         router.push('/login');
@@ -35,7 +35,7 @@ const ForgotPasswordPage: React.FC = () => {
       </Head>
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Reset Your Password</h2>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
             {error}
@@ -63,7 +63,7 @@ const ForgotPasswordPage: React.FC = () => {
               placeholder="Enter your email"
             />
           </div>
-          
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
@@ -73,10 +73,7 @@ const ForgotPasswordPage: React.FC = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <a 
-            href="/login" 
-            className="text-sm text-blue-600 hover:underline"
-          >
+          <a href="/login" className="text-sm text-blue-600 hover:underline">
             Back to Login
           </a>
         </div>

@@ -40,7 +40,7 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
         email: user.email,
         role: 'admin',
         createdAt: new Date(),
-        isInitialAdmin: true
+        isInitialAdmin: true,
       });
 
       // Set custom claims for admin (requires backend or Cloud Function)

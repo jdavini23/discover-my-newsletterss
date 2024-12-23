@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+} from 'typeorm';
 import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
@@ -42,10 +51,10 @@ export class User {
   @Column({ nullable: true, unique: true })
   facebookId!: string | null;
 
-  @Column({ 
-    type: 'enum', 
-    enum: ['local', 'google', 'facebook'], 
-    default: 'local' 
+  @Column({
+    type: 'enum',
+    enum: ['local', 'google', 'facebook'],
+    default: 'local',
   })
   authProvider!: string;
 

@@ -22,12 +22,14 @@ app.use(express.json());
 app.use('/api/admin', adminRoutes);
 
 // Initialize database
-initializeDatabase().then(() => {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+initializeDatabase()
+  .then(() => {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch(error => {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
   });
-}).catch(error => {
-  console.error('Failed to initialize database:', error);
-  process.exit(1);
-});

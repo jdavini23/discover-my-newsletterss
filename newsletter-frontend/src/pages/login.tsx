@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
       </Head>
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login to Newsletter Discovery</h2>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
             {error}
@@ -87,9 +87,7 @@ const LoginPage: React.FC = () => {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Or continue with
-              </span>
+              <span className="px-2 bg-white text-gray-500">Or continue with</span>
             </div>
           </div>
 
@@ -116,10 +114,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         <div className="mt-6 text-center">
-          <a 
-            href="/forgot-password" 
-            className="text-sm text-blue-600 hover:underline"
-          >
+          <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">
             Forgot your password?
           </a>
         </div>

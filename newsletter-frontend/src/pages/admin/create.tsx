@@ -8,7 +8,7 @@ const CreateAdminPage: React.FC = () => {
 
   const handleSecretSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Compare with environment variable
     if (adminSecret === process.env.NEXT_PUBLIC_ADMIN_SECRET) {
       setShowAdminCreation(true);
@@ -24,15 +24,12 @@ const CreateAdminPage: React.FC = () => {
       </Head>
       <div className="w-full max-w-md">
         {!showAdminCreation ? (
-          <form 
-            onSubmit={handleSecretSubmit} 
+          <form
+            onSubmit={handleSecretSubmit}
             className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
           >
             <div className="mb-4">
-              <label 
-                className="block text-gray-700 text-sm font-bold mb-2" 
-                htmlFor="adminSecret"
-              >
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="adminSecret">
                 Admin Secret
               </label>
               <input

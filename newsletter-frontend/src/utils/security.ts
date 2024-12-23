@@ -22,11 +22,11 @@ class SecurityService {
         if (!this.csrfToken) {
           await this.refreshCsrfToken();
         }
-        
+
         if (this.csrfToken) {
           config.headers['X-CSRF-Token'] = this.csrfToken;
         }
-        
+
         return config;
       },
       (error) => Promise.reject(error)
@@ -36,10 +36,13 @@ class SecurityService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 403 && error.response?.data?.error === 'CSRF Validation Failed') {
+        if (
+          error.response?.status === 403 &&
+          error.response?.data?.error === 'CSRF Validation Failed'
+        ) {
           // Token might be expired, refresh it
           await this.refreshCsrfToken();
-          
+
           // Retry the original request
           const config = error.config;
           config.headers['X-CSRF-Token'] = this.csrfToken;

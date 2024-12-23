@@ -71,7 +71,7 @@ const NewsletterList: React.FC = () => {
               key={newsletter.id}
               className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow"
             >
-              <h2 className="text-xl font-semibold mb-2">{newsletter.name}</h2>
+              <h2 className="text-xl font-semibold mb-2">{newsletter.title}</h2>
               <p className="text-gray-600 mb-4">{newsletter.description}</p>
 
               <div className="flex justify-between items-center">
@@ -85,7 +85,7 @@ const NewsletterList: React.FC = () => {
                 </a>
 
                 <button
-                  onClick={() => handleDeleteNewsletter(newsletter.id)}
+                  onClick={() => newsletter.id && handleDeleteNewsletter(newsletter.id)}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >
                   Delete
