@@ -12,9 +12,8 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint . --ext .ts",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
-    "firebase:login": "firebase login",
-    "firebase:init": "firebase init",
-    "firebase:deploy": "firebase deploy"
+    "firebase:test": "ts-node scripts/test-firebase-admin.ts",
+    "firebase:validate": "ts-node scripts/validate-firebase-credentials.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
