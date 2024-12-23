@@ -18,7 +18,8 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "allowJs": false,
-    "checkJs": false
+    "checkJs": false,
+    "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": ["src", "src/vite-env.d.ts"],
   "exclude": ["node_modules"],

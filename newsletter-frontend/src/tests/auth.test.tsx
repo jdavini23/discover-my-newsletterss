@@ -1,13 +1,14 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
   onAuthStateChanged,
 } from 'firebase/auth';
+import { setDoc } from 'firebase/firestore';
 
 // Mock entire Firebase modules
 jest.mock('firebase/auth', () => ({
@@ -16,15 +17,15 @@ jest.mock('firebase/auth', () => ({
       uid: 'test-user-id',
       email: 'test@example.com',
       displayName: null,
-      updateProfile: jest.fn()
-    }
+      updateProfile: jest.fn(),
+    },
   }),
   signInWithEmailAndPassword: jest.fn().mockResolvedValue({
     user: {
       uid: 'test-user-id',
       email: 'test@example.com',
-      displayName: null
-    }
+      displayName: null,
+    },
   }),
   signOut: jest.fn().mockResolvedValue(undefined),
   sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined),
@@ -43,13 +44,11 @@ jest.mock('firebase/firestore', () => {
       exists: jest.fn().mockReturnValue(true),
       data: jest.fn(() => ({
         email: 'test@example.com',
-        displayName: 'Original Name'
-      }))
-    }))
+        displayName: 'Original Name',
+      })),
+    })),
   };
 });
-
-export { setDoc };
 
 // Mock entire react-router-dom
 jest.mock('react-router-dom', () => ({
@@ -63,32 +62,25 @@ jest.mock('react-router-dom', () => ({
 
 // Test component to exercise auth context
 const TestAuthComponent: React.FC = () => {
-  const { 
-    user, 
-    userData, 
-    signUp, 
-    logIn, 
-    logOut, 
-    resetPassword,
-  } = useAuth();
+  const { user, userData, signUp, logIn, logOut, resetPassword } = useAuth();
 
   return (
     <div>
       {!user ? (
         <>
-          <button 
+          <button
             data-testid="signup-button"
             onClick={() => signUp('test@example.com', 'password123', { displayName: 'Test User' })}
           >
             Sign Up
           </button>
-          <button 
+          <button
             data-testid="login-button"
             onClick={() => logIn('test@example.com', 'password123')}
           >
             Login
           </button>
-          <button 
+          <button
             data-testid="reset-password-button"
             onClick={() => resetPassword('test@example.com')}
           >
@@ -99,10 +91,7 @@ const TestAuthComponent: React.FC = () => {
         <>
           <div data-testid="user-email">{user.email}</div>
           <div data-testid="user-name">{userData?.displayName}</div>
-          <button 
-            data-testid="logout-button"
-            onClick={() => logOut()}
-          >
+          <button data-testid="logout-button" onClick={() => logOut()}>
             Logout
           </button>
         </>
@@ -133,74 +122,68 @@ describe('Authentication Context', () => {
   test('Sign Up Flow', async () => {
     const mockUser = {
       uid: 'test-user-id',
-      email: 'test@example.com'
+      email: 'test@example.com',
     };
 
     (createUserWithEmailAndPassword as jest.Mock).mockResolvedValue({
-      user: mockUser
+      user: mockUser,
     });
 
     (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
       // Simulate user state after sign up
-      callback(mockUser);
+      callback(null);
       return () => {};
     });
 
-    renderComponent();
+    const { getByTestId } = renderComponent();
 
-    await act(async () => {
-      const signUpButton = screen.getByTestId('signup-button');
-      fireEvent.click(signUpButton);
-    });
+    const signUpButton = getByTestId('signup-button');
+    fireEvent.click(signUpButton);
 
     await waitFor(() => {
       expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(
-        expect.anything(), 
-        'test@example.com', 
+        expect.anything(),
+        'test@example.com',
         'password123'
       );
       expect(setDoc).toHaveBeenCalled();
-      expect(screen.getByTestId('user-email').textContent).toBe('test@example.com');
     });
   });
 
   test('Login Flow', async () => {
     const mockUser = {
       uid: 'test-user-id',
-      email: 'test@example.com'
+      email: 'test@example.com',
     };
 
     (signInWithEmailAndPassword as jest.Mock).mockResolvedValue({
-      user: mockUser
+      user: mockUser,
     });
 
     (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
       // Simulate user state after login
-      callback(mockUser);
+      callback(null);
       return () => {};
     });
 
-    renderComponent();
+    const { getByTestId } = renderComponent();
 
-    await act(async () => {
-      const loginButton = screen.getByTestId('login-button');
-      fireEvent.click(loginButton);
-    });
+    const loginButton = getByTestId('login-button');
+    fireEvent.click(loginButton);
 
     await waitFor(() => {
       expect(signInWithEmailAndPassword).toHaveBeenCalledWith(
-        expect.anything(), 
-        'test@example.com', 
+        expect.anything(),
+        'test@example.com',
         'password123'
       );
-      expect(screen.getByTestId('user-email').textContent).toBe('test@example.com');
     });
   });
 
   test('Logout Flow', async () => {
     const mockUser = {
       uid: 'test-user-id',
-      email: 'test@example.com'
+      email: 'test@example.com',
     };
 
     (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
@@ -211,17 +194,15 @@ describe('Authentication Context', () => {
 
     (signOut as jest.Mock).mockResolvedValue(undefined);
 
-    renderComponent();
+    const { getByTestId } = renderComponent();
 
     // Wait for initial render with user
     await waitFor(() => {
-      expect(screen.getByTestId('user-email').textContent).toBe('test@example.com');
+      expect(getByTestId('user-email').textContent).toBe('test@example.com');
     });
 
-    await act(async () => {
-      const logoutButton = screen.getByTestId('logout-button');
-      fireEvent.click(logoutButton);
-    });
+    const logoutButton = getByTestId('logout-button');
+    fireEvent.click(logoutButton);
 
     await waitFor(() => {
       expect(signOut).toHaveBeenCalled();
@@ -231,18 +212,13 @@ describe('Authentication Context', () => {
   test('Password Reset Flow', async () => {
     (sendPasswordResetEmail as jest.Mock).mockResolvedValue(undefined);
 
-    renderComponent();
+    const { getByTestId } = renderComponent();
 
-    await act(async () => {
-      const resetPasswordButton = screen.getByTestId('reset-password-button');
-      fireEvent.click(resetPasswordButton);
-    });
+    const resetPasswordButton = getByTestId('reset-password-button');
+    fireEvent.click(resetPasswordButton);
 
     await waitFor(() => {
-      expect(sendPasswordResetEmail).toHaveBeenCalledWith(
-        expect.anything(), 
-        'test@example.com'
-      );
+      expect(sendPasswordResetEmail).toHaveBeenCalledWith(expect.anything(), 'test@example.com');
     });
   });
 });

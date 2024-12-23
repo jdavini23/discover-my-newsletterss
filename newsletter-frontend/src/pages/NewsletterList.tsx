@@ -14,6 +14,7 @@ const NewsletterList: React.FC = () => {
         setNewsletters(data);
         setLoading(false);
       } catch (err) {
+        console.error('Error fetching newsletters:', err);
         setError('Failed to fetch newsletters');
         setLoading(false);
       }
@@ -27,6 +28,7 @@ const NewsletterList: React.FC = () => {
       await newsletterService.deleteNewsletter(id);
       setNewsletters(newsletters.filter((newsletter) => newsletter.id !== id));
     } catch (err) {
+      console.error('Error deleting newsletter:', err);
       setError('Failed to delete newsletter');
     }
   };

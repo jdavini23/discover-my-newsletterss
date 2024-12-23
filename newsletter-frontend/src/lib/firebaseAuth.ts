@@ -1,11 +1,10 @@
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
+import {
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut,
+  signInWithPopup,
   GoogleAuthProvider,
-  signInWithPopup
 } from 'firebase/auth';
 import { doc, setDoc, getFirestore } from 'firebase/firestore';
 import { auth } from './firebase';
@@ -22,7 +21,7 @@ export const signUp = async (email: string, password: string, additionalInfo?: a
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         ...additionalInfo,
-        createdAt: new Date()
+        createdAt: new Date(),
       });
     }
 
@@ -50,11 +49,15 @@ export const signInWithGoogle = async () => {
     const user = result.user;
 
     // Optional: Store user info in Firestore
-    await setDoc(doc(db, 'users', user.uid), {
-      email: user.email,
-      displayName: user.displayName,
-      createdAt: new Date()
-    }, { merge: true });
+    await setDoc(
+      doc(db, 'users', user.uid),
+      {
+        email: user.email,
+        displayName: user.displayName,
+        createdAt: new Date(),
+      },
+      { merge: true }
+    );
 
     return user;
   } catch (error) {

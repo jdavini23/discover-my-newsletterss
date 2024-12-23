@@ -3,6 +3,7 @@
 ## 1. Development Environment Setup
 
 ### Prerequisites
+
 - Node.js v20+
 - npm v10+
 - Git v2.40+
@@ -10,6 +11,7 @@
 - Visual Studio Code (recommended)
 
 ### Initial Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/discover-my-newsletters.git
@@ -29,6 +31,7 @@ npm run prepare
 ## 2. Development Workflow
 
 ### Starting the Development Environment
+
 ```bash
 # Start all services (frontend, backend, DB, Redis)
 docker-compose up
@@ -38,6 +41,7 @@ docker-compose up frontend backend
 ```
 
 ### Running Tests
+
 ```bash
 # Run all tests
 npm test
@@ -50,6 +54,7 @@ npm run test:frontend
 ```
 
 ### Code Quality Tools
+
 ```bash
 # Lint code
 npm run lint
@@ -65,6 +70,7 @@ npm run clean
 ```
 
 ### NPM Maintenance
+
 ```bash
 # Diagnose npm issues
 npm run diagnose
@@ -76,7 +82,9 @@ npm run fix
 ## 3. Git Workflow
 
 ### Commit Message Format
+
 We use conventional commits format:
+
 - `feat:` New features
 - `fix:` Bug fixes
 - `docs:` Documentation changes
@@ -89,7 +97,9 @@ We use conventional commits format:
 - `chore:` Maintenance tasks
 
 ### Pre-commit Hooks
+
 The following checks run automatically before commits:
+
 - Linting
 - Code formatting
 - Type checking
@@ -99,6 +109,7 @@ The following checks run automatically before commits:
 ## 4. Docker Environment
 
 ### Available Services
+
 - Frontend (React): Port 3000
 - Backend (Node.js): Port 4000
 - MySQL Database: Port 3306
@@ -106,6 +117,7 @@ The following checks run automatically before commits:
 - Test Database: Port 3307
 
 ### Docker Commands
+
 ```bash
 # Start development environment
 docker-compose up
@@ -123,29 +135,44 @@ docker-compose down -v
 ## 5. Code Quality Standards
 
 ### TypeScript
+
 - Strict mode enabled
 - No `any` types unless absolutely necessary
 - Explicit return types on functions
 - Comprehensive error handling
 - Proper type definitions
+- Consistent code formatting using Prettier
+- ESLint configuration for catching unused variables and imports
+- Comprehensive type checking across the project
 
 ### React Best Practices
+
 - Functional components with hooks
 - Proper prop typing
 - Memoization for expensive computations
 - Error boundaries implementation
 - Accessibility standards
+- Consistent code formatting
+- Minimal prop drilling
+- Proper state management
+- Efficient use of context providers
+- Comprehensive error logging
 
 ### Testing Requirements
+
 - Unit tests for business logic
 - Integration tests for API endpoints
 - Component tests for React components
+- Mocking external dependencies (Firebase, APIs)
 - Minimum 80% test coverage
 - E2E tests for critical paths
+- Comprehensive error handling in tests
+- Testing authentication and user management flows
 
 ## 6. Security Best Practices
 
 ### Authentication & Authorization
+
 - JWT-based authentication
 - Role-based access control
 - Secure password hashing
@@ -153,6 +180,7 @@ docker-compose down -v
 - Session management
 
 ### API Security
+
 - Rate limiting
 - CORS configuration
 - Input validation
@@ -161,6 +189,7 @@ docker-compose down -v
 - Security headers
 
 ### Data Protection
+
 - Encrypted environment variables
 - Secure database connections
 - PII data handling
@@ -170,6 +199,7 @@ docker-compose down -v
 ## 7. Performance Guidelines
 
 ### Frontend
+
 - Code splitting
 - Lazy loading
 - Image optimization
@@ -177,6 +207,7 @@ docker-compose down -v
 - Performance monitoring
 
 ### Backend
+
 - Query optimization
 - Caching strategy
 - Connection pooling
@@ -186,6 +217,7 @@ docker-compose down -v
 ## 8. Monitoring and Logging
 
 ### Logging Standards
+
 - Structured logging format
 - Error context preservation
 - PII data protection
@@ -193,6 +225,7 @@ docker-compose down -v
 - Performance metrics
 
 ### Monitoring Tools
+
 - Application metrics
 - Error tracking
 - Performance monitoring
@@ -202,6 +235,7 @@ docker-compose down -v
 ## 9. Deployment
 
 ### Production Deployment
+
 ```bash
 # Build production images
 NODE_ENV=production docker-compose build
@@ -211,6 +245,7 @@ NODE_ENV=production docker-compose up -d
 ```
 
 ### Environment Variables
+
 - Use `.env` for local development
 - Use secure secrets management in production
 - Regular credential rotation
@@ -219,12 +254,14 @@ NODE_ENV=production docker-compose up -d
 ## 10. Troubleshooting
 
 ### Common Issues
+
 - Check logs: `docker-compose logs -f [service]`
 - Verify environment variables
 - Check service health: `docker-compose ps`
 - Review container resources
 
 ### Development Tools
+
 - Node.js debugger configuration
 - React DevTools setup
 - Redux DevTools (if applicable)
@@ -233,6 +270,7 @@ NODE_ENV=production docker-compose up -d
 ## 11. Documentation
 
 ### Requirements
+
 - README.md with setup instructions
 - API documentation (OpenAPI/Swagger)
 - Component documentation
@@ -240,6 +278,7 @@ NODE_ENV=production docker-compose up -d
 - Changelog maintenance
 
 ### Style Guide
+
 - Clear and concise writing
 - Code examples where appropriate
 - Regular updates

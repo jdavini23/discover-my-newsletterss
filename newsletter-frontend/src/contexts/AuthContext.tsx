@@ -1,16 +1,16 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  User, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import {
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
   updateProfile,
-  UserCredential
+  UserCredential,
 } from 'firebase/auth';
-import { doc, setDoc, getFirestore, getDoc } from 'firebase/firestore';
-import { auth } from '../lib/firebase';
+import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, firestore } from '../lib/firebase';
 import { AuthProviderType, signInWithProvider } from '../lib/authProviders';
 
 interface UserData {
@@ -37,35 +37,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const db = getFirestore();
+  const db = collection(firestore, 'users');
 
   const signUp = async (email: string, password: string, additionalInfo?: UserData) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    
+
     // Update profile if additional info provided
     if (additionalInfo?.displayName) {
       await updateProfile(userCredential.user, {
-        displayName: additionalInfo.displayName
+        displayName: additionalInfo.displayName,
       });
     }
 
     // Store user data in Firestore
-    await setDoc(doc(db, 'users', userCredential.user.uid), {
+    await setDoc(doc(db, userCredential.user.uid), {
       email: userCredential.user.email,
       ...additionalInfo,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     return userCredential;
   };
 
-  const logIn = (email: string, password: string) => 
+  const logIn = (email: string, password: string) =>
     signInWithEmailAndPassword(auth, email, password);
 
   const logOut = () => signOut(auth);
 
-  const resetPassword = (email: string) => 
-    sendPasswordResetEmail(auth, email);
+  const resetPassword = (email: string) => sendPasswordResetEmail(auth, email);
 
   const updateUserProfile = async (userData: UserData) => {
     if (!user) throw new Error('No authenticated user');
@@ -73,41 +72,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Update Firebase Authentication profile
     await updateProfile(user, {
       displayName: userData.displayName || undefined,
-      photoURL: userData.photoURL || undefined
+      photoURL: userData.photoURL || undefined,
     });
 
     // Update Firestore user document
-    await setDoc(doc(db, 'users', user.uid), 
-      { ...userData }, 
-      { merge: true }
-    );
+    await setDoc(doc(db, user.uid), { ...userData }, { merge: true });
   };
 
   const signInWithOAuthProvider = async (provider: AuthProviderType) => {
     return await signInWithProvider(provider);
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      
-      if (currentUser) {
-        // Fetch additional user data from Firestore
-        const userDocRef = doc(db, 'users', currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        
+  const onAuthStateChange = useCallback(async (currentUser: User | null) => {
+    setUser(currentUser);
+    setLoading(false);
+
+    if (currentUser) {
+      // Fetch additional user data from Firestore
+      const userDocRef = doc(db, currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const additionalUserData = userDoc.data();
         setUserData({
           displayName: currentUser.displayName,
           email: currentUser.email,
           photoURL: currentUser.photoURL,
-          ...userDoc.data()
+          ...additionalUserData,
         });
       } else {
-        setUserData(null);
+        setUserData({
+          displayName: currentUser.displayName,
+          email: currentUser.email,
+          photoURL: currentUser.photoURL,
+        });
       }
+    } else {
+      setUserData(null);
+    }
+  }, []);
 
-      setLoading(false);
-    });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, onAuthStateChange);
 
     return () => unsubscribe();
   }, []);
@@ -121,14 +127,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logOut,
     resetPassword,
     updateUserProfile,
-    signInWithOAuthProvider
+    signInWithOAuthProvider,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

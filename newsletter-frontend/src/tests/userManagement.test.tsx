@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { updateProfile, onAuthStateChanged } from 'firebase/auth';
+import { setDoc } from 'firebase/firestore';
 
 // Mock entire Firebase modules
 jest.mock('firebase/auth', () => ({
@@ -19,31 +20,27 @@ jest.mock('firebase/firestore', () => {
       exists: jest.fn().mockReturnValue(true),
       data: jest.fn(() => ({
         email: 'test@example.com',
-        displayName: 'Original Name'
-      }))
-    }))
+        displayName: 'Original Name',
+      })),
+    })),
   };
 });
 
 // Test component to exercise user management
 const UserManagementTestComponent: React.FC = () => {
-  const { 
-    user, 
-    userData, 
-    updateUserProfile 
-  } = useAuth();
+  const { user, userData, updateUserProfile } = useAuth();
 
   return (
     <div>
       {user && (
         <>
           <div data-testid="current-name">{userData?.displayName}</div>
-          <button 
+          <button
             data-testid="update-profile-button"
-            onClick={() => 
-              updateUserProfile({ 
+            onClick={() =>
+              updateUserProfile({
                 displayName: 'Updated Name',
-                photoURL: 'https://example.com/avatar.jpg'
+                photoURL: 'https://example.com/avatar.jpg',
               })
             }
           >
@@ -63,7 +60,7 @@ describe('User Management Features', () => {
       // Simulate an initial state with a user
       callback({
         uid: 'test-user-id',
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
       return () => {};
     });

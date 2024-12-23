@@ -20,8 +20,8 @@ export const setAdminClaims = functions.https.onCall(async (data, context) => {
   }
 
   try {
-    await admin.auth().setCustomUserClaims(context.auth.uid, { 
-      admin: true 
+    await admin.auth().setCustomUserClaims(context.auth.uid, {
+      admin: true,
     });
 
     return { success: true };
@@ -32,7 +32,7 @@ export const setAdminClaims = functions.https.onCall(async (data, context) => {
 });
 
 // Cloud function to create initial admin user
-export const createInitialAdminUser = functions.https.onCall(async (data, context) => {
+export const createInitialAdminUser = functions.https.onCall(async (data, _context) => {
   const { email, password, adminSecret } = data;
 
   // Validate input
@@ -51,25 +51,25 @@ export const createInitialAdminUser = functions.https.onCall(async (data, contex
     const userRecord = await admin.auth().createUser({
       email,
       password,
-      emailVerified: false
+      emailVerified: false,
     });
 
     // Set admin custom claims
-    await admin.auth().setCustomUserClaims(userRecord.uid, { 
-      admin: true 
+    await admin.auth().setCustomUserClaims(userRecord.uid, {
+      admin: true,
     });
 
     // Optional: Store additional user info in Firestore
     await admin.firestore().collection('users').doc(userRecord.uid).set({
       email,
       role: 'admin',
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: 'Initial admin user created successfully',
-      userId: userRecord.uid 
+      userId: userRecord.uid,
     };
   } catch (error) {
     console.error('Error creating initial admin user', error);

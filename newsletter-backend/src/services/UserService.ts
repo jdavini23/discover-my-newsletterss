@@ -1,4 +1,4 @@
-import { getConnection, MoreThan } from 'typeorm';
+import { MoreThan } from 'typeorm';
 import { User } from '../models/User';
 import { SecurityEvent } from '../models/SecurityEvent';
 import { hashPassword } from '../utils/authUtils';
@@ -24,14 +24,19 @@ export class UserService {
     }
   }
 
-  async createAdminUser(email: string, password: string, name: string, adminSecret: string): Promise<User> {
+  async createAdminUser(
+    email: string,
+    password: string,
+    name: string,
+    adminSecret: string
+  ): Promise<User> {
     try {
       if (adminSecret !== process.env.ADMIN_SECRET) {
         throw new Error('Invalid admin secret');
       }
 
       const hashedPassword = await hashPassword(password);
-      
+
       const adminUser = new User();
       adminUser.email = email;
       adminUser.password = hashedPassword;
@@ -39,7 +44,7 @@ export class UserService {
       adminUser.role = 'admin';
 
       await this.logSecurityEvent('ADMIN_USER_CREATED', adminUser.id);
-      
+
       return await this.userRepository.save(adminUser);
     } catch (error) {
       securityLogger.error('Error creating admin user', { error, email });
@@ -56,7 +61,7 @@ export class UserService {
 
       const user = new User();
       Object.assign(user, userData);
-      
+
       if (userData.password) {
         user.password = await hashPassword(userData.password);
       }
@@ -81,7 +86,7 @@ export class UserService {
         throw new Error('Invalid credentials');
       }
 
-      const isValid = await hashPassword(password) === user.password;
+      const isValid = (await hashPassword(password)) === user.password;
       if (!isValid) {
         await this.logSecurityEvent('FAILED_LOGIN_ATTEMPT', user.id);
         throw new Error('Invalid credentials');
@@ -118,11 +123,11 @@ export class UserService {
 
   async resetPassword(token: string, newPassword: string): Promise<boolean> {
     const userRepository = AppDataSource.getRepository(User);
-    const user = await userRepository.findOne({ 
-      where: { 
+    const user = await userRepository.findOne({
+      where: {
         passwordResetToken: token,
-        passwordResetExpires: MoreThan(new Date()) 
-      }
+        passwordResetExpires: MoreThan(new Date()),
+      },
     });
 
     if (!user || !user.passwordResetExpires || user.passwordResetExpires < new Date()) {
@@ -140,8 +145,8 @@ export class UserService {
 
   async verifyEmail(token: string): Promise<void> {
     try {
-      const user = await this.userRepository.findOne({ 
-        where: { emailVerificationToken: token } 
+      const user = await this.userRepository.findOne({
+        where: { emailVerificationToken: token },
       });
 
       if (!user) {
@@ -160,8 +165,8 @@ export class UserService {
   }
 
   async logSecurityEvent(
-    eventType: string, 
-    userId: string, 
+    eventType: string,
+    userId: string,
     metadata?: Record<string, any>
   ): Promise<void> {
     try {
@@ -170,7 +175,7 @@ export class UserService {
         userId,
         ipAddress: '0.0.0.0',
         metadata,
-        isHighRisk: eventType.includes('FAILED') || eventType.includes('RESET')
+        isHighRisk: eventType.includes('FAILED') || eventType.includes('RESET'),
       });
       await this.securityEventRepository.save(event);
     } catch (error) {
@@ -193,9 +198,9 @@ export class UserService {
 
       user.role = 'admin';
       await this.userRepository.save(user);
-      
+
       await this.logSecurityEvent('USER_PROMOTED_TO_ADMIN', user.id, {
-        promotedBy: promoterUserId
+        promotedBy: promoterUserId,
       });
 
       return user;

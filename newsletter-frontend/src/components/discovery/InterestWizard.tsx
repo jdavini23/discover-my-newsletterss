@@ -47,6 +47,7 @@ const InterestWizard: React.FC = () => {
         type: 'success',
       });
     } catch (error) {
+      console.error('Error in handleSubmit:', error);
       addNotification({
         message: 'Failed to update interests',
         type: 'error',
