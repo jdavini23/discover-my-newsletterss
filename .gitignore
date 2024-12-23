@@ -1,1 +1,15 @@
 node_modules
+
+# Firebase
+*.firebaserc
+.firebase/
+
+# Secrets
+/secrets/*
+!secrets/setup-firebase-env.sh
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

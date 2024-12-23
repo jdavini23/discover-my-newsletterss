@@ -1,18 +1,23 @@
+<<<<<<< HEAD
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath } from 'url';
 import path from 'path';
+=======
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+>>>>>>> ade12b2f6031b48446df6ed2b184745fba3bdf82
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode`
-  const env = loadEnv(mode, process.cwd(), '')
-  
+  const env = loadEnv(mode, process.cwd(), '');
+
   return {
     plugins: [react()],
     server: {
       port: 3000,
-      open: true
+      open: true,
     },
     build: {
       outDir: 'build',
@@ -25,23 +30,23 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules')) {
               // Group large libraries into their own chunks
               if (id.includes('@mui') || id.includes('react-router')) {
-                return 'vendor-ui'
+                return 'vendor-ui';
               }
               if (id.includes('react-hot-toast') || id.includes('zustand')) {
-                return 'vendor-libs'
+                return 'vendor-libs';
               }
-              return 'vendor'
+              return 'vendor';
             }
-            
+
             // Split pages into separate chunks
             if (id.includes('/src/pages/')) {
-              return 'pages'
+              return 'pages';
             }
           },
-          format: 'es'
-        }
+          format: 'es',
+        },
       },
-      chunkSizeWarningLimit: 500 // Increase chunk size warning limit
+      chunkSizeWarningLimit: 500, // Increase chunk size warning limit
     },
     test: {
       globals: true,
@@ -67,15 +72,16 @@ export default defineConfig(({ mode }) => {
     // Add environment variable support
     define: {
       'import.meta.env': JSON.stringify(env),
-      'process.env': env
+      'process.env': env,
     },
     // Explicitly set TypeScript options
     esbuild: {
       jsx: 'automatic',
-      jsxImportSource: 'react'
+      jsxImportSource: 'react',
     },
     // Ensure proper file extensions are handled
     resolve: {
+<<<<<<< HEAD
       alias: {
         '@': path.resolve(__dirname, './src'),
         '@components': path.resolve(__dirname, './src/components'),
@@ -87,3 +93,9 @@ export default defineConfig(({ mode }) => {
     }
   }
 })
+=======
+      extensions: ['.tsx', '.ts', '.jsx', '.js'],
+    },
+  };
+});
+>>>>>>> ade12b2f6031b48446df6ed2b184745fba3bdf82

@@ -7,7 +7,7 @@ enum ErrorType {
   NetworkError = 'NETWORK_ERROR',
   APIError = 'API_ERROR',
   RenderError = 'RENDER_ERROR',
-  UnknownError = 'UNKNOWN_ERROR'
+  UnknownError = 'UNKNOWN_ERROR',
 }
 
 // Detailed error logging service
@@ -19,7 +19,7 @@ const logErrorToService = async (error: Error, errorType: ErrorType, componentSt
       name: error.name,
       type: errorType,
       stack: error.stack,
-      componentStack
+      componentStack,
     });
 
     // Optional: Send error to backend logging service
@@ -47,7 +47,7 @@ const ErrorNotifier: React.FC<{ error: Error; errorType: ErrorType }> = ({ error
     // Show user-friendly notification
     addNotification({
       message: getErrorMessage(errorType),
-      type: 'error'
+      type: 'error',
     });
   }, [error, errorType, addNotification]);
 
@@ -83,17 +83,17 @@ interface ErrorBoundaryState {
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { 
+    this.state = {
       hasError: false,
       error: undefined,
-      errorType: ErrorType.UnknownError
+      errorType: ErrorType.UnknownError,
     };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Determine error type based on error characteristics
     let errorType = ErrorType.UnknownError;
-    
+
     if (error.message.includes('fetch') || error.message.includes('network')) {
       errorType = ErrorType.NetworkError;
     } else if (error.message.includes('API') || error.message.includes('request failed')) {
@@ -102,10 +102,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       errorType = ErrorType.RenderError;
     }
 
-    return { 
+    return {
       hasError: true,
       error,
-      errorType
+      errorType,
     };
   }
 
@@ -121,10 +121,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   handleErrorReset = () => {
-    this.setState({ 
-      hasError: false, 
+    this.setState({
+      hasError: false,
       error: undefined,
-      errorType: ErrorType.UnknownError 
+      errorType: ErrorType.UnknownError,
     });
   };
 
@@ -134,22 +134,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <>
           {this.state.error && (
-            <ErrorNotifier 
-              error={this.state.error} 
-              errorType={this.state.errorType} 
-            />
+            <ErrorNotifier error={this.state.error} errorType={this.state.errorType} />
           )}
-          
+
           {/* Use custom fallback or default fallback UI */}
           {this.props.fallback || (
             <div className="error-boundary min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
               <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8 text-center">
-                <h1 className="text-3xl font-bold text-red-600 mb-4">
-                  Oops! Something Went Wrong
-                </h1>
-                <p className="text-gray-700 mb-6">
-                  {getErrorMessage(this.state.errorType)}
-                </p>
+                <h1 className="text-3xl font-bold text-red-600 mb-4">Oops! Something Went Wrong</h1>
+                <p className="text-gray-700 mb-6">{getErrorMessage(this.state.errorType)}</p>
 
                 {this.state.error && (
                   <details className="mb-6 text-left bg-gray-100 p-4 rounded">
@@ -169,7 +162,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                   >
                     Try Again
                   </button>
-                  
+
                   <Link
                     to="/"
                     className="w-full bg-gray-200 text-gray-800 py-2 rounded text-center hover:bg-gray-300 transition"
