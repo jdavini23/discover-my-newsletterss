@@ -13,7 +13,10 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\"",
     "prepare": "husky",
-    "analyze:bundle": "vite-bundle-analyzer"
+    "analyze:bundle": "vite-bundle-analyzer",
+    "optimize": "powershell -File scripts/optimize.ps1",
+    "dependency:audit": "powershell -File scripts/dependency-analysis.ps1",
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -52,6 +55,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^1.0.1",
     "autoprefixer": "^10.4.20",
+    "depcheck": "^1.4.7",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.7.0",
@@ -67,6 +71,7 @@
     "terser": "^5.26.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
+    "vite-bundle-analyzer": "^0.7.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^1.6.0"
   },
