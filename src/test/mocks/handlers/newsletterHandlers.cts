@@ -3,8 +3,6 @@ import { getCurrentConfig } from '../../../config/environment';
 
 const API_URL = getCurrentConfig().API_URL;
 
-console.log('MSW API_URL:', API_URL);
-
 // Sample data
 const newsletters = Array.from({ length: 20 }, (_, index) => ({
   id: `newsletter-${index + 1}`,
@@ -28,8 +26,6 @@ export const newsletterHandlers = [
   // Search newsletters
   http.get(`${API_URL}/newsletters/search`, ({ request }) => {
     const url = new URL(request.url);
-    console.log('MSW Search Request URL:', request.url);
-    console.log('MSW Search Params:', Object.fromEntries(url.searchParams.entries()));
 
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = parseInt(url.searchParams.get('limit') || '10');
@@ -51,24 +47,19 @@ export const newsletterHandlers = [
     }
 
     if (categories.length > 0) {
-      console.log('MSW Filtering by categories:', categories);
       filteredNewsletters = filteredNewsletters.filter((newsletter) =>
         categories.some((category) => newsletter.categories.includes(category))
       );
-      console.log('MSW Filtered newsletters count:', filteredNewsletters.length);
     }
 
     if (frequency.length > 0) {
-      console.log('MSW Filtering by frequency:', frequency);
       filteredNewsletters = filteredNewsletters.filter((newsletter) =>
         frequency.includes(newsletter.frequency)
       );
-      console.log('MSW Filtered newsletters count:', filteredNewsletters.length);
     }
 
     // Apply sorting
     if (sortBy) {
-      console.log('MSW Sorting by:', sortBy);
       switch (sortBy) {
         case 'price':
           filteredNewsletters.sort((a, b) => a.price.amount - b.price.amount);
@@ -99,33 +90,27 @@ export const newsletterHandlers = [
       totalPages: Math.ceil(filteredNewsletters.length / limit),
     };
 
-    console.log('MSW Response:', response);
     return HttpResponse.json(response);
   }),
 
   // Get newsletter by ID
   http.get(`${API_URL}/newsletters/:id`, ({ params }) => {
-    console.log('MSW Get Newsletter by ID:', params.id);
     const newsletter = newsletters.find((n) => n.id === params.id);
 
     if (!newsletter) {
-      console.log('MSW Newsletter not found');
       return new HttpResponse(null, { status: 404 });
     }
 
-    console.log('MSW Newsletter found:', newsletter);
     return HttpResponse.json(newsletter);
   }),
 
   // Get recommended newsletters
   http.get(`${API_URL}/newsletters/recommended`, () => {
-    console.log('MSW Getting recommended newsletters');
     return HttpResponse.json(newsletters.slice(0, 5));
   }),
 
   // Get featured newsletters
   http.get(`${API_URL}/newsletters/featured`, () => {
-    console.log('MSW Getting featured newsletters');
     return HttpResponse.json(newsletters.slice(5, 10));
   }),
 
