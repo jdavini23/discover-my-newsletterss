@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface AuthState {
-  user: any | null;
+  user: unknown | null;
   token: string | null;
   isAuthenticated: () => boolean;
-  login: (userData: any, token: string) => void;
+  login: (userData: unknown, token: string) => void;
   logout: () => void;
 }
 

@@ -74,3 +74,4 @@ storybook-static
 *.local
 
 *storybook.log
+.vercel

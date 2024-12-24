@@ -3,7 +3,7 @@ import { create } from 'zustand';
 // Define the shape of the newsletter search state
 export interface NewsletterSearchState {
   searchQuery: string;
-  results: any[];
+  results: unknown[];
   isLoading: boolean;
   error: string | null;
   setSearchQuery: (query: string) => void;

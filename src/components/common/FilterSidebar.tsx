@@ -8,7 +8,7 @@ interface FilterOption {
 interface FilterSidebarProps {
   categories: FilterOption[];
   tags: FilterOption[];
-  onApplyFilters: (filters: { categories: string[], tags: string[] }) => void;
+  onApplyFilters: (filters: { categories: string[]; tags: string[] }) => void;
 }
 
 export const FilterSidebar: React.FC<FilterSidebarProps> = ({

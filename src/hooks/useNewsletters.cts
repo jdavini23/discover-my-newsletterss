@@ -2,32 +2,32 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { newsletterApi } from '../services/api/newsletterApi';
 import type { NewsletterSearchFilters } from '../types/newsletter';
 
-export const useNewsletters = () => {
+export const useNewsletterSearch = (filters: NewsletterSearchFilters) => 
+  useQuery({
+    queryKey: ['newsletters', 'search', filters],
+    queryFn: () => newsletterApi.search(filters),
+  });
+
+export const useNewsletter = (id: string) => 
+  useQuery({
+    queryKey: ['newsletter', id],
+    queryFn: () => newsletterApi.getById(id),
+  });
+
+export const useRecommendedNewsletters = () => 
+  useQuery({
+    queryKey: ['newsletters', 'recommended'],
+    queryFn: () => newsletterApi.getRecommended(),
+  });
+
+export const useFeaturedNewsletters = () => 
+  useQuery({
+    queryKey: ['newsletters', 'featured'],
+    queryFn: () => newsletterApi.getFeatured(),
+  });
+
+export const useNewsletterSubscription = () => {
   const queryClient = useQueryClient();
-
-  const search = (filters: NewsletterSearchFilters) =>
-    useQuery({
-      queryKey: ['newsletters', 'search', filters],
-      queryFn: () => newsletterApi.search(filters),
-    });
-
-  const getNewsletter = (id: string) =>
-    useQuery({
-      queryKey: ['newsletter', id],
-      queryFn: () => newsletterApi.getById(id),
-    });
-
-  const getRecommended = () =>
-    useQuery({
-      queryKey: ['newsletters', 'recommended'],
-      queryFn: () => newsletterApi.getRecommended(),
-    });
-
-  const getFeatured = () =>
-    useQuery({
-      queryKey: ['newsletters', 'featured'],
-      queryFn: () => newsletterApi.getFeatured(),
-    });
 
   const subscribe = useMutation({
     mutationFn: newsletterApi.subscribe,
@@ -45,12 +45,5 @@ export const useNewsletters = () => {
     },
   });
 
-  return {
-    search,
-    getNewsletter,
-    getRecommended,
-    getFeatured,
-    subscribe,
-    unsubscribe,
-  };
+  return { subscribe, unsubscribe };
 };

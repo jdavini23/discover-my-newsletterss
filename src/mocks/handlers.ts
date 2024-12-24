@@ -49,7 +49,7 @@ export const handlers = [
     await delay(500);
 
     // Filter newsletters based on search parameters
-    let filteredNewsletters = mockNewsletters.filter(newsletter => {
+    const filteredNewsletters = mockNewsletters.filter(newsletter => {
       // Query filter
       const matchesQuery = !params.query || 
         newsletter.title.toLowerCase().includes(params.query.toLowerCase()) ||

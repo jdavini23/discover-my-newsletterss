@@ -48,7 +48,7 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
       await user.getIdToken(true); // Force token refresh
 
       setSuccess(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message);
       console.error('Admin user creation error', error);
     }

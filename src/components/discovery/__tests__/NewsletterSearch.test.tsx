@@ -44,7 +44,7 @@ const mockStoreState = {
 };
 
 const renderComponent = () => {
-  (useNewsletterSearchStore as any).mockReturnValue(mockStoreState);
+  (useNewsletterSearchStore as unknown).mockReturnValue(mockStoreState);
 
   return render(
     <ChakraProvider>
@@ -125,7 +125,7 @@ describe('NewsletterSearch Component', () => {
   });
 
   it('displays loading spinner when loading', () => {
-    (useNewsletterSearchStore as any).mockReturnValue({
+    (useNewsletterSearchStore as unknown).mockReturnValue({
       ...mockStoreState,
       isLoading: true,
     });
@@ -136,7 +136,7 @@ describe('NewsletterSearch Component', () => {
   });
 
   it('displays error message when error occurs', () => {
-    (useNewsletterSearchStore as any).mockReturnValue({
+    (useNewsletterSearchStore as unknown).mockReturnValue({
       ...mockStoreState,
       error: 'Something went wrong',
     });

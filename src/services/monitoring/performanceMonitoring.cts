@@ -22,7 +22,7 @@ class PerformanceMonitoringService {
 
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
     const paint = performance.getEntriesByType('paint');
-    const memory = (performance as any).memory;
+    const memory = (performance as unknown).memory;
 
     const metrics: PerformanceMetrics = {
       timeToFirstByte: navigation.responseStart - navigation.requestStart,

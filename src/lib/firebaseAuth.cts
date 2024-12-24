@@ -11,7 +11,7 @@ import { auth } from './firebase';
 
 const db = getFirestore();
 
-export const signUp = async (email: string, password: string, additionalInfo?: any) => {
+export const signUp = async (email: string, password: string, additionalInfo?: unknown) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;

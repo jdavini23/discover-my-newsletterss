@@ -23,7 +23,7 @@ const ForgotPasswordPage: React.FC = () => {
       setTimeout(() => {
         router.push('/login');
       }, 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message);
     }
   };

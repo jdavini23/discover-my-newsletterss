@@ -87,7 +87,7 @@ describe('AuthService', () => {
 
   it('should get current user when token is valid', () => {
     // Mock a valid token
-    (Cookies.get as any).mockReturnValue('mock.valid.token');
+    (Cookies.get as unknown).mockReturnValue('mock.valid.token');
 
     // Mock token decoding
     const originalDecodeToken = Object.getPrototypeOf(authService).decodeToken;
@@ -108,7 +108,7 @@ describe('AuthService', () => {
   });
 
   it('should return null when no token exists', () => {
-    (Cookies.get as any).mockReturnValue(undefined);
+    (Cookies.get as unknown).mockReturnValue(undefined);
 
     const user = authService.getCurrentUser();
 

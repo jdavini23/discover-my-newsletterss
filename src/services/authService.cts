@@ -122,7 +122,7 @@ class AuthService {
   }
 
   // Simple token decoding (replace with proper JWT decoding in production)
-  private decodeToken(token: string): any {
+  private decodeToken(token: string): unknown {
     try {
       const base64Payload = token.split('.')[1];
       const payload = JSON.parse(atob(base64Payload));

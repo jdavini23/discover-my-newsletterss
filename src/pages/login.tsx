@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
     try {
       await logIn(email, password);
       router.push('/dashboard'); // Redirect after successful login
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message);
     }
   };
@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
     try {
       await signInWithOAuthProvider(provider);
       router.push('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message);
     }
   };

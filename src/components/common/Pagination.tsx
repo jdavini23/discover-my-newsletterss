@@ -24,8 +24,8 @@ export const Pagination: React.FC<PaginationProps> = ({
       pages.push(1);
       
       // Determine start and end for middle pages
-      let start = Math.max(2, currentPage - 1);
-      let end = Math.min(totalPages - 1, currentPage + 1);
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
       
       // Add ellipsis if needed
       if (start > 2) {

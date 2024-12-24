@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   stories: ['./src/components/**/*.stories.{js,jsx,ts,tsx}'],
   entry: './src/components', // Path to your component directory
   theme: {
@@ -19,7 +19,9 @@ module.exports = {
         '@hooks': '/src/hooks',
         '@services': '/src/services',
         '@stores': '/src/stores',
-        '@types': '/src/types'
+        '@types': '/src/types',
+        '@utils': '/src/utils',
+        '@styles': '/src/styles'
       },
       extensions: ['.js', '.ts', '.jsx', '.tsx', '.json']
     },

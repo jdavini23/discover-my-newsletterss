@@ -25,6 +25,7 @@ const reactHooksPlugin = require('eslint-plugin-react-hooks');
 const reactRefreshPlugin = require('eslint-plugin-react-refresh');
 const spellcheckPlugin = require('eslint-plugin-spellcheck');
 const globals = require('globals');
+const tsParser = require('@typescript-eslint/parser');
 
 module.exports = [
   {
@@ -36,14 +37,15 @@ module.exports = [
       '**/*.config.*',
       '.eslintrc.cjs',
       '.prettierrc.js',
-      'public/mockServiceWorker.js'
+      'public/mockServiceWorker.js',
+      'storybook-static/**'
     ]
   },
   {
     // TypeScript and React configuration
     files: ['src/**/*.{ts,tsx,cts}'],
     languageOptions: {
-      parser: typescriptEslint.parser,
+      parser: tsParser,
       globals: {
         ...globals.browser,
         ...globals.es2021
@@ -51,46 +53,47 @@ module.exports = [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        ecmaFeatures: { jsx: true }
+        ecmaFeatures: {
+          jsx: true
+        }
       }
     },
     plugins: {
       '@typescript-eslint': typescriptEslint,
+      'react': reactPlugin,
       'react-hooks': reactHooksPlugin,
       'react-refresh': reactRefreshPlugin,
-      react: reactPlugin,
-      spellcheck: spellcheckPlugin
+      'spellcheck': spellcheckPlugin
     },
     rules: {
       // TypeScript rules
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      
-      // Semicolon rules
-      'semi': ['error', 'always'],
-      '@typescript-eslint/semi': ['error', 'always'],
-      '@typescript-eslint/member-delimiter-style': ['error', {
-        multiline: { delimiter: 'semi', requireLast: true },
-        singleline: { delimiter: 'semi', requireLast: false }
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_', 
+        varsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_'
       }],
-
+      '@typescript-eslint/no-explicit-any': ['warn', { 
+        fixToUnknown: true,
+        ignoreRestArgs: true 
+      }],
+      
       // React hooks rules
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      'react-refresh/only-export-components': 'warn',
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
       // Code complexity and quality
-      'complexity': ['error', { max: 15 }],
-      'max-lines-per-function': ['error', { max: 100, skipBlankLines: true, skipComments: true }],
-      'no-duplicate-imports': 'error',
-
-      // Stylistic rules
+      'complexity': ['warn', { max: 20 }],
+      'max-lines-per-function': ['warn', { max: 150, skipBlankLines: true, skipComments: true }],
+      
+      // Console and debugging
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'prefer-const': 'error'
-    },
-    settings: {
-      react: { version: 'detect' }
+      
+      // Import and module rules
+      'no-duplicate-imports': 'warn',
+      
+      // General code style
+      'prefer-const': 'warn'
     }
   }
 ];

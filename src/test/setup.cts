@@ -2,8 +2,9 @@ import { afterEach, beforeAll, afterAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
-import { resetAllMocks } from 'vitest-mock-extended';
-import { server } from '@/test/mocks/server';
+import { mockIDBFactory } from 'vitest-mock-extended';
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
 
 // Establish API mocking before all tests
 beforeAll(() => server.listen());
@@ -11,7 +12,6 @@ beforeAll(() => server.listen());
 // Automatically clean up after each test
 afterEach(() => {
   cleanup(); // Cleans up any rendered components
-  resetAllMocks(); // Resets all mocks
   server.resetHandlers(); // Reset any request handlers that we may add during the tests
 });
 
@@ -35,32 +35,47 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Polyfill for structuredClone in JSDOM
 if (!globalThis.structuredClone) {
-  globalThis.structuredClone = (obj: any) => JSON.parse(JSON.stringify(obj));
+  globalThis.structuredClone = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 }
 
-// Mock browser APIs that might not be available in test environment
-Object.defineProperty(window, 'localStorage', {
-  value: {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn(),
-  },
+// Mock global IndexedDB
+Object.defineProperty(window, 'indexedDB', {
+  value: mockIDBFactory(),
   writable: true,
 });
 
-// Suppress specific warnings or errors during testing
-const originalConsoleError = console.error;
-console.error = (...args) => {
-  const suppressedErrors = [
-    /Warning: An update inside a test was not wrapped in act/,
-    /Warning: ReactDOM.render is no longer supported/,
-  ];
+// Mock localStorage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value.toString();
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+  };
+})();
 
-  if (!suppressedErrors.some(pattern => pattern.test(args[0]))) {
-    originalConsoleError(...args);
-  }
-};
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
+// Setup MSW server with default handlers
+const server = setupServer(
+  http.get('/api/example', () => {
+    return HttpResponse.json({ message: 'Mocked response' });
+  })
+);
+
+// Silence console warnings during tests
+console.warn = vi.fn();
+console.error = vi.fn();
 
 // Mock window.addEventListener('unhandledrejection')
 window.addEventListener('unhandledrejection', (event) => {

@@ -4,7 +4,7 @@ import { securityService } from '../utils/security';
 interface SecurityEvent {
   type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   timestamp: Date;
 }
 
