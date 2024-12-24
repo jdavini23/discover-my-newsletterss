@@ -1,16 +1,17 @@
 /** @type {import('tailwindcss').Config} */
-import forms from '@tailwindcss/forms';
-import typography from '@tailwindcss/typography';
-import aspectRatio from '@tailwindcss/aspect-ratio';
-import containerQueries from '@tailwindcss/container-queries';
+const forms = require('@tailwindcss/forms');
+const typography = require('@tailwindcss/typography');
+const aspectRatio = require('@tailwindcss/aspect-ratio');
+const containerQueries = require('@tailwindcss/container-queries');
 
-export default {
+module.exports = {
+  // Explicitly define content sources to resolve Tailwind warning
   content: [
-    // Explicitly include all files that might contain Tailwind classes
     './index.html', 
     './src/**/*.{js,ts,jsx,tsx}',
-    // Include story files if they exist
     './src/**/*.stories.{js,ts,jsx,tsx}',
+    // Add Storybook files to content sources
+    './.storybook/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -82,7 +83,7 @@ export default {
       '6xl': '4rem',
     },
   },
-  // Performance and optimization plugins
+  // Explicitly add plugins to resolve configuration
   plugins: [
     forms,
     typography,
@@ -110,6 +111,13 @@ export default {
       'translate-x-full',
     ]
   },
+  // Add safelist to ensure specific classes are always included
+  safelist: [
+    'bg-primary',
+    'bg-secondary',
+    'text-success',
+    'text-error',
+  ],
   // Dark mode configuration
   darkMode: 'class',
 };

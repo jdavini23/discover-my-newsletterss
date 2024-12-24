@@ -1,87 +1,35 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
 import { Button } from './Button';
-import { ThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme } from '@/styles/themes';
 
-const meta: Meta<typeof Button> = {
-  title: 'Common/Button',
-  component: Button,
-  argTypes: {
-    variant: {
-      control: { type: 'select', options: ['primary', 'secondary', 'accent'] },
-    },
-    size: {
-      control: { type: 'select', options: ['sm', 'md', 'lg'] },
-    },
-    onClick: { action: 'clicked' },
-  },
-  decorators: [
-    (Story, context) => {
-      const theme = context.parameters.theme === 'dark' ? darkTheme : lightTheme;
-      return (
-        <ThemeProvider theme={theme}>
-          <div style={{ 
-            padding: '20px', 
-            backgroundColor: theme.colors.background,
-            display: 'flex', 
-            gap: '10px', 
-            flexWrap: 'wrap' 
-          }}>
-            <Story {...context} />
-          </div>
-        </ThemeProvider>
-      );
-    },
-  ],
+export const PrimaryButton = () => (
+  <Button variant="primary" onClick={() => console.log('Primary button clicked')}>
+    Primary Action
+  </Button>
+);
+
+export const SecondaryButton = () => (
+  <Button variant="secondary" onClick={() => console.log('Secondary button clicked')}>
+    Secondary Action
+  </Button>
+);
+
+export const DisabledButton = () => (
+  <Button disabled onClick={() => console.log('Disabled button clicked')}>
+    Disabled Button
+  </Button>
+);
+
+PrimaryButton.ladle = {
+  name: 'Primary Button',
+  description: 'Primary action button'
 };
 
-export default meta;
-
-type Story = StoryObj<typeof Button>;
-
-export const Primary: Story = {
-  args: {
-    children: 'Primary Button',
-    variant: 'primary',
-  },
+SecondaryButton.ladle = {
+  name: 'Secondary Button', 
+  description: 'Secondary action button'
 };
 
-export const Secondary: Story = {
-  args: {
-    children: 'Secondary Button',
-    variant: 'secondary',
-  },
-};
-
-export const Accent: Story = {
-  args: {
-    children: 'Accent Button',
-    variant: 'accent',
-  },
-};
-
-export const Sizes: Story = {
-  render: () => (
-    <>
-      <Button size="sm">Small Button</Button>
-      <Button size="md">Medium Button</Button>
-      <Button size="lg">Large Button</Button>
-    </>
-  ),
-};
-
-export const Disabled: Story = {
-  args: {
-    children: 'Disabled Button',
-    disabled: true,
-  },
-};
-
-export const DarkTheme: Story = {
-  parameters: {
-    theme: 'dark',
-  },
-  args: {
-    children: 'Dark Theme Button',
-  },
+DisabledButton.ladle = {
+  name: 'Disabled Button',
+  description: 'Button in disabled state'
 };
