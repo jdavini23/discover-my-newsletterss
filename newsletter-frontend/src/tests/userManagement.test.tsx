@@ -1,33 +1,34 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { expect, describe, test, vi, beforeEach } from 'vitest';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { updateProfile, onAuthStateChanged } from 'firebase/auth';
 import { setDoc } from 'firebase/firestore';
 
 // Mock entire Firebase modules
-jest.mock('firebase/auth', () => ({
-  updateProfile: jest.fn().mockResolvedValue(undefined),
-  onAuthStateChanged: jest.fn(),
+vi.mock('firebase/auth', () => ({
+  updateProfile: vi.fn(),
+  onAuthStateChanged: vi.fn(),
 }));
 
-jest.mock('firebase/firestore', () => {
-  const setDoc = jest.fn().mockResolvedValue(undefined);
+vi.mock('firebase/firestore', () => {
+  const setDoc = vi.fn();
   return {
-    collection: jest.fn(() => 'users-collection'),
-    doc: jest.fn((collection, id) => `${collection}/${id}`),
+    collection: vi.fn(() => 'users-collection'),
+    doc: vi.fn((collection, id) => `${collection}/${id}`),
     setDoc,
-    getDoc: jest.fn(() => ({
-      exists: jest.fn().mockReturnValue(true),
-      data: jest.fn(() => ({
+    getDoc: vi.fn(() => ({
+      exists: () => true,
+      data: () => ({
         email: 'test@example.com',
         displayName: 'Original Name',
-      })),
+      }),
     })),
   };
 });
 
 // Test component to exercise user management
-const UserManagementTestComponent: React.FC = () => {
+function UserManagementTestComponent() {
   const { user, userData, updateUserProfile } = useAuth();
 
   return (
@@ -50,13 +51,13 @@ const UserManagementTestComponent: React.FC = () => {
       )}
     </div>
   );
-};
+}
 
 describe('User Management Features', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset mocked implementations
-    (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+    (onAuthStateChanged as vi.Mock).mockImplementation((_auth, callback) => {
       // Simulate an initial state with a user
       callback({
         uid: 'test-user-id',
@@ -75,6 +76,8 @@ describe('User Management Features', () => {
   };
 
   test('Update User Profile', async () => {
+    (updateProfile as vi.Mock).mockResolvedValue(undefined);
+
     renderComponent();
 
     // Initial name check

@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 const Profile: React.FC = () => {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <div className="container mx-auto px-4 py-8">

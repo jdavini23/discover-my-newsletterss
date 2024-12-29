@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
+import { expect, describe, test, vi, beforeEach } from 'vitest';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import {
   createUserWithEmailAndPassword,
@@ -10,50 +11,45 @@ import {
 } from 'firebase/auth';
 import { setDoc } from 'firebase/firestore';
 
-// Mock entire Firebase modules
-jest.mock('firebase/auth', () => ({
-  createUserWithEmailAndPassword: jest.fn().mockResolvedValue({
+// Mock Firebase modules
+vi.mock('firebase/auth', () => ({
+  createUserWithEmailAndPassword: vi.fn().mockResolvedValue({
     user: {
       uid: 'test-user-id',
       email: 'test@example.com',
       displayName: null,
-      updateProfile: jest.fn(),
+      updateProfile: vi.fn(),
     },
   }),
-  signInWithEmailAndPassword: jest.fn().mockResolvedValue({
+  signInWithEmailAndPassword: vi.fn().mockResolvedValue({
     user: {
       uid: 'test-user-id',
       email: 'test@example.com',
       displayName: null,
     },
   }),
-  signOut: jest.fn().mockResolvedValue(undefined),
-  sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined),
-  onAuthStateChanged: jest.fn(),
-  updateProfile: jest.fn().mockResolvedValue(undefined),
-  getAuth: jest.fn(() => ({})),
+  signOut: vi.fn().mockResolvedValue(undefined),
+  sendPasswordResetEmail: vi.fn().mockResolvedValue(undefined),
+  onAuthStateChanged: vi.fn(),
 }));
 
-jest.mock('firebase/firestore', () => {
-  const setDoc = jest.fn().mockResolvedValue(undefined);
-  return {
-    collection: jest.fn(() => 'users-collection'),
-    doc: jest.fn((collection, id) => `${collection}/${id}`),
-    setDoc,
-    getDoc: jest.fn(() => ({
-      exists: jest.fn().mockReturnValue(true),
-      data: jest.fn(() => ({
-        email: 'test@example.com',
-        displayName: 'Original Name',
-      })),
+vi.mock('firebase/firestore', () => ({
+  setDoc: vi.fn().mockResolvedValue(undefined),
+  collection: vi.fn(() => 'users-collection'),
+  doc: vi.fn((collection, id) => `${collection}/${id}`),
+  getDoc: vi.fn(() => ({
+    exists: vi.fn().mockReturnValue(true),
+    data: vi.fn(() => ({
+      email: 'test@example.com',
+      displayName: 'Original Name',
     })),
-  };
-});
+  })),
+}));
 
 // Mock entire react-router-dom
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => jest.fn(),
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  useNavigate: () => vi.fn(),
   useLocation: () => ({ pathname: '/' }),
   Navigate: ({ to }: { to: string }) => <div data-testid="navigate" data-to={to} />,
   Routes: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -102,9 +98,9 @@ const TestAuthComponent: React.FC = () => {
 
 describe('Authentication Context', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset mocked implementations
-    (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+    (onAuthStateChanged as vi.Mock).mockImplementation((_auth, callback) => {
       // Simulate an initial state with no user
       callback(null);
       return () => {};
@@ -125,11 +121,11 @@ describe('Authentication Context', () => {
       email: 'test@example.com',
     };
 
-    (createUserWithEmailAndPassword as jest.Mock).mockResolvedValue({
+    (createUserWithEmailAndPassword as vi.Mock).mockResolvedValue({
       user: mockUser,
     });
 
-    (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+    (onAuthStateChanged as vi.Mock).mockImplementation((_auth, callback) => {
       // Simulate user state after sign up
       callback(null);
       return () => {};
@@ -156,11 +152,11 @@ describe('Authentication Context', () => {
       email: 'test@example.com',
     };
 
-    (signInWithEmailAndPassword as jest.Mock).mockResolvedValue({
+    (signInWithEmailAndPassword as vi.Mock).mockResolvedValue({
       user: mockUser,
     });
 
-    (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+    (onAuthStateChanged as vi.Mock).mockImplementation((_auth, callback) => {
       // Simulate user state after login
       callback(null);
       return () => {};
@@ -186,13 +182,13 @@ describe('Authentication Context', () => {
       email: 'test@example.com',
     };
 
-    (onAuthStateChanged as jest.Mock).mockImplementation((_auth, callback) => {
+    (onAuthStateChanged as vi.Mock).mockImplementation((_auth, callback) => {
       // Simulate initial logged-in state
       callback(mockUser);
       return () => {};
     });
 
-    (signOut as jest.Mock).mockResolvedValue(undefined);
+    (signOut as vi.Mock).mockResolvedValue(undefined);
 
     const { getByTestId } = renderComponent();
 
@@ -210,7 +206,7 @@ describe('Authentication Context', () => {
   });
 
   test('Password Reset Flow', async () => {
-    (sendPasswordResetEmail as jest.Mock).mockResolvedValue(undefined);
+    (sendPasswordResetEmail as vi.Mock).mockResolvedValue(undefined);
 
     const { getByTestId } = renderComponent();
 

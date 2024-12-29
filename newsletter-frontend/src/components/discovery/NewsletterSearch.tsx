@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useNewsletterSearchStore } from '../../stores/newsletterSearchStore';
+import { useEffect, useState } from 'react';
 import {
-  Select,
+  Box,
   Input,
+  Button,
   VStack,
   HStack,
-  Button,
-  Spinner,
   Text,
-  Wrap,
-  WrapItem,
+  Select,
+  Spinner,
+  Alert,
+  SimpleGrid,
+  Card,
+  CardBody,
+  Heading,
+  Badge,
 } from '@chakra-ui/react';
+import { useNewsletterSearchStore } from '../../stores/newsletterSearchStore';
 
 interface Newsletter {
   id: string;
@@ -19,143 +24,124 @@ interface Newsletter {
   categories: string[];
   frequency: string;
   subscriberCount: number;
+  url: string;
 }
 
-export const NewsletterSearch: React.FC = () => {
+export default function NewsletterSearch() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const {
     newsletters,
-    categories,
-    tags,
-    frequencies,
-    isLoading,
+    loading,
     error,
+    categories,
     fetchNewsletters,
-    setSearchParams,
     fetchFilterOptions,
+    setSearchParams,
     resetSearch,
   } = useNewsletterSearchStore();
 
-  const [localQuery, setLocalQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedFrequency, setSelectedFrequency] = useState('');
-
   useEffect(() => {
-    // Fetch initial filter options and newsletters
-    fetchFilterOptions();
     fetchNewsletters();
+    fetchFilterOptions();
   }, []);
 
   const handleSearch = () => {
     setSearchParams({
-      query: localQuery || undefined,
+      query: searchQuery,
       categories: selectedCategory ? [selectedCategory] : undefined,
-      tags: selectedTags.length ? selectedTags : undefined,
-      frequency: selectedFrequency as 'daily' | 'weekly' | 'monthly' | undefined,
+      page: 1,
     });
+    fetchNewsletters();
   };
 
   const handleReset = () => {
-    setLocalQuery('');
+    setSearchQuery('');
     setSelectedCategory('');
-    setSelectedTags([]);
-    setSelectedFrequency('');
     resetSearch();
+    fetchNewsletters();
   };
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minH="200px">
+        <Spinner size="xl" />
+      </Box>
     );
-  };
+  }
 
   if (error) {
-    return <Text color="red.500">Error: {error}</Text>;
+    return (
+      <Alert status="error">
+        <Alert.Icon />
+        {error}
+      </Alert>
+    );
   }
 
   return (
-    <VStack spacing={4} align="stretch">
-      <HStack>
-        <Input
-          placeholder="Search newsletters..."
-          value={localQuery}
-          onChange={(e) => setLocalQuery(e.target.value)}
-        />
-        <Select
-          placeholder="Select Category"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </Select>
-        <Select
-          placeholder="Frequency"
-          value={selectedFrequency}
-          onChange={(e) => setSelectedFrequency(e.target.value)}
-        >
-          {frequencies.map((freq) => (
-            <option key={freq} value={freq}>
-              {freq}
-            </option>
-          ))}
-        </Select>
-        <Button onClick={handleSearch} colorScheme="blue">
-          Search
-        </Button>
-        <Button onClick={handleReset} variant="outline">
-          Reset
-        </Button>
-      </HStack>
+    <Box>
+      <VStack spacing="4" align="stretch">
+        <HStack>
+          <Input
+            placeholder="Search newsletters..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Select
+            placeholder="Select category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </Select>
+          <Button colorScheme="blue" onClick={handleSearch}>
+            Search
+          </Button>
+          <Button variant="outline" onClick={handleReset}>
+            Reset
+          </Button>
+        </HStack>
 
-      <Wrap spacing={2}>
-        {tags.map((tag) => (
-          <WrapItem key={tag}>
-            <Button
-              size="sm"
-              variant={selectedTags.includes(tag) ? 'solid' : 'outline'}
-              colorScheme={selectedTags.includes(tag) ? 'blue' : 'gray'}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </Button>
-          </WrapItem>
-        ))}
-      </Wrap>
-
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <VStack align="stretch">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
           {newsletters.map((newsletter) => (
-            <NewsletterCard key={newsletter.id} newsletter={newsletter} />
+            <Card key={newsletter.id}>
+              <CardBody>
+                <VStack align="start" spacing={2}>
+                  <Heading size="md">{newsletter.title}</Heading>
+                  <Text>{newsletter.description}</Text>
+                  <HStack wrap="wrap" spacing={2}>
+                    {newsletter.categories.map((category) => (
+                      <Badge key={category} colorScheme="blue">
+                        {category}
+                      </Badge>
+                    ))}
+                  </HStack>
+                  <Text fontSize="sm">Frequency: {newsletter.frequency}</Text>
+                  <Text fontSize="sm">
+                    Subscribers: {newsletter.subscriberCount.toLocaleString()}
+                  </Text>
+                  <Button
+                    as="a"
+                    href={newsletter.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="sm"
+                    colorScheme="blue"
+                    variant="outline"
+                  >
+                    Visit Newsletter
+                  </Button>
+                </VStack>
+              </CardBody>
+            </Card>
           ))}
-        </VStack>
-      )}
-    </VStack>
-  );
-};
-
-// Newsletter Card Component
-const NewsletterCard: React.FC<{ newsletter: Newsletter }> = ({ newsletter }) => {
-  return (
-    <VStack align="stretch" p={4} borderWidth={1} borderRadius="md" boxShadow="md">
-      <HStack justifyContent="space-between">
-        <Text fontWeight="bold">{newsletter.title}</Text>
-        <Text color="gray.500">{newsletter.frequency}</Text>
-      </HStack>
-      <Text>{newsletter.description}</Text>
-      <HStack>
-        {newsletter.categories.map((category) => (
-          <Text key={category} fontSize="sm" color="blue.500">
-            {category}
-          </Text>
-        ))}
-      </HStack>
-      <Text fontSize="sm">Subscribers: {newsletter.subscriberCount}</Text>
-    </VStack>
+        </SimpleGrid>
+      </VStack>
+    </Box>
   );
 };

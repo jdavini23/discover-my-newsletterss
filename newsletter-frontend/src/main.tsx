@@ -29,16 +29,13 @@ async function enableMocking() {
           /^\/ws$/,
         ].some((pattern) => pattern.test(request.url));
 
-        // Only print warnings for unhandled API requests
-        if (!shouldIgnore && request.url.includes('/api/')) {
+        if (!shouldIgnore) {
           print.warning();
         }
       },
-      serviceWorker: {
-        url: '/mockServiceWorker.js',
-      },
     });
   }
+  return Promise.resolve();
 }
 
 enableMocking().then(() => {
@@ -47,6 +44,6 @@ enableMocking().then(() => {
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 });

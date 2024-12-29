@@ -1,148 +1,127 @@
-import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
-import { NewsletterSearch } from '../NewsletterSearch';
-import { ChakraProvider } from '@chakra-ui/react';
-import { useNewsletterSearchStore } from '@/stores/newsletterSearchStore';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { render } from '../../../test/setup';
+import NewsletterSearch from '../NewsletterSearch';
+import { useNewsletterSearchStore } from '../../../stores/newsletterSearchStore';
 
-// Mock the Zustand store
-vi.mock('@/stores/newsletterSearchStore', () => ({
+vi.mock('../../../stores/newsletterSearchStore', () => ({
   useNewsletterSearchStore: vi.fn(),
 }));
 
-const mockNewsletters = [
-  {
-    id: '1',
-    title: 'Tech Insider',
-    description: 'Latest trends in technology',
-    categories: ['Technology'],
-    frequency: 'weekly',
-    subscriberCount: 5000,
-  },
-  {
-    id: '2',
-    title: 'Business Horizons',
-    description: 'Insights for entrepreneurs',
-    categories: ['Business'],
-    frequency: 'monthly',
-    subscriberCount: 3500,
-  },
-];
-
-const mockStoreState = {
-  newsletters: mockNewsletters,
-  categories: ['Technology', 'Business', 'Science'],
-  tags: ['AI', 'Innovation', 'Startups'],
-  frequencies: ['daily', 'weekly', 'monthly'],
-  isLoading: false,
-  error: null,
-  fetchNewsletters: vi.fn(),
-  setSearchParams: vi.fn(),
-  fetchFilterOptions: vi.fn(),
-  resetSearch: vi.fn(),
-};
-
-const renderComponent = () => {
-  (useNewsletterSearchStore as any).mockReturnValue(mockStoreState);
-
-  return render(
-    <ChakraProvider>
-      <NewsletterSearch />
-    </ChakraProvider>
-  );
-};
+const mockUseNewsletterSearchStore = useNewsletterSearchStore as unknown as ReturnType<typeof vi.fn>;
 
 describe('NewsletterSearch Component', () => {
-  it('renders search input and buttons', () => {
-    renderComponent();
+  const mockStore = {
+    newsletters: [],
+    loading: false,
+    error: null,
+    categories: ['Technology', 'Finance', 'Health'],
+    fetchNewsletters: vi.fn(),
+    fetchFilterOptions: vi.fn(),
+    setSearchParams: vi.fn(),
+    resetSearch: vi.fn(),
+  };
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseNewsletterSearchStore.mockImplementation(() => mockStore);
+  });
+
+  it('renders search input and buttons', () => {
+    render(<NewsletterSearch />);
     expect(screen.getByPlaceholderText('Search newsletters...')).toBeInTheDocument();
     expect(screen.getByText('Search')).toBeInTheDocument();
     expect(screen.getByText('Reset')).toBeInTheDocument();
   });
 
   it('displays newsletters when available', () => {
-    renderComponent();
+    const mockNewsletters = [
+      {
+        id: '1',
+        title: 'Tech Weekly',
+        description: 'Latest in technology',
+        categories: ['Technology'],
+        frequency: 'Weekly',
+        subscriberCount: 1000,
+        url: 'https://techweekly.com',
+      },
+    ];
 
-    expect(screen.getByText('Tech Insider')).toBeInTheDocument();
-    expect(screen.getByText('Business Horizons')).toBeInTheDocument();
+    mockUseNewsletterSearchStore.mockImplementation(() => ({
+      ...mockStore,
+      newsletters: mockNewsletters,
+    }));
+
+    render(<NewsletterSearch />);
+    expect(screen.getByText('Tech Weekly')).toBeInTheDocument();
+    expect(screen.getByText('Latest in technology')).toBeInTheDocument();
   });
 
   it('calls fetchNewsletters and fetchFilterOptions on initial render', () => {
-    renderComponent();
-
-    expect(mockStoreState.fetchNewsletters).toHaveBeenCalled();
-    expect(mockStoreState.fetchFilterOptions).toHaveBeenCalled();
+    render(<NewsletterSearch />);
+    expect(mockStore.fetchNewsletters).toHaveBeenCalled();
+    expect(mockStore.fetchFilterOptions).toHaveBeenCalled();
   });
 
   it('allows searching newsletters', async () => {
-    const user = userEvent.setup();
-    renderComponent();
-
+    render(<NewsletterSearch />);
     const searchInput = screen.getByPlaceholderText('Search newsletters...');
-    const searchButton = screen.getByText('Search');
+    fireEvent.change(searchInput, { target: { value: 'tech' } });
+    fireEvent.click(screen.getByText('Search'));
 
-    await user.type(searchInput, 'Tech');
-    await user.click(searchButton);
-
-    expect(mockStoreState.setSearchParams).toHaveBeenCalledWith({
-      query: 'Tech',
-      categories: undefined,
-      tags: undefined,
-      frequency: undefined,
+    await waitFor(() => {
+      expect(mockStore.setSearchParams).toHaveBeenCalledWith({
+        query: 'tech',
+        categories: undefined,
+        page: 1,
+      });
+      expect(mockStore.fetchNewsletters).toHaveBeenCalled();
     });
   });
 
   it('allows filtering by category', async () => {
-    const user = userEvent.setup();
-    renderComponent();
+    render(<NewsletterSearch />);
+    const categorySelect = screen.getByRole('combobox');
+    fireEvent.change(categorySelect, { target: { value: 'Technology' } });
+    fireEvent.click(screen.getByText('Search'));
 
-    const categorySelect = screen.getByText('Select Category').closest('select');
-
-    if (categorySelect) {
-      await user.selectOptions(categorySelect, 'Technology');
-      const searchButton = screen.getByText('Search');
-      await user.click(searchButton);
-
-      expect(mockStoreState.setSearchParams).toHaveBeenCalledWith({
-        query: undefined,
+    await waitFor(() => {
+      expect(mockStore.setSearchParams).toHaveBeenCalledWith({
+        query: '',
         categories: ['Technology'],
-        tags: undefined,
-        frequency: undefined,
+        page: 1,
       });
-    }
+      expect(mockStore.fetchNewsletters).toHaveBeenCalled();
+    });
   });
 
   it('handles reset functionality', async () => {
-    const user = userEvent.setup();
-    renderComponent();
+    render(<NewsletterSearch />);
+    fireEvent.click(screen.getByText('Reset'));
 
-    const resetButton = screen.getByText('Reset');
-    await user.click(resetButton);
-
-    expect(mockStoreState.resetSearch).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockStore.resetSearch).toHaveBeenCalled();
+      expect(mockStore.fetchNewsletters).toHaveBeenCalled();
+    });
   });
 
   it('displays loading spinner when loading', () => {
-    (useNewsletterSearchStore as any).mockReturnValue({
-      ...mockStoreState,
-      isLoading: true,
-    });
+    mockUseNewsletterSearchStore.mockImplementation(() => ({
+      ...mockStore,
+      loading: true,
+    }));
 
-    renderComponent();
-
-    expect(screen.getByRole('status')).toBeInTheDocument(); // Chakra UI spinner
+    render(<NewsletterSearch />);
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('displays error message when error occurs', () => {
-    (useNewsletterSearchStore as any).mockReturnValue({
-      ...mockStoreState,
-      error: 'Something went wrong',
-    });
+    mockUseNewsletterSearchStore.mockImplementation(() => ({
+      ...mockStore,
+      error: 'Failed to fetch newsletters',
+    }));
 
-    renderComponent();
-
-    expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+    render(<NewsletterSearch />);
+    expect(screen.getByText('Failed to fetch newsletters')).toBeInTheDocument();
   });
 });

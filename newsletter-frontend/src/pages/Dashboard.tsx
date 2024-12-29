@@ -2,7 +2,8 @@ import React from 'react';
 import { useAuthStore } from '../stores/authStore';
 
 const Dashboard: React.FC = () => {
-  const { user, logout } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -21,7 +22,7 @@ const Dashboard: React.FC = () => {
             Edit Profile
           </button>
           <button
-            onClick={logout}
+            onClick={clearAuth}
             className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
           >
             Logout

@@ -10,7 +10,7 @@ import {
   UserCredential,
 } from 'firebase/auth';
 import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, firestore } from '../lib/firebase';
+import { auth, db } from '../lib/firebase';
 import { AuthProviderType, signInWithProvider } from '../lib/authProviders';
 
 interface UserData {
@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const db = collection(firestore, 'users');
+  const dbRef = collection(db, 'users');
 
   const signUp = async (
     email: string,
@@ -84,7 +84,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithOAuthProvider = async (provider: AuthProviderType): Promise<User> => {
-    return await signInWithProvider(provider);
+    const result = await signInWithProvider(auth, provider);
+    return result.user;
   };
 
   const onAuthStateChange = useCallback(

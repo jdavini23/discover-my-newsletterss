@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
 const Home: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
     <div className="flex min-h-screen flex-col justify-center bg-gray-100 py-12 sm:px-6 lg:px-8">
@@ -20,7 +20,7 @@ const Home: React.FC = () => {
         <div className="container mx-auto flex items-center justify-between px-4 py-6">
           <h1 className="text-2xl font-bold text-gray-800">Newsletter Discovery</h1>
           <nav className="space-x-4">
-            {!isAuthenticated() ? (
+            {!isAuthenticated ? (
               <>
                 <Link
                   to="/login"
@@ -30,7 +30,7 @@ const Home: React.FC = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                  className="rounded border border-blue-500 px-4 py-2 text-blue-500 hover:bg-blue-50"
                 >
                   Register
                 </Link>
@@ -81,7 +81,7 @@ const Home: React.FC = () => {
             </p>
           </div>
 
-          {!isAuthenticated() && (
+          {!isAuthenticated && (
             <div className="mt-12">
               <Link
                 to="/register"
@@ -94,10 +94,44 @@ const Home: React.FC = () => {
         </div>
       </main>
 
+      <div className="mt-8">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium leading-6 text-gray-900">
+                Why Choose Our Platform?
+              </h3>
+              <div className="mt-2 max-w-xl text-sm text-gray-500">
+                <ul className="list-disc space-y-2 pl-4">
+                  <li>Personalized newsletter recommendations based on your interests</li>
+                  <li>Easy discovery of high-quality content from trusted sources</li>
+                  <li>Save time by having the best newsletters curated for you</li>
+                  <li>Stay informed with content that matters to you</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center">
+              <Link
+                to={isAuthenticated ? "/dashboard" : "/register"}
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700"
+              >
+                {isAuthenticated ? "Go to Dashboard" : "Get Started"}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <footer className="bg-gray-800 py-6 text-white">
         <div className="container mx-auto px-4 text-center">
           <p>&copy; 2024 Newsletter Discovery. All rights reserved.</p>
         </div>
+      </footer>
+      <footer className="mt-8 text-center">
+        <p className="text-sm text-gray-500">
+          &copy; {new Date().getFullYear()} Newsletter Discovery. All rights reserved.
+        </p>
       </footer>
     </div>
   );
