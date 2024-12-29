@@ -151,23 +151,35 @@ docker-compose down -v
 - Proper prop typing
 - Memoization for expensive computations
 - Error boundaries implementation
-- Accessibility standards
-- Consistent code formatting
-- Minimal prop drilling
-- Proper state management
-- Efficient use of context providers
-- Comprehensive error logging
+- Accessibility standards (WCAG 2.1 compliance)
+- Performance monitoring with React Profiler
+- State management with React Query for server state
+- Redux Toolkit for complex client state
+- Component composition over prop drilling
+- Strict TypeScript checking for components
+- Comprehensive error logging with context
+- Automated accessibility testing
+- Proper code splitting and lazy loading
+- Mobile-first responsive design
+- SEO optimization with proper meta tags
 
-### Testing Requirements
+### Backend Best Practices
 
-- Unit tests for business logic
-- Integration tests for API endpoints
-- Component tests for React components
-- Mocking external dependencies (Firebase, APIs)
-- Minimum 80% test coverage
-- E2E tests for critical paths
-- Comprehensive error handling in tests
-- Testing authentication and user management flows
+- RESTful API design principles
+- OpenAPI/Swagger documentation
+- Rate limiting and request throttling
+- Proper error handling middleware
+- Request validation using zod
+- Database query optimization
+- Caching strategies (Redis)
+- Logging and monitoring (Winston)
+- Background job processing
+- API versioning
+- Health check endpoints
+- Graceful shutdown handling
+- Database migrations strategy
+- Connection pooling
+- Request tracing
 
 ## 6. Security Best Practices
 
@@ -214,25 +226,66 @@ docker-compose down -v
 - Memory management
 - Response compression
 
-## 8. Monitoring and Logging
+## 8. Monitoring and Observability
 
-### Logging Standards
+### Metrics Collection
+
+- Application performance metrics
+- Error rates and types
+- API response times
+- Database query performance
+- Cache hit/miss rates
+- Memory usage
+- CPU utilization
+- Network latency
+
+### Logging Strategy
 
 - Structured logging format
-- Error context preservation
-- PII data protection
-- Log rotation
-- Performance metrics
+- Log levels (DEBUG, INFO, WARN, ERROR)
+- Request/Response logging
+- Error stack traces
+- User actions logging
+- Performance logging
+- Security event logging
+- Audit trail logging
 
-### Monitoring Tools
+### Alerting
 
-- Application metrics
-- Error tracking
-- Performance monitoring
-- User analytics
-- Server metrics
+- Error rate thresholds
+- Performance degradation
+- Resource utilization
+- Security incidents
+- Database health
+- Cache performance
+- API availability
+- Custom business metrics
 
-## 9. Deployment
+## 9. CI/CD Pipeline
+
+### Continuous Integration
+
+- Pre-commit hooks
+- Branch protection rules
+- Automated testing
+- Code coverage reports
+- Static code analysis
+- Dependency scanning
+- Container scanning
+- License compliance checks
+
+### Continuous Deployment
+
+- Environment promotion strategy
+- Automated deployments
+- Rollback procedures
+- Feature flags
+- Blue-green deployments
+- Canary releases
+- Infrastructure as Code
+- Secret management
+
+## 10. Deployment
 
 ### Production Deployment
 
@@ -251,7 +304,7 @@ NODE_ENV=production docker-compose up -d
 - Regular credential rotation
 - Environment-specific configurations
 
-## 10. Troubleshooting
+## 11. Troubleshooting
 
 ### Common Issues
 
@@ -267,7 +320,42 @@ NODE_ENV=production docker-compose up -d
 - Redux DevTools (if applicable)
 - Network debugging tools
 
-## 11. Documentation
+## 12. Newsletter-Specific Guidelines
+
+### Content Management
+
+- Newsletter metadata validation
+- Content caching strategy
+- Image optimization
+- Rich text handling
+- Draft system
+- Version control for content
+- Scheduled publishing
+- Content moderation
+
+### User Experience
+
+- Subscription management
+- Email template system
+- Personalization features
+- Reading history tracking
+- Recommendation engine
+- Search functionality
+- Social sharing
+- Offline reading support
+
+### Analytics
+
+- Newsletter engagement metrics
+- User behavior tracking
+- A/B testing framework
+- Conversion tracking
+- Retention analysis
+- Content performance metrics
+- Search analytics
+- Email delivery metrics
+
+## 13. Documentation
 
 ### Requirements
 
