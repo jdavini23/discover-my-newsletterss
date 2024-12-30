@@ -5,69 +5,72 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      colors: {
-        primary: {
-          DEFAULT: '#4CAF50',
-          50: '#E8F5E9',
-          100: '#C8E6C9',
-          500: '#4CAF50',
-          700: '#388E3C',
-          900: '#1B5E20'
-        },
-        secondary: {
-          DEFAULT: '#FF5722',
-          50: '#FBE9E7',
-          100: '#FFCCBC',
-          500: '#FF5722',
-          700: '#E64A19',
-          900: '#BF360C'
-        },
-        accent1: {
-          DEFAULT: '#3B82F6',
-          50: '#E6F2FF',
-          100: '#BCDAFF',
-          500: '#3B82F6',
-          700: '#1D4ED8',
-          900: '#1E3A8A'
-        },
-        accent2: {
-          DEFAULT: '#FFC107',
-          50: '#FFF3E0',
-          100: '#FFE0B2',
-          500: '#FFC107',
-          700: '#FFA000',
-          900: '#FF6F00'
-        },
-        neutralBackground: {
-          DEFAULT: '#F9FAFB',
-          50: '#FFFFFF',
-          100: '#F9FAFB',
-          500: '#F3F4F6',
-          700: '#E5E7EB'
-        },
-        neutralText: {
-          DEFAULT: '#1F2937',
-          50: '#F9FAFB',
-          100: '#F3F4F6',
-          500: '#1F2937',
-          700: '#111827'
-        },
-        darkBackground: {
-          DEFAULT: '#1A202C',
-          50: '#2D3748',
-          100: '#4A5568',
-          500: '#1A202C',
-          700: '#171923'
-        },
-        darkText: {
-          DEFAULT: '#E2E8F0',
-          50: '#FFFFFF',
-          100: '#F7FAFC',
-          500: '#E2E8F0',
-          700: '#CBD5E0'
-        }
+    colors: {
+      primary: {
+        DEFAULT: '#4CAF50',
+        50: '#E8F5E9',
+        100: '#C8E6C9',
+        500: '#4CAF50',
+        700: '#388E3C',
+        900: '#1B5E20'
       },
+      secondary: {
+        DEFAULT: '#FF5722',
+        50: '#FBE9E7',
+        100: '#FFCCBC',
+        500: '#FF5722',
+        700: '#E64A19',
+        900: '#BF360C'
+      },
+      accent1: {
+        DEFAULT: '#3B82F6',
+        50: '#E6F2FF',
+        100: '#BCDAFF',
+        500: '#3B82F6',
+        700: '#1D4ED8',
+        900: '#1E3A8A'
+      },
+      accent2: {
+        DEFAULT: '#FFC107',
+        50: '#FFF3E0',
+        100: '#FFE0B2',
+        500: '#FFC107',
+        700: '#FFA000',
+        900: '#FF6F00'
+      },
+      neutralBackground: {
+        DEFAULT: '#F9FAFB',
+        50: '#FFFFFF',
+        100: '#F9FAFB',
+        500: '#F3F4F6',
+        700: '#E5E7EB'
+      },
+      neutralText: {
+        DEFAULT: '#1F2937',
+        50: '#F9FAFB',
+        100: '#F3F4F6',
+        500: '#1F2937',
+        700: '#111827'
+      },
+      darkBackground: {
+        DEFAULT: '#1A202C',
+        50: '#2D3748',
+        100: '#4A5568',
+        500: '#1A202C',
+        700: '#171923'
+      },
+      darkText: {
+        DEFAULT: '#E2E8F0',
+        50: '#FFFFFF',
+        100: '#F7FAFC',
+        500: '#E2E8F0',
+        700: '#CBD5E0'
+      },
+      transparent: 'transparent',
+      white: '#FFFFFF',
+      black: '#000000'
+    },
+    extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
