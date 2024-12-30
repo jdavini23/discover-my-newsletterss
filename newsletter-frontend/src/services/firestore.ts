@@ -1,42 +1,28 @@
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  setDoc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc,
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
   getDoc,
-  Timestamp,
-  query,
+  updateDoc,
   where,
+  query,
   getDocs,
+  addDoc,
+  deleteDoc,
+  Timestamp,
   orderBy,
   limit,
-  startAfter,
-  Query,
-  DocumentSnapshot,
   increment
 } from 'firebase/firestore';
 import { auth } from '@/config/firebase';
 import { User, Newsletter, Subscription, NewsletterFilter } from '@/types/firestore';
+import { UserProfile, UpdateProfileParams, UserActivity } from '@/types/profile';
 
 const db = getFirestore();
 
-// User-related Firestore operations
-export const createUserProfile = async (user: Partial<User>) => {
-  if (!user.id) throw new Error('User ID is required');
-
-  const userRef = doc(db, 'users', user.id);
-  await setDoc(userRef, {
-    email: user.email,
-    displayName: user.displayName || '',
-    createdAt: Timestamp.now()
-  }, { merge: true });
-};
-
 // Fetch user profile
-export const fetchUserProfile = async (userId: string) => {
+export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
   const userRef = doc(db, 'users', userId);
   const userSnap = await getDoc(userRef);
 
@@ -45,33 +31,21 @@ export const fetchUserProfile = async (userId: string) => {
   }
 
   return {
-    id: userSnap.id,
+    uid: userSnap.id,
     ...userSnap.data()
-  } as User;
-};
-
-// Update user profile
-export const updateUserProfile = async (
-  userId: string, 
-  updates: Partial<Omit<User, 'id' | 'createdAt'>>
-) => {
-  if (!userId) throw new Error('User ID is required');
-
-  const userRef = doc(db, 'users', userId);
-  await updateDoc(userRef, updates);
+  } as UserProfile;
 };
 
 // Update user newsletter preferences
 export const updateNewsletterPreferences = async (
   userId: string, 
-  preferences: User['newsletterPreferences']
-) => {
-  if (!userId) throw new Error('User ID is required');
-
+  preferences: UserProfile['newsletterPreferences']
+): Promise<UserProfile> => {
   const userRef = doc(db, 'users', userId);
-  await updateDoc(userRef, {
-    newsletterPreferences: preferences
-  });
+
+  await updateDoc(userRef, { newsletterPreferences: preferences });
+  
+  return fetchUserProfile(userId);
 };
 
 // Fetch available newsletter topics
@@ -253,4 +227,69 @@ export const fetchUserSubscriptions = async () => {
   );
 
   return subscriptions;
+};
+
+// Comprehensive user profile management functions
+export const updateUserProfile = async (
+  userId: string, 
+  updates: UpdateProfileParams
+): Promise<UserProfile> => {
+  const userRef = doc(db, 'users', userId);
+  
+  // Validate and sanitize updates
+  const sanitizedUpdates: Partial<UserProfile> = {
+    ...(updates.displayName && { displayName: updates.displayName }),
+    ...(updates.bio && { bio: updates.bio }),
+    ...(updates.photoURL && { photoURL: updates.photoURL }),
+    ...(updates.interests && { interests: updates.interests }),
+    ...(updates.newsletterPreferences && { newsletterPreferences: updates.newsletterPreferences })
+  };
+
+  await updateDoc(userRef, sanitizedUpdates);
+  
+  return fetchUserProfile(userId);
+};
+
+export const createUserProfile = async (
+  userId: string, 
+  initialData: Partial<UserProfile> | Partial<User>
+): Promise<UserProfile> => {
+  const userRef = doc(db, 'users', userId);
+  
+  // Handle both User and UserProfile types
+  const defaultProfile: UserProfile = {
+    uid: userId,
+    email: initialData.email || '',
+    displayName: initialData.displayName || '',
+    photoURL: 'photoURL' in initialData ? initialData.photoURL : undefined,
+    bio: '',
+    interests: [],
+    newsletterPreferences: {
+      frequency: 'weekly',
+      categories: []
+    },
+    activityLog: [],
+    accountCreatedAt: Timestamp.now(),
+    lastLoginAt: Timestamp.now()
+  };
+
+  await setDoc(userRef, defaultProfile, { merge: true });
+  return defaultProfile;
+};
+
+export const addUserActivityLog = async (
+  userId: string, 
+  activity: UserActivity
+): Promise<UserProfile> => {
+  const userRef = doc(db, 'users', userId);
+  const userProfile = await fetchUserProfile(userId);
+
+  const updatedActivityLog = [
+    ...(userProfile.activityLog || []),
+    activity
+  ];
+
+  await updateDoc(userRef, { activityLog: updatedActivityLog });
+  
+  return fetchUserProfile(userId);
 };

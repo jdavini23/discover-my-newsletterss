@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { User } from '@/types/firestore';
 import { 
   fetchUserProfile, 
@@ -13,101 +14,116 @@ interface UserProfileState {
   error: string | null;
   availableTopics: string[];
 
-  // Actions
   fetchProfile: (userId: string) => Promise<void>;
   updateProfile: (updates: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<void>;
   updateNewsletterPrefs: (preferences: User['newsletterPreferences']) => Promise<void>;
   loadAvailableTopics: () => Promise<void>;
+  addActivityLog: (activity: User['activityLog'][0]) => Promise<void>;
+  resetProfile: () => void;
 }
 
-export const useUserProfileStore = create<UserProfileState>((set, get) => ({
-  profile: null,
-  isLoading: false,
-  error: null,
-  availableTopics: [],
+const useUserProfileStore = create<UserProfileState>()(
+  persist(
+    (set, get) => ({
+      profile: null,
+      isLoading: false,
+      error: null,
+      availableTopics: [],
 
-  fetchProfile: async (userId: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const profile = await fetchUserProfile(userId);
-      set({ profile, isLoading: false });
-    } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Failed to fetch profile', 
-        isLoading: false 
-      });
-      throw error;
-    }
-  },
+      fetchProfile: async (userId: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const profile = await fetchUserProfile(userId);
+          set({ profile, isLoading: false });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to fetch profile', 
+            isLoading: false 
+          });
+        }
+      },
 
-  updateProfile: async (updates) => {
-    set({ isLoading: true, error: null });
-    try {
-      const currentProfile = get().profile;
-      if (!currentProfile) {
-        throw new Error('No user profile found');
+      updateProfile: async (updates) => {
+        const { profile } = get();
+        if (!profile) {
+          throw new Error('No profile to update');
+        }
+
+        set({ isLoading: true, error: null });
+        try {
+          const updatedProfile = await updateUserProfile(profile.id, updates);
+          set({ profile: updatedProfile, isLoading: false });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to update profile', 
+            isLoading: false 
+          });
+        }
+      },
+
+      updateNewsletterPrefs: async (preferences) => {
+        const { profile } = get();
+        if (!profile) {
+          throw new Error('No profile to update newsletter preferences');
+        }
+
+        set({ isLoading: true, error: null });
+        try {
+          const updatedProfile = await updateNewsletterPreferences(profile.id, preferences);
+          set({ profile: updatedProfile, isLoading: false });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to update newsletter preferences', 
+            isLoading: false 
+          });
+        }
+      },
+
+      loadAvailableTopics: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const topics = await fetchAvailableTopics();
+          set({ 
+            availableTopics: topics.map(topic => topic.id), 
+            isLoading: false 
+          });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to load topics', 
+            isLoading: false 
+          });
+        }
+      },
+
+      addActivityLog: async (activity) => {
+        const { profile } = get();
+        if (!profile) {
+          throw new Error('No profile to update activity log');
+        }
+
+        try {
+          const updatedProfile = await updateUserProfile(profile.id, {
+            activityLog: [...(profile.activityLog || []), activity]
+          });
+          set({ profile: updatedProfile });
+        } catch (error) {
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to add activity log' 
+          });
+        }
+      },
+
+      resetProfile: () => {
+        set({ profile: null, isLoading: false, error: null, availableTopics: [] });
       }
-
-      await updateUserProfile(currentProfile.id, updates);
-      
-      // Optimistically update local state
-      set({ 
-        profile: { 
-          ...currentProfile, 
-          ...updates 
-        }, 
-        isLoading: false 
-      });
-    } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Failed to update profile', 
-        isLoading: false 
-      });
-      throw error;
+    }),
+    {
+      name: 'user-profile-storage',
+      partialize: (state) => ({ profile: state.profile })
     }
-  },
+  )
+);
 
-  updateNewsletterPrefs: async (preferences) => {
-    set({ isLoading: true, error: null });
-    try {
-      const currentProfile = get().profile;
-      if (!currentProfile) {
-        throw new Error('No user profile found');
-      }
-
-      await updateNewsletterPreferences(currentProfile.id, preferences);
-      
-      // Optimistically update local state
-      set({ 
-        profile: { 
-          ...currentProfile, 
-          newsletterPreferences: preferences 
-        }, 
-        isLoading: false 
-      });
-    } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Failed to update newsletter preferences', 
-        isLoading: false 
-      });
-      throw error;
-    }
-  },
-
-  loadAvailableTopics: async () => {
-    set({ isLoading: true, error: null });
-    try {
-      const topics = await fetchAvailableTopics();
-      set({ 
-        availableTopics: topics.map(topic => topic.id), 
-        isLoading: false 
-      });
-    } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Failed to load topics', 
-        isLoading: false 
-      });
-      throw error;
-    }
-  }
-}));
+// Export both default and named exports
+export { useUserProfileStore };
+export default useUserProfileStore;
