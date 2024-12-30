@@ -72,3 +72,4 @@ storybook-static
 
 # Misc
 *.local
+.vercel

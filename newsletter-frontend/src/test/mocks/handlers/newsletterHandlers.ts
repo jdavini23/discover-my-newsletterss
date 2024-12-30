@@ -22,7 +22,7 @@ const mockNewsletters = [
 ];
 
 export const newsletterHandlers = [
-  http.get('/api/newsletters/search', ({ request }) => {
+  http.get('http://localhost:3000/api/newsletters/search', ({ request }) => {
     const url = new URL(request.url);
     const query = url.searchParams.get('query') || '';
     const page = parseInt(url.searchParams.get('page') || '1');
@@ -42,7 +42,7 @@ export const newsletterHandlers = [
     });
   }),
 
-  http.get('/api/newsletters/:id', ({ params }) => {
+  http.get('http://localhost:3000/api/newsletters/:id', ({ params }) => {
     const { id } = params;
     const newsletter = mockNewsletters.find((n) => n.id === id);
 
@@ -53,11 +53,11 @@ export const newsletterHandlers = [
     return HttpResponse.json(newsletter);
   }),
 
-  http.post('/api/newsletters/:id/subscribe', () => {
+  http.post('http://localhost:3000/api/newsletters/:id/subscribe', () => {
     return new HttpResponse(null, { status: 200 });
   }),
 
-  http.post('/api/newsletters/:id/unsubscribe', () => {
+  http.post('http://localhost:3000/api/newsletters/:id/unsubscribe', () => {
     return new HttpResponse(null, { status: 200 });
   }),
 ];

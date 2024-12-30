@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { useNotificationStore } from '../../stores/rootStore';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 // Error types for more specific error handling
 enum ErrorType {
@@ -45,10 +46,14 @@ const ErrorNotifier: React.FC<{ error: Error; errorType: ErrorType }> = ({ error
     logErrorToService(error, errorType);
 
     // Show user-friendly notification
-    addNotification({
+    const errorNotification: Notification = {
+      id: uuidv4(),
+      title: 'Error Occurred',
       message: getErrorMessage(errorType),
       type: 'error',
-    });
+    };
+
+    addNotification(errorNotification);
   }, [error, errorType, addNotification]);
 
   return null;

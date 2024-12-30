@@ -1,22 +1,15 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import {
-  newsletterService,
-  Newsletter,
-  NewsletterSearchParams,
-  NewsletterSearchResult,
-} from '../services/newsletterService';
+import { newsletterApi } from '@/services/api/newsletterApi';
 
 interface NewsletterSearchState {
   // Search results
-  newsletters: Newsletter[];
+  newsletters: any[];
   total: number;
   page: number;
-  pageSize: number;
-  totalPages: number;
 
   // Search parameters
-  searchParams: NewsletterSearchParams;
+  searchParams: any;
 
   // Filter options
   categories: string[];
@@ -29,7 +22,7 @@ interface NewsletterSearchState {
 
   // Actions
   fetchNewsletters: () => Promise<void>;
-  setSearchParams: (params: Partial<NewsletterSearchParams>) => void;
+  setSearchParams: (params: any) => void;
   resetSearch: () => void;
   fetchFilterOptions: () => Promise<void>;
 }
@@ -40,17 +33,12 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
     newsletters: [],
     total: 0,
     page: 1,
-    pageSize: 10,
-    totalPages: 0,
 
-    searchParams: {
-      page: 1,
-      pageSize: 10,
-    },
+    searchParams: {},
 
     categories: [],
     tags: [],
-    frequencies: ['daily', 'weekly', 'monthly'],
+    frequencies: [],
 
     isLoading: false,
     error: null,
@@ -63,14 +51,12 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
       });
 
       try {
-        const result = await newsletterService.searchNewsletters(get().searchParams);
+        const result = await newsletterApi.searchNewsletters(get().searchParams);
 
         set((state) => {
           state.newsletters = result.newsletters;
           state.total = result.total;
           state.page = result.page;
-          state.pageSize = result.pageSize;
-          state.totalPages = result.totalPages;
           state.isLoading = false;
         });
       } catch (error) {
@@ -95,7 +81,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
     // Reset search to initial state
     resetSearch: () => {
       set((state) => {
-        state.searchParams = { page: 1, pageSize: 10 };
+        state.searchParams = {};
         state.newsletters = [];
         state.total = 0;
         state.page = 1;
@@ -106,7 +92,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
     // Fetch available filter options
     fetchFilterOptions: async () => {
       try {
-        const options = await newsletterService.getFilterOptions();
+        const options = await newsletterApi.getFilterOptions();
 
         set((state) => {
           state.categories = options.categories;

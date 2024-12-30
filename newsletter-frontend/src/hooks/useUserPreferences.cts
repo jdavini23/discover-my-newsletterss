@@ -1,17 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userPreferencesApi } from '../services/api/userPreferencesApi';
-import type { UpdateUserPreferencesRequest, UserPreferences } from '../types/userPreferences';
+import { userPreferencesApi } from '@/services/api/userPreferencesApi';
+import { UserPreferences, UpdateUserPreferencesRequest } from '@/types/userPreferences';
 
-// Default preferences used when data is loading or unavailable
 const defaultPreferences: UserPreferences = {
-  id: '',
-  favoriteNewsletters: [],
+  userId: '',
   interests: [],
+  newsletterSubscriptions: [],
   notificationSettings: {
     email: true,
     push: false,
-    frequency: 'weekly',
-  },
+    sms: false
+  }
 };
 
 export const useUserPreferences = () => {
@@ -19,52 +18,74 @@ export const useUserPreferences = () => {
 
   const preferences = useQuery({
     queryKey: ['userPreferences'],
-    queryFn: () => userPreferencesApi.get(),
+    queryFn: () => userPreferencesApi.getUserPreferences(''),
     initialData: defaultPreferences,
     retry: 1,
   });
 
   const updatePreferences = useMutation({
-    mutationFn: (data: UpdateUserPreferencesRequest) => userPreferencesApi.update(data),
+    mutationFn: (data: UpdateUserPreferencesRequest) => {
+      const { userId, ...preferences } = data;
+      return userPreferencesApi.updateUserPreferences(userId, {
+        ...preferences,
+        notificationSettings: preferences.notificationSettings ?? defaultPreferences.notificationSettings
+      });
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const addFavorite = useMutation({
-    mutationFn: userPreferencesApi.addFavorite,
+    mutationFn: (params: { userId: string; newsletterId: string }) => {
+      const currentPreferences = queryClient.getQueryData(['userPreferences']) as UserPreferences;
+      return userPreferencesApi.updateUserPreferences(params.userId, {
+        ...currentPreferences,
+        newsletterSubscriptions: [...currentPreferences.newsletterSubscriptions, params.newsletterId]
+      });
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const removeFavorite = useMutation({
-    mutationFn: userPreferencesApi.removeFavorite,
+    mutationFn: (params: { userId: string; newsletterId: string }) => {
+      const currentPreferences = queryClient.getQueryData(['userPreferences']) as UserPreferences;
+      return userPreferencesApi.updateUserPreferences(params.userId, {
+        ...currentPreferences,
+        newsletterSubscriptions: currentPreferences.newsletterSubscriptions.filter(id => id !== params.newsletterId)
+      });
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const updateInterests = useMutation({
-    mutationFn: userPreferencesApi.updateInterests,
+    mutationFn: (params: { userId: string; interests: string[] }) => 
+      userPreferencesApi.updateUserPreferences(params.userId, { interests: params.interests }),
     onSuccess: (data) => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const updateNotificationSettings = useMutation({
-    mutationFn: userPreferencesApi.updateNotificationSettings,
+    mutationFn: (params: { userId: string; settings: UserPreferences['notificationSettings'] }) => 
+      userPreferencesApi.updateUserPreferences(params.userId, { notificationSettings: params.settings }),
     onSuccess: (data) => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   return {
-    preferences,
-    updatePreferences,
-    addFavorite,
-    removeFavorite,
-    updateInterests,
-    updateNotificationSettings,
+    preferences: preferences.data,
+    updatePreferences: updatePreferences.mutate,
+    addFavorite: addFavorite.mutate,
+    removeFavorite: removeFavorite.mutate,
+    updateInterests: updateInterests.mutate,
+    updateNotificationSettings: updateNotificationSettings.mutate,
+    get: userPreferencesApi.getUserPreferences,
+    update: userPreferencesApi.updateUserPreferences
   };
 };

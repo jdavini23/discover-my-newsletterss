@@ -1,13 +1,15 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
-import { expect, describe, test, vi, beforeEach } from 'vitest';
+import { render, fireEvent, waitFor, act } from '@testing-library/react';
+import { expect, describe, test, vi } from 'vitest';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
-import {
+import { AuthProviderType } from '../types/auth';
+import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
   onAuthStateChanged,
+  updateProfile
 } from 'firebase/auth';
 import { setDoc } from 'firebase/firestore';
 

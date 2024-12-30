@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotificationStore } from '../../stores/rootStore';
 import { Tooltip } from '../common/Tooltip';
+import { Notification } from '@/types/notification';
 
 // Memoize interest categories to prevent unnecessary re-renders
 const interestCategories = [
@@ -42,16 +43,21 @@ const InterestWizard: React.FC = () => {
       // Simulated API call or store update
       await updateUserInterests(selectedInterests);
 
-      addNotification({
-        message: 'Interests updated successfully!',
-        type: 'success',
-      });
+      const successNotification: Omit<Notification, 'id'> = {
+        title: 'Success',
+        message: 'Interests updated successfully',
+        type: 'success'
+      };
+
+      addNotification(successNotification);
     } catch (error) {
       console.error('Error in handleSubmit:', error);
-      addNotification({
+      const errorNotification: Omit<Notification, 'id'> = {
+        title: 'Error',
         message: 'Failed to update interests',
-        type: 'error',
-      });
+        type: 'error'
+      };
+      addNotification(errorNotification);
     }
   }, [selectedInterests, addNotification]);
 

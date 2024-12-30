@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Newsletter } from '../types/newsletter';
+import { Newsletter } from '../types/newsletter.ts';
 
 interface SearchParams {
   query?: string;
@@ -79,7 +79,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>((set, get)
       });
     } catch (error) {
       set({ 
-        error: error instanceof Error ? error.message : 'Network error',
+        error: 'Network error',
         newsletters: [],
         loading: false,
       });
@@ -87,41 +87,54 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>((set, get)
   },
 
   fetchFilterOptions: async () => {
+    set({ loading: true, error: null });
     try {
-      const response = await fetch(`${API_BASE_URL}/api/newsletters/filter-options`);
+      const response = await fetch(`${API_BASE_URL}/api/newsletters/filters`);
       if (!response.ok) {
         throw new Error('Failed to fetch filter options');
       }
+
       const data = await response.json();
       set({
-        categories: data.categories || [],
-        tags: data.tags || [],
-        frequencies: data.frequencies || [],
+        categories: data.categories,
+        tags: data.tags,
+        frequencies: data.frequencies,
+        loading: false,
       });
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Failed to fetch filter options' });
+      set({ 
+        error: 'Network error',
+        categories: [],
+        tags: [],
+        frequencies: [],
+        loading: false,
+      });
     }
   },
 
   setSearchParams: (params: SearchParams) => {
     set(state => ({
-      searchParams: { ...state.searchParams, ...params },
-      currentPage: params.page || state.currentPage,
-      pageSize: params.pageSize || state.pageSize,
+      searchParams: {
+        ...state.searchParams,
+        ...params,
+      }
     }));
   },
 
   resetSearch: () => {
     set({
       newsletters: [],
-      error: null,
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
       searchParams: {
         page: 1,
         pageSize: 10,
       },
-      currentPage: 1,
-      pageSize: 10,
-      total: 0,
+      error: null,
+      categories: [],
+      tags: [],
+      frequencies: [],
     });
   },
 }));

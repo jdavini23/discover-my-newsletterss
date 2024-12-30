@@ -2,24 +2,31 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 
 @Entity('security_events')
 export class SecurityEvent {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
-
-  @Column()
-  eventType!: string;
-
-  @Column()
-  userId!: string;
-
-  @Column()
-  ipAddress!: string;
-
-  @Column({ type: 'json', nullable: true })
+  id?: string;
+  eventType: string;
+  userId: string;
+  ipAddress?: string;
   metadata?: Record<string, any>;
+  isHighRisk: boolean;
+  createdAt: Date;
 
-  @Column({ default: false })
-  isHighRisk!: boolean;
+  constructor(data?: Partial<SecurityEvent>) {
+    if (data) {
+      Object.assign(this, data);
+    }
+    this.createdAt = data?.createdAt || new Date();
+    this.isHighRisk = data?.isHighRisk || false;
+  }
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  toJSON() {
+    return {
+      id: this.id,
+      eventType: this.eventType,
+      userId: this.userId,
+      ipAddress: this.ipAddress,
+      metadata: this.metadata,
+      isHighRisk: this.isHighRisk,
+      createdAt: this.createdAt
+    };
+  }
 }

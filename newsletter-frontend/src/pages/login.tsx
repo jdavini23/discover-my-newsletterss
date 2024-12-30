@@ -1,14 +1,34 @@
 import React, { useState } from 'react';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Head from '@/lib/next-head-mock';
+import { useRouter } from '@/lib/next-router-mock';
 import { useAuth } from '../contexts/AuthContext';
-import { AuthProviderType } from '../lib/authProviders';
+import { AuthProviderType as AuthProviderTypeEnum } from '../types/auth';
+
+const AuthProviderButton = ({ 
+  children, 
+  providerType 
+}: { 
+  children: React.ReactNode; 
+  providerType: keyof typeof AuthProviderTypeEnum 
+}) => {
+  const { signInWithProvider } = useAuth();
+
+  const handleSignIn = () => {
+    signInWithProvider(AuthProviderTypeEnum[providerType]);
+  };
+
+  return (
+    <button onClick={handleSignIn}>
+      {children}
+    </button>
+  );
+};
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { logIn, signInWithOAuthProvider } = useAuth();
+  const { logIn, signInWithProvider } = useAuth();
   const router = useRouter();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -18,17 +38,12 @@ const LoginPage: React.FC = () => {
     try {
       await logIn(email, password);
       router.push('/dashboard'); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
-
-  const handleOAuthLogin = async (provider: AuthProviderType) => {
-    try {
-      await signInWithOAuthProvider(provider);
-      router.push('/dashboard');
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred during login');
+      }
     }
   };
 
@@ -92,24 +107,9 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-3 gap-3">
-            <button
-              onClick={() => handleOAuthLogin(AuthProviderType.GOOGLE)}
-              className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-            >
-              Google
-            </button>
-            <button
-              onClick={() => handleOAuthLogin(AuthProviderType.GITHUB)}
-              className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-            >
-              GitHub
-            </button>
-            <button
-              onClick={() => handleOAuthLogin(AuthProviderType.FACEBOOK)}
-              className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-            >
-              Facebook
-            </button>
+            <AuthProviderButton providerType="GOOGLE">Google</AuthProviderButton>
+            <AuthProviderButton providerType="GITHUB">GitHub</AuthProviderButton>
+            <AuthProviderButton providerType="FACEBOOK">Facebook</AuthProviderButton>
           </div>
         </div>
 

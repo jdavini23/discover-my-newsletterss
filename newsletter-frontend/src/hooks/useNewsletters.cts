@@ -1,56 +1,28 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { newsletterApi } from '../services/api/newsletterApi';
-import type { NewsletterSearchFilters } from '../types/newsletter';
+import { newsletterApi, Newsletter, NewsletterSearchParams, NewsletterSearchResult } from '../services/api/newsletterApi';
 
 export const useNewsletters = () => {
-  const queryClient = useQueryClient();
-
-  const search = (filters: NewsletterSearchFilters) =>
-    useQuery({
-      queryKey: ['newsletters', 'search', filters],
-      queryFn: () => newsletterApi.search(filters),
-    });
-
-  const getNewsletter = (id: string) =>
-    useQuery({
-      queryKey: ['newsletter', id],
-      queryFn: () => newsletterApi.getById(id),
-    });
-
-  const getRecommended = () =>
-    useQuery({
-      queryKey: ['newsletters', 'recommended'],
-      queryFn: () => newsletterApi.getRecommended(),
-    });
-
-  const getFeatured = () =>
-    useQuery({
-      queryKey: ['newsletters', 'featured'],
-      queryFn: () => newsletterApi.getFeatured(),
-    });
-
-  const subscribe = useMutation({
-    mutationFn: newsletterApi.subscribe,
-    onSuccess: (_, newsletterId) => {
-      queryClient.invalidateQueries({ queryKey: ['newsletter', newsletterId] });
-      queryClient.invalidateQueries({ queryKey: ['newsletters'] });
-    },
-  });
-
-  const unsubscribe = useMutation({
-    mutationFn: newsletterApi.unsubscribe,
-    onSuccess: (_, newsletterId) => {
-      queryClient.invalidateQueries({ queryKey: ['newsletter', newsletterId] });
-      queryClient.invalidateQueries({ queryKey: ['newsletters'] });
-    },
-  });
-
   return {
-    search,
-    getNewsletter,
-    getRecommended,
-    getFeatured,
-    subscribe,
-    unsubscribe,
+    ...newsletterApi,
+    search: newsletterApi.searchNewsletters,
+    getById: async (id: string) => {
+      const result = await newsletterApi.searchNewsletters({ query: id });
+      return result.newsletters[0];
+    },
+    getRecommended: async () => {
+      return newsletterApi.searchNewsletters({ page: 1, limit: 5 });
+    },
+    getFeatured: async () => {
+      return newsletterApi.searchNewsletters({ page: 1, limit: 3 });
+    },
+    subscribe: async (newsletterId: string) => {
+      // Placeholder implementation
+      console.log(`Subscribing to newsletter ${newsletterId}`);
+      return true;
+    },
+    unsubscribe: async (newsletterId: string) => {
+      // Placeholder implementation
+      console.log(`Unsubscribing from newsletter ${newsletterId}`);
+      return true;
+    }
   };
 };

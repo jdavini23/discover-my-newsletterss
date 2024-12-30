@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { expect, describe, test, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { expect, describe, test, vi } from 'vitest';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { updateProfile, onAuthStateChanged } from 'firebase/auth';
 import { setDoc } from 'firebase/firestore';
