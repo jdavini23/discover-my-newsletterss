@@ -1,21 +1,20 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow authenticated users to read/write their own data
+    // Allow authenticated users to read and write their own data
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
-    // Allow admins to manage newsletters
+    // Public read, authenticated write for newsletters
     match /newsletters/{newsletterId} {
       allow read: true;
-      allow create, update, delete: if request.auth.token.admin == true;
+      allow create, update, delete: if request.auth != null;
     }
     
-    // Public read, authenticated write
-    match /public/{document=**} {
-      allow read: true;
-      allow write: if request.auth != null;
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

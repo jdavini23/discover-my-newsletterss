@@ -1,29 +1,20 @@
-import { defineConfig, UserConfigExport } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  optimizeDeps: {
-    include: [
-      'react', 
-      'react-dom', 
-      'react/jsx-runtime',
-      'react/jsx-dev-runtime',
-      'msw'
-    ],
-    esbuildOptions: {
-      target: 'es2020'
+  resolve: {
+    alias: {
+      '@': '/src',
     },
-    force: true
   },
-  test: {
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    globals: true,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-    },
-  }
-} as const satisfies UserConfigExport)
+  server: {
+    port: 3000,
+    open: true,
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+  },
+})
