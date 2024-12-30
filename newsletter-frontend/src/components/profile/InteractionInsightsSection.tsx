@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserProfile, UserActivity } from '../../types/profile';
+import { UserProfile } from '../../types/profile';
 
 const DEFAULT_AVATAR = '/src/assets/images/default-avatar.svg';
 
@@ -24,52 +24,52 @@ const InteractionInsightsSection: React.FC<InteractionInsightsSectionProps> = ({
   }, {} as Record<string, number>);
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
+    <div className="bg-neutralBackground-100 shadow-soft rounded-xl p-6">
       <div className="flex items-center mb-6">
         <img 
           src={profile.photoURL || DEFAULT_AVATAR} 
           alt="Profile" 
-          className="w-16 h-16 rounded-full object-cover mr-4" 
+          className="w-16 h-16 rounded-full object-cover mr-4 border-4 border-primary-100" 
         />
         <div>
-          <h2 className="text-2xl font-bold">{profile.displayName || 'User'}</h2>
-          <p className="text-gray-600">{profile.email}</p>
+          <h2 className="text-2xl font-bold text-neutralText-500">{profile.displayName || 'User'}</h2>
+          <p className="text-neutralText-500">{profile.email}</p>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-6">Interaction Insights</h2>
+      <h3 className="text-xl font-semibold mb-6 text-neutralText-700">Interaction Insights</h3>
 
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         {Object.entries(activityCounts || {}).map(([type, count]) => (
           <div 
             key={type} 
-            className="bg-gray-100 p-4 rounded-md text-center"
+            className="bg-neutralBackground-50 p-4 rounded-md text-center border border-neutralBackground-500"
           >
-            <p className="text-xl font-bold text-blue-600">{count}</p>
-            <p className="text-sm text-gray-600">{ActivityTypeLabels[type as keyof typeof ActivityTypeLabels]}</p>
+            <p className="text-xl font-bold text-primary-500">{count}</p>
+            <p className="text-sm text-neutralText-700">{ActivityTypeLabels[type as keyof typeof ActivityTypeLabels]}</p>
           </div>
         ))}
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
+        <h4 className="text-lg font-semibold mb-4 text-neutralText-700">Recent Activity</h4>
         {sortedActivities.length === 0 ? (
-          <p className="text-gray-500">No recent activities</p>
+          <p className="text-neutralText-500">No recent activities</p>
         ) : (
-          <ul className="divide-y divide-gray-200">
+          <ul className="divide-y divide-neutralBackground-500">
             {sortedActivities.map((activity, index) => (
               <li key={index} className="py-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-neutralText-700">
                       {ActivityTypeLabels[activity.type as keyof typeof ActivityTypeLabels]}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-neutralText-500">
                       {new Date(activity.timestamp.seconds * 1000).toLocaleString()}
                     </p>
                   </div>
                   {activity.details && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-accent1-500">
                       {activity.details}
                     </span>
                   )}
