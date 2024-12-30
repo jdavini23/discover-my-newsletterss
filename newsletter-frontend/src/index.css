@@ -35,7 +35,7 @@ body {
 
 /* Focus states */
 *:focus {
-  @apply outline-none ring-2 ring-primary-300;
+  @apply outline-none ring-2 ring-primary-100;
 }
 
 /* Transition classes */
