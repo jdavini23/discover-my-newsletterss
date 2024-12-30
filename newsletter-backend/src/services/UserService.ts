@@ -109,7 +109,10 @@ export class UserService {
       return user;
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error creating user', { errorMessage: error.message, email: userData.email });
+        securityLogger.error('Error creating user', {
+          errorMessage: error.message,
+          email: userData.email,
+        });
       } else {
         securityLogger.error('Unknown error creating user', { email: userData.email });
       }
@@ -135,7 +138,10 @@ export class UserService {
       return adminUser;
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error creating admin user', { errorMessage: error.message, email: adminUserData.email });
+        securityLogger.error('Error creating admin user', {
+          errorMessage: error.message,
+          email: adminUserData.email,
+        });
       } else {
         securityLogger.error('Unknown error creating admin user', { email: adminUserData.email });
       }
@@ -157,7 +163,10 @@ export class UserService {
       return user;
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error validating user', { errorMessage: error.message, email: validationData.email });
+        securityLogger.error('Error validating user', {
+          errorMessage: error.message,
+          email: validationData.email,
+        });
       } else {
         securityLogger.error('Unknown error validating user', { email: validationData.email });
       }
@@ -183,7 +192,10 @@ export class UserService {
       await this.logSecurityEvent({ eventType: 'PASSWORD_RESET_INITIATED', userId: user.id });
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error initiating password reset', { errorMessage: error.message, email });
+        securityLogger.error('Error initiating password reset', {
+          errorMessage: error.message,
+          email,
+        });
       } else {
         securityLogger.error('Unknown error initiating password reset', { email });
       }
@@ -246,9 +258,14 @@ export class UserService {
       await this.securityEventsCollection.add(securityEvent);
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error logging security event', { errorMessage: error.message, eventType: options.eventType });
+        securityLogger.error('Error logging security event', {
+          errorMessage: error.message,
+          eventType: options.eventType,
+        });
       } else {
-        securityLogger.error('Unknown error logging security event', { eventType: options.eventType });
+        securityLogger.error('Unknown error logging security event', {
+          eventType: options.eventType,
+        });
       }
     }
   }
@@ -274,7 +291,10 @@ export class UserService {
       return user;
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error promoting user to admin', { errorMessage: error.message, userId });
+        securityLogger.error('Error promoting user to admin', {
+          errorMessage: error.message,
+          userId,
+        });
       } else {
         securityLogger.error('Unknown error promoting user to admin', { userId });
       }

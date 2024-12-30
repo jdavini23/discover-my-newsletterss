@@ -2,12 +2,25 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 
 @Entity('security_events')
 export class SecurityEvent {
+  @PrimaryGeneratedColumn('uuid')
   id?: string;
+
+  @Column()
   eventType: string;
+
+  @Column()
   userId: string;
+
+  @Column({ nullable: true })
   ipAddress?: string;
+
+  @Column('jsonb', { nullable: true })
   metadata?: Record<string, any>;
+
+  @Column()
   isHighRisk: boolean;
+
+  @CreateDateColumn()
   createdAt: Date;
 
   constructor(data?: Partial<SecurityEvent>) {
@@ -26,7 +39,7 @@ export class SecurityEvent {
       ipAddress: this.ipAddress,
       metadata: this.metadata,
       isHighRisk: this.isHighRisk,
-      createdAt: this.createdAt
+      createdAt: this.createdAt,
     };
   }
 }

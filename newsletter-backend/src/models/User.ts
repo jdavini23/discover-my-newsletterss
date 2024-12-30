@@ -46,7 +46,7 @@ export class User {
       firebaseUid: this.firebaseUid,
       authProvider: this.authProvider,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }
