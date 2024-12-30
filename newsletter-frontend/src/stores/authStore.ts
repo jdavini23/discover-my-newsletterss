@@ -23,7 +23,7 @@ interface AuthState {
   initializeAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,
@@ -50,13 +50,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (email: string, password: string, name?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const user = await signUp(email, password);
-      
-      // Create user profile in Firestore
-      await createUserProfile({
-        id: user.uid,
-        email: user.email || email,
-        displayName: name
+      const userCredential = await signUp(email, password);
+      const user = userCredential.user;
+
+      // Create user profile
+      await createUserProfile(user.uid, {
+        email: user.email || '',
+        displayName: name || user.displayName || ''
       });
 
       set({ 
@@ -92,16 +92,24 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   initializeAuth: () => {
-    // Set up authentication state listener
-    const unsubscribe = onAuthChange((user) => {
-      set({ 
-        user, 
-        isAuthenticated: !!user, 
-        isLoading: false 
-      });
+    onAuthChange((user) => {
+      if (user) {
+        set({ 
+          user, 
+          isAuthenticated: true, 
+          isLoading: false 
+        });
+      } else {
+        set({ 
+          user: null, 
+          isAuthenticated: false, 
+          isLoading: false 
+        });
+      }
     });
-
-    // Return unsubscribe function to clean up listener
-    return unsubscribe;
   }
 }));
+
+// Export both default and named exports
+export { useAuthStore };
+export default useAuthStore;
