@@ -77,5 +77,14 @@
     "vite": "^5.0.10",
     "vite-bundle-analyzer": "^0.8.1",
     "vitest": "^1.1.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,cts,mts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,json,md}": [
+      "prettier --write"
+    ]
   }
 }
