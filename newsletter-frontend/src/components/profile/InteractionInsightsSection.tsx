@@ -1,15 +1,17 @@
 import React from 'react';
 import { UserProfile, UserActivity } from '../../types/profile';
 
-interface InteractionInsightsSectionProps {
-  profile: UserProfile;
-}
+const DEFAULT_AVATAR = '/src/assets/images/default-avatar.svg';
 
 const ActivityTypeLabels = {
   'newsletter_view': 'Viewed Newsletter',
   'newsletter_subscribe': 'Subscribed to Newsletter',
   'newsletter_like': 'Liked Newsletter'
 };
+
+interface InteractionInsightsSectionProps {
+  profile: UserProfile;
+}
 
 const InteractionInsightsSection: React.FC<InteractionInsightsSectionProps> = ({ profile }) => {
   const sortedActivities = [...(profile.activityLog || [])]
@@ -23,6 +25,18 @@ const InteractionInsightsSection: React.FC<InteractionInsightsSectionProps> = ({
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="flex items-center mb-6">
+        <img 
+          src={profile.photoURL || DEFAULT_AVATAR} 
+          alt="Profile" 
+          className="w-16 h-16 rounded-full object-cover mr-4" 
+        />
+        <div>
+          <h2 className="text-2xl font-bold">{profile.displayName || 'User'}</h2>
+          <p className="text-gray-600">{profile.email}</p>
+        </div>
+      </div>
+
       <h2 className="text-2xl font-bold mb-6">Interaction Insights</h2>
 
       <div className="grid md:grid-cols-3 gap-4 mb-6">
