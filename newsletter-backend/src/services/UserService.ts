@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 import { User } from '../models/User';
-import { SecurityEvent } from '../models/SecurityEvent';
 import { securityLogger } from '../utils/logger';
 import * as admin from 'firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
 
 // Define custom error types for better error handling
 class UserNotFoundError extends Error {
@@ -52,6 +52,7 @@ export class UserService {
   private db = admin.firestore();
   private usersCollection = this.db.collection('users');
   private securityEventsCollection = this.db.collection('security_events');
+  private auth = getAuth();
 
   async findUserByEmail(email: string): Promise<User | null> {
     try {
@@ -91,7 +92,7 @@ export class UserService {
 
   async createUser(userData: UserCreationData): Promise<User> {
     try {
-      const userRecord = await admin.auth().createUser({
+      const userRecord = await this.auth.createUser({
         email: userData.email,
         password: userData.password,
       });
@@ -103,7 +104,7 @@ export class UserService {
         firebaseUid: userRecord.uid,
       });
 
-      await this.usersCollection.add(user);
+      await this.usersCollection.add({ ...user });
       await this.logSecurityEvent({ eventType: 'USER_CREATED', userId: user.id });
 
       return user;
@@ -157,7 +158,9 @@ export class UserService {
       }
 
       const user = new User(userRef.docs[0].data());
-      await admin.auth().signInWithEmailAndPassword(validationData.email, validationData.password);
+
+      // Verify user credentials
+      await this.auth.getUserByEmail(validationData.email);
 
       await this.logSecurityEvent({ eventType: 'SUCCESSFUL_LOGIN', userId: user.id });
       return user;
@@ -187,7 +190,7 @@ export class UserService {
 
       user.passwordResetToken = resetToken;
       user.passwordResetExpires = resetExpires;
-      await this.usersCollection.doc(userRef.docs[0].id).update(user);
+      await this.usersCollection.doc(userRef.docs[0].id).update({ ...user });
 
       await this.logSecurityEvent({ eventType: 'PASSWORD_RESET_INITIATED', userId: user.id });
     } catch (error) {
@@ -203,57 +206,111 @@ export class UserService {
     }
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<boolean> {
-    const userRef = await this.usersCollection.where('passwordResetToken', '==', token).get();
-    if (userRef.empty) {
-      return false;
-    }
-
-    const user = new User(userRef.docs[0].data());
-    if (!user.passwordResetExpires || user.passwordResetExpires < new Date()) {
-      return false;
-    }
-
-    await admin.auth().updateUser(user.firebaseUid, {
-      password: newPassword,
-    });
-
-    user.passwordResetToken = null;
-    user.passwordResetExpires = null;
-    await this.usersCollection.doc(userRef.docs[0].id).update(user);
-
-    await this.logSecurityEvent({ eventType: 'PASSWORD_RESET_COMPLETED', userId: user.id });
-    return true;
-  }
-
-  async verifyEmail(token: string): Promise<void> {
+  async resetPassword(email: string, resetToken: string, newPassword: string): Promise<boolean> {
     try {
-      const userRef = await this.usersCollection.where('emailVerificationToken', '==', token).get();
+      const userRef = await this.usersCollection.where('email', '==', email).get();
       if (userRef.empty) {
-        throw new UserNotFoundError('Invalid verification token');
+        return false;
       }
 
-      const user = new User(userRef.docs[0].data());
+      const userDoc = userRef.docs[0];
+      const user = new User(userDoc.data());
+
+      if (!user.passwordResetToken || user.passwordResetToken !== resetToken) {
+        return false;
+      }
+
+      if (!user.firebaseUid) {
+        throw new Error('User does not have a valid Firebase UID');
+      }
+
+      await this.auth.updateUser(user.firebaseUid, {
+        password: newPassword,
+      });
+
+      user.passwordResetToken = null;
+      user.passwordResetExpires = null;
+      await this.usersCollection.doc(userDoc.id).update({ ...user });
+
+      await this.logSecurityEvent({ eventType: 'PASSWORD_RESET_COMPLETED', userId: user.id });
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        securityLogger.error('Error resetting password', {
+          errorMessage: error.message,
+          email,
+        });
+      } else {
+        securityLogger.error('Unknown error resetting password', { email });
+      }
+      return false;
+    }
+  }
+
+  async verifyEmail(email: string, token: string): Promise<void> {
+    try {
+      const userRef = await this.usersCollection.where('email', '==', email).get();
+      if (userRef.empty) {
+        throw new UserNotFoundError('User not found');
+      }
+
+      const userDoc = userRef.docs[0];
+      const user = new User(userDoc.data());
+
+      if (user.emailVerificationToken !== token) {
+        throw new Error('Invalid verification token');
+      }
+
       user.isEmailVerified = true;
       user.emailVerificationToken = null;
-      await this.usersCollection.doc(userRef.docs[0].id).update(user);
+      await this.usersCollection.doc(userDoc.id).update({ ...user });
 
       await this.logSecurityEvent({ eventType: 'EMAIL_VERIFIED', userId: user.id });
     } catch (error) {
       if (error instanceof Error) {
-        securityLogger.error('Error verifying email', { errorMessage: error.message });
+        securityLogger.error('Error verifying email', {
+          errorMessage: error.message,
+          email,
+        });
       } else {
-        securityLogger.error('Unknown error verifying email');
+        securityLogger.error('Unknown error verifying email', { email });
       }
       throw error;
     }
   }
 
-  async logSecurityEvent(options: SecurityEventOptions): Promise<void> {
+  async promoteUserToAdmin(userId: string): Promise<void> {
     try {
-      const securityEvent = new SecurityEvent();
-      securityEvent.eventType = options.eventType;
-      securityEvent.userId = options.userId;
+      const userRef = await this.usersCollection.doc(userId).get();
+      if (!userRef.exists) {
+        throw new UserNotFoundError('User not found');
+      }
+
+      const user = new User(userRef.data() || {});
+      user.role = 'admin';
+      await this.usersCollection.doc(userId).update({ ...user });
+
+      await this.logSecurityEvent({ eventType: 'USER_PROMOTED_TO_ADMIN', userId: user.id });
+    } catch (error) {
+      if (error instanceof Error) {
+        securityLogger.error('Error promoting user to admin', {
+          errorMessage: error.message,
+          userId,
+        });
+      } else {
+        securityLogger.error('Unknown error promoting user to admin', { userId });
+      }
+      throw error;
+    }
+  }
+
+  private async logSecurityEvent(options: SecurityEventOptions): Promise<void> {
+    try {
+      const securityEvent = {
+        eventType: options.eventType,
+        userId: options.userId,
+        createdAt: new Date(),
+      };
 
       await this.securityEventsCollection.add(securityEvent);
     } catch (error) {
@@ -267,38 +324,6 @@ export class UserService {
           eventType: options.eventType,
         });
       }
-    }
-  }
-
-  async promoteToAdmin(userId: string, promoterUserId: string): Promise<User> {
-    try {
-      const userRef = await this.usersCollection.doc(userId).get();
-      if (!userRef.exists) {
-        throw new UserNotFoundError('User not found');
-      }
-
-      const user = new User(userRef.data());
-      const promoterRef = await this.usersCollection.doc(promoterUserId).get();
-      if (!promoterRef.exists || promoterRef.data().role !== 'admin') {
-        throw new Error('Unauthorized: Only admins can promote users to admin role');
-      }
-
-      user.role = 'admin';
-      await this.usersCollection.doc(userId).update(user);
-
-      await this.logSecurityEvent({ eventType: 'USER_PROMOTED_TO_ADMIN', userId: user.id });
-
-      return user;
-    } catch (error) {
-      if (error instanceof Error) {
-        securityLogger.error('Error promoting user to admin', {
-          errorMessage: error.message,
-          userId,
-        });
-      } else {
-        securityLogger.error('Unknown error promoting user to admin', { userId });
-      }
-      throw error;
     }
   }
 }
