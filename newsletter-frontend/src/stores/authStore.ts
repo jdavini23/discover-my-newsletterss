@@ -1,11 +1,6 @@
 import { create } from 'zustand';
-import { User } from 'firebase/auth';
-import { 
-  signIn, 
-  signUp, 
-  logOut, 
-  onAuthChange 
-} from '@/config/firebase';
+import { User, UserCredential } from 'firebase/auth';
+import { signIn, signUp, logOut, onAuthChange } from '@/config/firebase';
 import { createUserProfile } from '@/services/firestore';
 
 interface AuthState {
@@ -13,17 +8,17 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  
+
   // Authentication methods
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
-  
+
   // Authentication state management
   initializeAuth: () => void;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
+const useAuthStore = create<AuthState>(set => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,
@@ -33,15 +28,15 @@ const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const user = await signIn(email, password);
-      set({ 
-        user, 
-        isAuthenticated: true, 
-        isLoading: false 
+      set({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
       });
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Login failed', 
-        isLoading: false 
+      set({
+        error: error instanceof Error ? error.message : 'Login failed',
+        isLoading: false,
       });
       throw error;
     }
@@ -50,24 +45,23 @@ const useAuthStore = create<AuthState>((set) => ({
   register: async (email: string, password: string, name?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const userCredential = await signUp(email, password);
-      const user = userCredential.user;
+      const userCredential: UserCredential = await signUp(email, password);
 
       // Create user profile
-      await createUserProfile(user.uid, {
-        email: user.email || '',
-        displayName: name || user.displayName || ''
+      await createUserProfile(userCredential.user.uid, {
+        email: userCredential.user.email || '',
+        displayName: name || userCredential.user.displayName || '',
       });
 
-      set({ 
-        user, 
-        isAuthenticated: true, 
-        isLoading: false 
+      set({
+        user: userCredential.user,
+        isAuthenticated: true,
+        isLoading: false,
       });
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Registration failed', 
-        isLoading: false 
+      set({
+        error: error instanceof Error ? error.message : 'Registration failed',
+        isLoading: false,
       });
       throw error;
     }
@@ -77,37 +71,37 @@ const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       await logOut();
-      set({ 
-        user: null, 
-        isAuthenticated: false, 
-        isLoading: false 
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
       });
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : 'Logout failed', 
-        isLoading: false 
+      set({
+        error: error instanceof Error ? error.message : 'Logout failed',
+        isLoading: false,
       });
       throw error;
     }
   },
 
   initializeAuth: () => {
-    onAuthChange((user) => {
+    onAuthChange(user => {
       if (user) {
-        set({ 
-          user, 
-          isAuthenticated: true, 
-          isLoading: false 
+        set({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
         });
       } else {
-        set({ 
-          user: null, 
-          isAuthenticated: false, 
-          isLoading: false 
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
         });
       }
     });
-  }
+  },
 }));
 
 // Export both default and named exports

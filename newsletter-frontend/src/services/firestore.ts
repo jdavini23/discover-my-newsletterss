@@ -13,7 +13,8 @@ import {
   Timestamp,
   orderBy,
   limit,
-  increment
+  increment,
+  Query,
 } from 'firebase/firestore';
 import { auth } from '@/config/firebase';
 import { User, Newsletter, Subscription, NewsletterFilter } from '@/types/firestore';
@@ -32,19 +33,19 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile> => 
 
   return {
     uid: userSnap.id,
-    ...userSnap.data()
+    ...userSnap.data(),
   } as UserProfile;
 };
 
 // Update user newsletter preferences
 export const updateNewsletterPreferences = async (
-  userId: string, 
+  userId: string,
   preferences: UserProfile['newsletterPreferences']
 ): Promise<UserProfile> => {
   const userRef = doc(db, 'users', userId);
 
   await updateDoc(userRef, { newsletterPreferences: preferences });
-  
+
   return fetchUserProfile(userId);
 };
 
@@ -52,10 +53,10 @@ export const updateNewsletterPreferences = async (
 export const fetchAvailableTopics = async () => {
   const topicsRef = collection(db, 'topics');
   const topicsSnapshot = await getDocs(topicsRef);
-  
+
   return topicsSnapshot.docs.map(doc => ({
     id: doc.id,
-    ...doc.data()
+    ...doc.data(),
   }));
 };
 
@@ -67,7 +68,7 @@ export const addNewsletter = async (newsletter: Omit<Newsletter, 'id'>) => {
   const docRef = await addDoc(newsletterRef, {
     ...newsletter,
     userId: auth.currentUser.uid,
-    createdAt: Timestamp.now()
+    createdAt: Timestamp.now(),
   });
 
   return docRef.id;
@@ -78,33 +79,27 @@ export const getUserNewsletters = async () => {
 
   const newsletterRef = collection(db, 'newsletters');
   const q = query(newsletterRef, where('userId', '==', auth.currentUser.uid));
-  
+
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  } as Newsletter));
+  return querySnapshot.docs.map(
+    doc =>
+      ({
+        id: doc.id,
+        ...doc.data(),
+      }) as Newsletter
+  );
 };
 
 // Newsletter Discovery Methods
 export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
-  const { 
-    topics, 
-    sortBy = 'popularity', 
-    searchQuery, 
-    page = 1, 
-    pageSize = 12 
-  } = filters;
+  const { topics, sortBy = 'popularity', searchQuery, page = 1, pageSize = 12 } = filters;
 
   // Base query
   let newsletterQuery: Query = collection(db, 'newsletters');
 
   // Apply topic filters
   if (topics && topics.length > 0) {
-    newsletterQuery = query(
-      newsletterQuery, 
-      where('topics', 'array-contains-any', topics)
-    );
+    newsletterQuery = query(newsletterQuery, where('topics', 'array-contains-any', topics));
   }
 
   // Apply search query
@@ -121,37 +116,28 @@ export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
   // Apply sorting
   switch (sortBy) {
     case 'popularity':
-      newsletterQuery = query(
-        newsletterQuery, 
-        orderBy('popularity', 'desc')
-      );
+      newsletterQuery = query(newsletterQuery, orderBy('popularity', 'desc'));
       break;
     case 'recent':
-      newsletterQuery = query(
-        newsletterQuery, 
-        orderBy('createdAt', 'desc')
-      );
+      newsletterQuery = query(newsletterQuery, orderBy('createdAt', 'desc'));
       break;
     case 'rating':
-      newsletterQuery = query(
-        newsletterQuery, 
-        orderBy('averageRating', 'desc')
-      );
+      newsletterQuery = query(newsletterQuery, orderBy('averageRating', 'desc'));
       break;
   }
 
   // Apply pagination
-  newsletterQuery = query(
-    newsletterQuery,
-    limit(pageSize)
-  );
+  newsletterQuery = query(newsletterQuery, limit(pageSize));
 
   const newsletterSnapshot = await getDocs(newsletterQuery);
-  
-  return newsletterSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  } as Newsletter));
+
+  return newsletterSnapshot.docs.map(
+    doc =>
+      ({
+        id: doc.id,
+        ...doc.data(),
+      }) as Newsletter
+  );
 };
 
 // Subscribe to a newsletter
@@ -159,18 +145,18 @@ export const subscribeToNewsletter = async (newsletterId: string) => {
   if (!auth.currentUser) throw new Error('No authenticated user');
 
   const subscriptionRef = collection(db, 'subscriptions');
-  
+
   // Create subscription
   const subscriptionDoc = await addDoc(subscriptionRef, {
     userId: auth.currentUser.uid,
     newsletterId,
-    subscribedAt: Timestamp.now()
+    subscribedAt: Timestamp.now(),
   });
 
   // Increment newsletter subscriber count
   const newsletterRef = doc(db, 'newsletters', newsletterId);
   await updateDoc(newsletterRef, {
-    subscriberCount: increment(1)
+    subscriberCount: increment(1),
   });
 
   return subscriptionDoc.id;
@@ -188,7 +174,7 @@ export const unsubscribeFromNewsletter = async (newsletterId: string) => {
   );
 
   const subscriptionSnapshot = await getDocs(subscriptionsQuery);
-  
+
   if (!subscriptionSnapshot.empty) {
     const subscriptionDoc = subscriptionSnapshot.docs[0];
     await deleteDoc(doc(db, 'subscriptions', subscriptionDoc.id));
@@ -196,7 +182,7 @@ export const unsubscribeFromNewsletter = async (newsletterId: string) => {
     // Decrement newsletter subscriber count
     const newsletterRef = doc(db, 'newsletters', newsletterId);
     await updateDoc(newsletterRef, {
-      subscriberCount: increment(-1)
+      subscriberCount: increment(-1),
     });
   }
 };
@@ -211,17 +197,17 @@ export const fetchUserSubscriptions = async () => {
   );
 
   const subscriptionSnapshot = await getDocs(subscriptionsQuery);
-  
+
   // Get full newsletter details for each subscription
   const subscriptions = await Promise.all(
-    subscriptionSnapshot.docs.map(async (subDoc) => {
+    subscriptionSnapshot.docs.map(async subDoc => {
       const newsletterId = subDoc.data().newsletterId;
       const newsletterDoc = await getDoc(doc(db, 'newsletters', newsletterId));
-      
+
       return {
         id: newsletterId,
         ...newsletterDoc.data(),
-        subscriptionId: subDoc.id
+        subscriptionId: subDoc.id,
       } as Newsletter & { subscriptionId: string };
     })
   );
@@ -231,31 +217,31 @@ export const fetchUserSubscriptions = async () => {
 
 // Comprehensive user profile management functions
 export const updateUserProfile = async (
-  userId: string, 
+  userId: string,
   updates: UpdateProfileParams
 ): Promise<UserProfile> => {
   const userRef = doc(db, 'users', userId);
-  
+
   // Validate and sanitize updates
   const sanitizedUpdates: Partial<UserProfile> = {
     ...(updates.displayName && { displayName: updates.displayName }),
     ...(updates.bio && { bio: updates.bio }),
     ...(updates.photoURL && { photoURL: updates.photoURL }),
     ...(updates.interests && { interests: updates.interests }),
-    ...(updates.newsletterPreferences && { newsletterPreferences: updates.newsletterPreferences })
+    ...(updates.newsletterPreferences && { newsletterPreferences: updates.newsletterPreferences }),
   };
 
   await updateDoc(userRef, sanitizedUpdates);
-  
+
   return fetchUserProfile(userId);
 };
 
 export const createUserProfile = async (
-  userId: string, 
+  userId: string,
   initialData: Partial<UserProfile> | Partial<User>
 ): Promise<UserProfile> => {
   const userRef = doc(db, 'users', userId);
-  
+
   // Handle both User and UserProfile types
   const defaultProfile: UserProfile = {
     uid: userId,
@@ -266,11 +252,11 @@ export const createUserProfile = async (
     interests: [],
     newsletterPreferences: {
       frequency: 'weekly',
-      categories: []
+      categories: [],
     },
     activityLog: [],
     accountCreatedAt: Timestamp.now(),
-    lastLoginAt: Timestamp.now()
+    lastLoginAt: Timestamp.now(),
   };
 
   await setDoc(userRef, defaultProfile, { merge: true });
@@ -278,18 +264,15 @@ export const createUserProfile = async (
 };
 
 export const addUserActivityLog = async (
-  userId: string, 
+  userId: string,
   activity: UserActivity
 ): Promise<UserProfile> => {
   const userRef = doc(db, 'users', userId);
   const userProfile = await fetchUserProfile(userId);
 
-  const updatedActivityLog = [
-    ...(userProfile.activityLog || []),
-    activity
-  ];
+  const updatedActivityLog = [...(userProfile.activityLog || []), activity];
 
   await updateDoc(userRef, { activityLog: updatedActivityLog });
-  
+
   return fetchUserProfile(userId);
 };

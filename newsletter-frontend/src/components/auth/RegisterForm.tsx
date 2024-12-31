@@ -7,15 +7,17 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 // Validation schema
-const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    name: z.string().min(2, 'Name must be at least 2 characters'),
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -23,12 +25,12 @@ export const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
   const { register: registerUser } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors } 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -38,9 +40,8 @@ export const RegisterForm: React.FC = () => {
       toast.success('Account created successfully');
       navigate('/');
     } catch (error) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : 'Registration failed. Please try again.';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Registration failed. Please try again.';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -62,9 +63,7 @@ export const RegisterForm: React.FC = () => {
           } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
           placeholder="John Doe"
         />
-        {errors.name && (
-          <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
       </div>
 
       <div>
@@ -80,9 +79,7 @@ export const RegisterForm: React.FC = () => {
           } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
           placeholder="you@example.com"
         />
-        {errors.email && (
-          <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
       </div>
 
       <div>
@@ -98,9 +95,7 @@ export const RegisterForm: React.FC = () => {
           } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
           placeholder="••••••••"
         />
-        {errors.password && (
-          <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
       </div>
 
       <div>

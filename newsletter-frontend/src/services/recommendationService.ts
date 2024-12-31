@@ -1,43 +1,38 @@
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  updateDoc, 
-  addDoc, 
-  query, 
-  where, 
+import {
+  getFirestore,
+  collection,
+  doc,
+  updateDoc,
+  addDoc,
+  query,
+  where,
   getDocs,
   Timestamp,
   orderBy,
-  limit
+  limit,
 } from 'firebase/firestore';
 import { auth } from '@/config/firebase';
-import { 
-  User, 
-  Newsletter, 
-  UserNewsletterInteraction,
-  NewsletterFilter 
-} from '@/types/firestore';
+import { User, Newsletter, UserNewsletterInteraction, NewsletterFilter } from '@/types/firestore';
 
 const db = getFirestore();
 
 // Record user interaction with a newsletter
 export const recordNewsletterInteraction = async (
-  newsletterId: string, 
+  newsletterId: string,
   interactionType: UserNewsletterInteraction['interactionType'],
   duration?: number
 ) => {
   if (!auth.currentUser) throw new Error('No authenticated user');
 
   const interactionRef = collection(db, 'userNewsletterInteractions');
-  
+
   const interaction: UserNewsletterInteraction = {
     id: '', // Firestore will generate this
     userId: auth.currentUser.uid,
     newsletterId,
     interactionType,
     timestamp: Timestamp.now(),
-    duration
+    duration,
   };
 
   // Add interaction record
@@ -46,19 +41,18 @@ export const recordNewsletterInteraction = async (
   // Update user's recommendation profile
   const userRef = doc(db, 'users', auth.currentUser.uid);
   await updateDoc(userRef, {
-    'recommendationProfile.viewedNewsletters': 
-      interactionType === 'view' 
-        ? { $addToSet: newsletterId } 
-        : undefined,
-    'recommendationProfile.subscribedNewsletters': 
-      interactionType === 'subscribe' 
-        ? { $addToSet: newsletterId } 
-        : undefined,
-    [`recommendationProfile.interactionScores.${newsletterId}`]: 
-      interactionType === 'view' ? { $inc: 1 } :
-      interactionType === 'subscribe' ? { $inc: 5 } :
-      interactionType === 'read' ? { $inc: 3 } : 
-      undefined
+    'recommendationProfile.viewedNewsletters':
+      interactionType === 'view' ? { $addToSet: newsletterId } : undefined,
+    'recommendationProfile.subscribedNewsletters':
+      interactionType === 'subscribe' ? { $addToSet: newsletterId } : undefined,
+    [`recommendationProfile.interactionScores.${newsletterId}`]:
+      interactionType === 'view'
+        ? { $inc: 1 }
+        : interactionType === 'subscribe'
+          ? { $inc: 5 }
+          : interactionType === 'read'
+            ? { $inc: 3 }
+            : undefined,
   });
 
   return docRef.id;
@@ -66,13 +60,10 @@ export const recordNewsletterInteraction = async (
 
 // Generate personalized recommendations
 export const generatePersonalizedRecommendations = async (
-  user: User, 
+  user: User,
   filters: NewsletterFilter = {}
 ) => {
-  const { 
-    topics = user.newsletterPreferences.interestedTopics, 
-    pageSize = 12 
-  } = filters;
+  const { topics = user.newsletterPreferences.interestedTopics, pageSize = 12 } = filters;
 
   // Base recommendation query
   let recommendationQuery = query(
@@ -83,10 +74,7 @@ export const generatePersonalizedRecommendations = async (
 
   // Filter by user's interested topics
   if (topics && topics.length > 0) {
-    recommendationQuery = query(
-      recommendationQuery,
-      where('topics', 'array-contains-any', topics)
-    );
+    recommendationQuery = query(recommendationQuery, where('topics', 'array-contains-any', topics));
   }
 
   // Sort by recommendation score
@@ -99,11 +87,14 @@ export const generatePersonalizedRecommendations = async (
   );
 
   const recommendationSnapshot = await getDocs(recommendationQuery);
-  
-  return recommendationSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  } as Newsletter));
+
+  return recommendationSnapshot.docs.map(
+    doc =>
+      ({
+        id: doc.id,
+        ...doc.data(),
+      }) as Newsletter
+  );
 };
 
 // Update newsletter recommendation metadata
@@ -118,20 +109,26 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
   const interactionsSnapshot = await getDocs(interactionsQuery);
 
   // Calculate recommendation metadata
-  const interactions = interactionsSnapshot.docs.map(doc => doc.data() as UserNewsletterInteraction);
-  
+  const interactions = interactionsSnapshot.docs.map(
+    doc => doc.data() as UserNewsletterInteraction
+  );
+
   const topicWeights: Record<string, number> = {};
   let totalInteractions = 0;
   let contentQualityScore = 0;
 
   interactions.forEach(interaction => {
     totalInteractions++;
-    
+
     // Weight interactions differently
-    const interactionWeight = 
-      interaction.interactionType === 'subscribe' ? 5 :
-      interaction.interactionType === 'read' ? 3 :
-      interaction.interactionType === 'view' ? 1 : 0;
+    const interactionWeight =
+      interaction.interactionType === 'subscribe'
+        ? 5
+        : interaction.interactionType === 'read'
+          ? 3
+          : interaction.interactionType === 'view'
+            ? 1
+            : 0;
 
     // Accumulate topic weights
     // In a real scenario, you'd fetch the newsletter's topics
@@ -156,7 +153,7 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
   // Update newsletter metadata
   await updateDoc(newsletterRef, {
     'recommendationMetadata.topicWeights': topicWeights,
-    'recommendationMetadata.contentQualityScore': contentQualityScore
+    'recommendationMetadata.contentQualityScore': contentQualityScore,
   });
 };
 
@@ -164,8 +161,8 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
 export const findSimilarNewsletters = async (newsletterId: string) => {
   const newsletterRef = doc(db, 'newsletters', newsletterId);
 
-  // In a real-world scenario, this would use more sophisticated 
-  // similarity algorithms like collaborative filtering or 
+  // In a real-world scenario, this would use more sophisticated
+  // similarity algorithms like collaborative filtering or
   // content-based filtering
   const similarNewslettersQuery = query(
     collection(db, 'newsletters'),
@@ -174,14 +171,14 @@ export const findSimilarNewsletters = async (newsletterId: string) => {
   );
 
   const similarNewslettersSnapshot = await getDocs(similarNewslettersQuery);
-  
+
   const similarNewsletters = similarNewslettersSnapshot.docs
     .filter(doc => doc.id !== newsletterId)
     .map(doc => doc.id);
 
   // Update newsletter with similar newsletters
   await updateDoc(newsletterRef, {
-    'recommendationMetadata.similarNewsletters': similarNewsletters
+    'recommendationMetadata.similarNewsletters': similarNewsletters,
   });
 
   return similarNewsletters;
