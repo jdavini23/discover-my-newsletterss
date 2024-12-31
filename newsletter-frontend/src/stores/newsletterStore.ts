@@ -12,7 +12,6 @@ import {
 import { Newsletter, NewsletterFilter } from '@/types/firestore';
 import { UserProfile, User } from '../types/profile';
 import { useUserProfileStore } from './userProfileStore';
-import { useAuthStore } from './authStore';
 
 interface NewsletterState {
   newsletters: Newsletter[];
@@ -36,45 +35,35 @@ interface NewsletterState {
 }
 
 // Helper function to map UserProfile to User
-function mapProfileToUser(profile: UserProfile): User {
-  return {
-    id: profile.uid,
-    email: profile.email,
-    displayName: profile.displayName,
-    createdAt: profile.accountCreatedAt,
-    newsletterPreferences: {
-      interestedTopics: profile.interests,
-      frequencyPreference: profile.newsletterPreferences.frequency,
-      receiveRecommendations: true,
-    },
-    recommendationProfile: {
-      viewedNewsletters: profile.activityLog
-        .filter(activity => activity.type === 'newsletter_view')
-        .map(activity => activity.newsletterId),
-      subscribedNewsletters: profile.activityLog
-        .filter(activity => activity.type === 'newsletter_subscribe')
-        .map(activity => activity.newsletterId),
-      interactionScores: profile.activityLog.reduce(
-        (scores, activity) => {
-          if (!scores[activity.newsletterId]) {
-            scores[activity.newsletterId] = 0;
-          }
-          // Assign scores based on interaction type
-          scores[activity.newsletterId] +=
-            activity.type === 'newsletter_subscribe'
-              ? 2
-              : activity.type === 'newsletter_view'
-                ? 1
-                : 0;
-          return scores;
-        },
-        {} as Record<string, number>
-      ),
-    },
-  };
-}
+const mapProfileToUser = (profile: UserProfile): User => ({
+  id: profile.uid,
+  email: profile.email,
+  displayName: profile.displayName,
+  createdAt: profile.accountCreatedAt,
+  newsletterPreferences: {
+    interestedTopics: profile.interests,
+    frequencyPreference: profile.newsletterPreferences.frequency,
+    receiveRecommendations: true, // Default or derive from profile
+  },
+  recommendationProfile: {
+    viewedNewsletters: profile.activityLog
+      .filter(log => log.type === 'newsletter_view')
+      .map(log => log.newsletterId),
+    subscribedNewsletters: profile.activityLog
+      .filter(log => log.type === 'newsletter_subscribe')
+      .map(log => log.newsletterId),
+    interactionScores: {}, // You might want to implement a more sophisticated scoring mechanism
+  },
+  interestedTopics: profile.interests,
+  frequencyPreference: profile.newsletterPreferences.frequency,
+  receiveRecommendations: true,
+  interests: profile.interests,
+  readingHistory: profile.activityLog
+    .filter(log => log.type === 'newsletter_view')
+    .map(log => log.newsletterId),
+});
 
-export const useNewsletterStore = create<NewsletterState>((set, get) => ({
+const useNewsletterStore = create<NewsletterState>((set, get) => ({
   newsletters: [],
   userSubscriptions: [],
   recommendedNewsletters: [],
@@ -108,7 +97,12 @@ export const useNewsletterStore = create<NewsletterState>((set, get) => ({
       const { profile } = useUserProfileStore.getState();
 
       if (!profile) {
-        throw new Error('User profile not found');
+        // If no profile, return an empty list of recommended newsletters
+        set({
+          recommendedNewsletters: [],
+          isLoading: false,
+        });
+        return;
       }
 
       const user = mapProfileToUser(profile);
@@ -122,6 +116,7 @@ export const useNewsletterStore = create<NewsletterState>((set, get) => ({
       });
     } catch (error) {
       set({
+        recommendedNewsletters: [], // Ensure recommended newsletters is reset
         error: error instanceof Error ? error.message : 'Failed to fetch recommendations',
         isLoading: false,
       });
@@ -223,3 +218,5 @@ export const useNewsletterStore = create<NewsletterState>((set, get) => ({
     }
   },
 }));
+
+export { useNewsletterStore };
