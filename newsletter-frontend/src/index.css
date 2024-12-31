@@ -1,22 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './styles/colors.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* Global styles */
   html, body {
-    @apply antialiased;
+    @apply antialiased bg-background-light text-text-primary-light transition-colors duration-200;
   }
 
-  body {
-    @apply bg-white text-neutralText-500;
-    margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
+  .dark html, .dark body {
+    @apply bg-background-dark text-text-primary-dark;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-text-primary-light dark:text-text-primary-dark;
+  }
+
+  p {
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
   }
 
   /* Focus states */
@@ -29,8 +32,12 @@
     @apply w-2 bg-transparent;
   }
 
+  *::-webkit-scrollbar-track {
+    @apply bg-background-light dark:bg-background-dark;
+  }
+
   *::-webkit-scrollbar-thumb {
-    @apply bg-neutralBackground-300 rounded-full;
+    @apply bg-background-400 dark:bg-background-600 rounded-full;
   }
 
   /* Transition classes */
@@ -54,11 +61,6 @@
   }
   a:hover {
     color: #535bf2;
-  }
-
-  h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
   }
 
   button {
@@ -89,5 +91,40 @@
     a:hover {
       color: #747bff;
     }
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white font-medium py-2 px-4 rounded-lg 
+           transition-all duration-200 hover:bg-primary-hover
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white font-medium py-2 px-4 rounded-lg 
+           transition-all duration-200 hover:bg-secondary-hover
+           focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50;
+  }
+
+  .card {
+    @apply bg-white dark:bg-background-surface rounded-xl shadow-sm p-6 
+           border border-gray-100 dark:border-gray-800;
+  }
+
+  .input {
+    @apply w-full bg-white dark:bg-background-surface 
+           border border-gray-200 dark:border-gray-700 
+           rounded-lg px-4 py-2 
+           text-text-primary-light dark:text-text-primary-dark
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary to-primary-light;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-secondary to-secondary-light;
   }
 }

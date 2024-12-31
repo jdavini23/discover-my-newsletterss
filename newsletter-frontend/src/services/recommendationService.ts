@@ -63,28 +63,53 @@ export const generatePersonalizedRecommendations = async (
   user: User,
   filters: NewsletterFilter = {}
 ) => {
-  const { topics = user.newsletterPreferences.interestedTopics, pageSize = 12 } = filters;
+  const {
+    topics = user.newsletterPreferences.interestedTopics,
+    pageSize = 12,
+    sortBy = 'recommended',
+  } = filters;
+
+  // Ensure we have a non-empty array for 'not-in' filter
+  const excludedNewsletters =
+    (user.recommendationProfile.subscribedNewsletters || []).length > 0
+      ? user.recommendationProfile.subscribedNewsletters
+      : ['__no_match__']; // Use a placeholder that won't match any real ID
 
   // Base recommendation query
   let recommendationQuery = query(
     collection(db, 'newsletters'),
     // Exclude already subscribed newsletters
-    where('id', 'not-in', user.recommendationProfile.subscribedNewsletters || [])
+    where('id', 'not-in', excludedNewsletters)
   );
 
   // Filter by user's interested topics
   if (topics && topics.length > 0) {
-    recommendationQuery = query(recommendationQuery, where('topics', 'array-contains-any', topics));
+    recommendationQuery = query(
+      recommendationQuery,
+      where('topics', 'array-contains-any', topics),
+      orderBy('averageRating', 'desc')
+    );
   }
 
-  // Sort by recommendation score
-  // This would ideally be a more complex algorithm in a real-world scenario
-  recommendationQuery = query(
-    recommendationQuery,
-    orderBy('recommendationMetadata.contentQualityScore', 'desc'),
-    orderBy('popularity', 'desc'),
-    limit(pageSize)
-  );
+  // Sort based on selected option
+  switch (sortBy) {
+    case 'popularity':
+      recommendationQuery = query(recommendationQuery, orderBy('subscriberCount', 'desc'));
+      break;
+    case 'rating':
+      recommendationQuery = query(recommendationQuery, orderBy('averageRating', 'desc'));
+      break;
+    case 'recent':
+      recommendationQuery = query(recommendationQuery, orderBy('createdAt', 'desc'));
+      break;
+    case 'recommended':
+    default:
+      // Use a simpler sorting for recommended to avoid complex indexing
+      recommendationQuery = query(recommendationQuery, orderBy('averageRating', 'desc'));
+  }
+
+  // Add limit to all queries
+  recommendationQuery = query(recommendationQuery, limit(pageSize));
 
   const recommendationSnapshot = await getDocs(recommendationQuery);
 

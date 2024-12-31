@@ -1,0 +1,26 @@
+/* Light Mode */
+:root {
+  --primary: #4A90E2;
+  --secondary: #F5A623;
+  --accent: #50E3C2;
+  --background: #F8F9FA;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+}
+
+/* Dark Mode */
+.dark {
+  --background: #121212;
+  --surface: #1E1E1E;
+  --text-primary: #EDEDED;
+  --text-secondary: #A1A1A1;
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}

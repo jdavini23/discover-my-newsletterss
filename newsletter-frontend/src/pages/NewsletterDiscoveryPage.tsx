@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNewsletterStore } from '@/stores/newsletterStore';
-import { useUserProfileStore } from '@/stores/userProfileStore';
-import { useAuthStore } from '@/stores/authStore';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 
-// Predefined topics matching user profile
+import { Newsletter } from '@/types/firestore';
+import { useNewsletterStore } from '@/stores/newsletterStore';
+
 const NEWSLETTER_TOPICS = [
   'Technology',
   'Science',
@@ -18,204 +19,148 @@ const NEWSLETTER_TOPICS = [
 ];
 
 const NewsletterDiscoveryPage: React.FC = () => {
+  const navigate = useNavigate();
   const {
     newsletters,
     discoverNewsletters,
-    recommendedNewsletters,
     getRecommendedNewsletters,
+    recommendedNewsletters,
     subscribeNewsletter,
     unsubscribeNewsletter,
     userSubscriptions,
-    recordInteraction,
     isLoading,
     error,
   } = useNewsletterStore();
-  const { profile } = useUserProfileStore();
-  const { user } = useAuthStore();
 
-  // Filter and sorting states
-  const [selectedTopics, setSelectedTopics] = useState<string[]>(
-    profile?.newsletterPreferences?.categories || []
-  );
-  const [sortBy, setSortBy] = useState<'popularity' | 'recent' | 'rating' | 'recommended'>(
-    'popularity'
-  );
+  const [filteredNewsletters, setFilteredNewsletters] = useState<Newsletter[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [sortBy] = useState<'popularity' | 'recent' | 'rating' | 'recommended'>('recommended');
 
-  // Fetch newsletters on component mount and when filters change
   useEffect(() => {
-    if (sortBy === 'recommended') {
-      getRecommendedNewsletters();
-    } else {
-      discoverNewsletters({
-        topics: selectedTopics,
-        sortBy,
-        searchQuery,
-      });
-    }
-  }, [selectedTopics, sortBy, searchQuery]);
+    discoverNewsletters();
+    getRecommendedNewsletters();
+  }, [discoverNewsletters, getRecommendedNewsletters]);
 
-  // Record view interaction when newsletter is displayed
-  useEffect(() => {
-    newsletters.forEach(newsletter => {
-      recordInteraction(newsletter.id, 'view');
-    });
-  }, [newsletters]);
-
-  // Check if a newsletter is subscribed
-  const isSubscribed = (newsletterId: string) =>
-    userSubscriptions.some(sub => sub.id === newsletterId);
-
-  // Handle topic selection
-  const toggleTopic = (topic: string) => {
-    setSelectedTopics(prev =>
-      prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]
-    );
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    filterNewsletters(query, selectedTopics);
   };
 
-  // Handle newsletter subscription/unsubscription
-  const handleSubscription = async (newsletterId: string) => {
-    try {
-      if (isSubscribed(newsletterId)) {
-        await unsubscribeNewsletter(newsletterId);
-      } else {
-        await subscribeNewsletter(newsletterId);
-      }
-    } catch (err) {
-      console.error('Subscription error', err);
-    }
+  const handleTopicFilter = (topic: string) => {
+    const newSelectedTopics = selectedTopics.includes(topic)
+      ? selectedTopics.filter(t => t !== topic)
+      : [...selectedTopics, topic];
+
+    setSelectedTopics(newSelectedTopics);
+    filterNewsletters(searchQuery, newSelectedTopics);
   };
 
-  // Determine which newsletters to display
-  const displayNewsletters = sortBy === 'recommended' ? recommendedNewsletters : newsletters;
+  const filterNewsletters = (query: string, topics: string[]) => {
+    let result = newsletters;
+
+    if (query) {
+      result = result.filter(
+        (newsletter: Newsletter) =>
+          newsletter.title.toLowerCase().includes(query.toLowerCase()) ||
+          newsletter.description.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+
+    if (topics.length > 0) {
+      result = result.filter((newsletter: Newsletter) =>
+        topics.some(topic => newsletter.topics.includes(topic))
+      );
+    }
+
+    setFilteredNewsletters(result);
+  };
+
+  const renderNewsletterCard = (newsletter: Newsletter) => (
+    <div
+      key={newsletter.id}
+      className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow"
+    >
+      {newsletter.coverImageUrl && (
+        <img
+          src={newsletter.coverImageUrl}
+          alt={newsletter.title}
+          className="w-full h-48 object-cover rounded-t-lg mb-4"
+        />
+      )}
+      <h2 className="text-xl font-bold mb-2">{newsletter.title}</h2>
+      <p className="text-gray-600 mb-4 line-clamp-3">{newsletter.description}</p>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-2 text-gray-600">
+          <ChevronRightIcon className="w-5 h-5 text-yellow-500" />
+          <span>{newsletter.averageRating?.toFixed(1) || 'N/A'}</span>
+        </div>
+        <button
+          onClick={() => navigate(`/newsletter/${newsletter.id}`)}
+          className="text-blue-500 hover:text-blue-700"
+        >
+          View Details
+        </button>
+      </div>
+    </div>
+  );
+
+  const allTopics = Array.from(new Set(newsletters.flatMap(nl => nl.topics)));
 
   return (
-    <div className="min-h-screen bg-neutralBackground-50 w-screen">
-      <div className="w-full px-4 py-12">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-neutralText-900 mb-8">
-            {sortBy === 'recommended' ? 'Recommended Newsletters' : 'Discover Newsletters'}
-          </h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Discover Newsletters</h1>
 
-          {/* Filters */}
-          <div className="mb-8 space-y-4">
-            {/* Search Input */}
-            <div>
-              <input
-                type="text"
-                placeholder="Search newsletters..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-neutralBackground-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
+      <div className="mb-6 relative">
+        <input
+          type="text"
+          placeholder="Search newsletters..."
+          value={searchQuery}
+          onChange={e => handleSearch(e.target.value)}
+          className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+        <ChevronRightIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+      </div>
 
-            {/* Topic Filters */}
-            <div>
-              <h3 className="text-lg font-semibold text-neutralText-700 mb-2">Filter by Topics</h3>
-              <div className="flex flex-wrap gap-2">
-                {NEWSLETTER_TOPICS.map(topic => (
-                  <button
-                    key={topic}
-                    onClick={() => toggleTopic(topic)}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      selectedTopics.includes(topic)
-                        ? 'bg-primary-500 text-white'
-                        : 'bg-neutralBackground-200 text-neutralText-700'
-                    }`}
-                  >
-                    {topic}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sort By */}
-            <div>
-              <label htmlFor="sort" className="block text-sm font-medium text-neutralText-700">
-                Sort By
-              </label>
-              <select
-                id="sort"
-                value={sortBy}
-                onChange={e =>
-                  setSortBy(e.target.value as 'popularity' | 'recent' | 'rating' | 'recommended')
-                }
-                className="mt-1 block w-full rounded-md border-neutralBackground-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              >
-                <option value="popularity">Most Popular</option>
-                <option value="recent">Most Recent</option>
-                <option value="rating">Highest Rated</option>
-                <option value="recommended">Recommended for You</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Newsletter Grid */}
-          {isLoading ? (
-            <div className="text-center text-neutralText-500">Loading newsletters...</div>
-          ) : error ? (
-            <div className="text-center text-red-500">{error}</div>
-          ) : displayNewsletters.length === 0 ? (
-            <div className="text-center text-neutralText-500">
-              {sortBy === 'recommended'
-                ? 'No personalized recommendations yet. Keep exploring!'
-                : 'No newsletters found'}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {displayNewsletters.map(newsletter => (
-                <div key={newsletter.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-                  {/* Newsletter Cover Image */}
-                  {newsletter.coverImageUrl && (
-                    <img
-                      src={newsletter.coverImageUrl}
-                      alt={newsletter.title}
-                      className="w-full h-48 object-cover"
-                    />
-                  )}
-
-                  <div className="p-4">
-                    <h2 className="text-xl font-bold text-neutralText-900 mb-2">
-                      {newsletter.title}
-                    </h2>
-                    <p className="text-neutralText-600 text-sm mb-4">{newsletter.description}</p>
-
-                    {/* Topics */}
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {newsletter.topics.slice(0, 3).map(topic => (
-                        <span
-                          key={topic}
-                          className="px-2 py-1 bg-neutralBackground-200 text-xs rounded-full"
-                        >
-                          {topic}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Subscriber Count */}
-                    <div className="text-sm text-neutralText-500 mb-4">
-                      {newsletter.subscriberCount || 0} subscribers
-                    </div>
-
-                    {/* Subscribe/Unsubscribe Button */}
-                    <button
-                      onClick={() => handleSubscription(newsletter.id)}
-                      className={`w-full py-2 rounded-md ${
-                        isSubscribed(newsletter.id)
-                          ? 'bg-neutralBackground-200 text-neutralText-700'
-                          : 'bg-primary-500 text-white hover:bg-primary-600'
-                      }`}
-                    >
-                      {isSubscribed(newsletter.id) ? 'Unsubscribe' : 'Subscribe'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-4">Filter by Topics</h2>
+        <div className="flex flex-wrap gap-2">
+          {NEWSLETTER_TOPICS.map(topic => (
+            <button
+              key={topic}
+              onClick={() => handleTopicFilter(topic)}
+              className={`px-3 py-1 rounded-full text-sm ${
+                selectedTopics.includes(topic)
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-700'
+              }`}
+            >
+              {topic}
+            </button>
+          ))}
         </div>
       </div>
+
+      {isLoading ? (
+        <div className="text-center text-gray-600">Loading newsletters...</div>
+      ) : error ? (
+        <div className="text-center text-red-600">{error}</div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(sortBy === 'recommended'
+            ? recommendedNewsletters.length > 0
+              ? recommendedNewsletters
+              : newsletters
+            : filteredNewsletters.length > 0
+              ? filteredNewsletters
+              : newsletters
+          ).map(renderNewsletterCard)}
+        </div>
+      )}
+
+      {newsletters.length === 0 && (
+        <p className="text-center text-gray-500 mt-8">No newsletters found. Check back later!</p>
+      )}
     </div>
   );
 };
