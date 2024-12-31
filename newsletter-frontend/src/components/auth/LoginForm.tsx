@@ -18,12 +18,12 @@ export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors } 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -33,9 +33,8 @@ export const LoginForm: React.FC = () => {
       toast.success('Successfully logged in');
       navigate('/');
     } catch (error) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : 'Login failed. Please try again.';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Login failed. Please try again.';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -57,9 +56,7 @@ export const LoginForm: React.FC = () => {
           } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
           placeholder="you@example.com"
         />
-        {errors.email && (
-          <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
       </div>
 
       <div>
@@ -75,9 +72,7 @@ export const LoginForm: React.FC = () => {
           } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
           placeholder="••••••••"
         />
-        {errors.password && (
-          <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
       </div>
 
       <div className="flex items-center justify-between">
@@ -93,8 +88,8 @@ export const LoginForm: React.FC = () => {
         </div>
 
         <div className="text-sm">
-          <a 
-            href="/forgot-password" 
+          <a
+            href="/forgot-password"
             className="font-medium text-primary-600 hover:text-primary-500"
           >
             Forgot your password?
@@ -106,7 +101,7 @@ export const LoginForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-fast"
+          className="w-full py-2 px-4 border border-primary-600 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
         >
           {isLoading ? 'Signing in...' : 'Sign in'}
         </button>

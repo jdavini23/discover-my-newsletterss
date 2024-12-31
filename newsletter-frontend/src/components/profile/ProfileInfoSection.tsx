@@ -19,7 +19,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({ profile }) => {
     try {
       await updateProfile({
         displayName,
-        bio
+        bio,
       });
     } catch (error) {
       console.error('Failed to update profile', error);
@@ -31,12 +31,12 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({ profile }) => {
   return (
     <div className="bg-neutralBackground-100 shadow-soft rounded-xl p-6">
       <h2 className="text-2xl font-bold mb-6 text-neutralText-500">Profile Information</h2>
-      
+
       <div className="flex items-center mb-6">
-        <img 
-          alt="Profile" 
-          className="w-24 h-24 rounded-full object-cover mr-6 border-4 border-primary-100" 
-          src={profile.photoURL || DEFAULT_AVATAR} 
+        <img
+          alt="Profile"
+          className="w-24 h-24 rounded-full object-cover mr-6 border-4 border-primary-100"
+          src={profile.photoURL || DEFAULT_AVATAR}
         />
         <div>
           <p className="text-neutralText-500">{profile.email}</p>
@@ -52,7 +52,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({ profile }) => {
             type="text"
             id="displayName"
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={e => setDisplayName(e.target.value)}
             className="mt-1 block w-full rounded-md border-neutralBackground-500 shadow-soft focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
           />
         </div>
@@ -64,7 +64,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({ profile }) => {
           <textarea
             id="bio"
             value={bio}
-            onChange={(e) => setBio(e.target.value)}
+            onChange={e => setBio(e.target.value)}
             rows={4}
             className="mt-1 block w-full rounded-md border-neutralBackground-500 shadow-soft focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
           />

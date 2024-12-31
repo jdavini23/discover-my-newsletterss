@@ -5,7 +5,7 @@ export interface User {
   email: string;
   displayName?: string;
   createdAt: Timestamp;
-  
+
   // Newsletter preferences
   newsletterPreferences: {
     interestedTopics: string[];
@@ -31,7 +31,7 @@ export interface Newsletter {
   coverImageUrl?: string;
   subscriberCount: number;
   createdAt: Timestamp;
-  
+
   // Additional metadata for recommendations
   popularity: number;
   averageRating?: number;
