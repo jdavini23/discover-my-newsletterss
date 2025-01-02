@@ -86,14 +86,18 @@ const useAuthStore = create<AuthState>(set => ({
   },
 
   initializeAuth: () => {
+    console.log('Initializing authentication...');
     onAuthChange(user => {
+      console.log('Auth state changed:', user);
       if (user) {
+        console.log('User authenticated:', user.email);
         set({
           user,
           isAuthenticated: true,
           isLoading: false,
         });
       } else {
+        console.log('No user authenticated');
         set({
           user: null,
           isAuthenticated: false,

@@ -8,7 +8,7 @@ interface AccountSettingsSectionProps {
   profile: UserProfile;
 }
 
-const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile }) => {
+const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile: _profile }) => {
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
