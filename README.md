@@ -1,58 +1,50 @@
-# Discover My Newsletters
+# React + TypeScript + Vite
 
-## Overview
-Discover My Newsletters is a modern, user-friendly web application designed to help users discover, manage, and explore newsletters across various topics.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
-- 🔍 Advanced Newsletter Search
-- 🌈 Interest-based Recommendations
-- 🔐 Secure User Authentication
-- 📊 Personalized Dashboard
-- 🌙 Dark/Light Mode Support
+Currently, two official plugins are available:
 
-## Tech Stack
-- React
-- TypeScript
-- Vite
-- Storybook
-- Firebase Authentication
-- Zustand State Management
-- Tailwind CSS
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Getting Started
+## Expanding the ESLint configuration
 
-### Prerequisites
-- Node.js (v18+)
-- npm
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-### Installation
-1. Clone the repository
-```bash
-git clone https://github.com/jdavini23/discover-my-newsletterss.git
-cd discover-my-newsletterss
-npm install
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+});
 ```
 
-2. Start the development server
-```bash
-npm run dev
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react';
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+});
 ```
-
-3. View Storybook
-```bash
-npm run storybook
-```
-
-## Deployment
-- Frontend: Deployed on GitHub Pages
-- Storybook: Available at https://jdavini23.github.io/discover-my-newsletterss/
-
-## Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-- Inspired by the need for better newsletter discovery
-- Thanks to all contributors and open-source libraries

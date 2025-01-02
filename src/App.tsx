@@ -1,118 +1,50 @@
-import React, { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ErrorBoundary } from 'react-error-boundary';
-import { initDarkMode, setupDarkModeListener } from './utils/darkMode';
+import { useAuthStore } from '@/stores/authStore';
+import AuthPage from './pages/AuthPage';
+import NewsletterDiscoveryPage from './pages/NewsletterDiscoveryPage';
+import NewsletterDetailPage from './pages/NewsletterDetailPage';
+import ProfilePage from './pages/ProfilePage';
+import HomePage from './pages/HomePage';
+import Layout from './components/layout/Layout';
 
-// Import components and stores
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { NotificationCenter } from './components/common/Notification';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { useAuthStore } from './stores/authStore';
-
-// Create a client following best practices for caching and retry
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
-});
-
-// Lazy load page components for performance optimization
-const Home = lazy(() => import('./pages/Home'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Profile = lazy(() => import('./pages/Profile'));
-const NewsletterList = lazy(() => import('./pages/NewsletterList'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-const RegisterPage = lazy(() => import('./pages/RegisterPage'));
-const Unauthorized = lazy(() => import('./pages/Unauthorized'));
-const PasswordResetRequest = lazy(() => import('./pages/PasswordResetRequest'));
-const PasswordResetConfirm = lazy(() => import('./pages/PasswordResetConfirm'));
-const InterestWizard = lazy(() => import('./pages/InterestWizard'));
-const NewsletterSearch = lazy(() => import('./pages/NewsletterSearch'));
-
-// Loading Fallback Component for improved UX
-const LoadingFallback: React.FC = () => (
-  <div className="flex h-screen items-center justify-center">
-    <div className="h-32 w-32 animate-spin rounded-full border-t-2 border-blue-500"></div>
-  </div>
-);
-
-const App: React.FC = () => {
+function App() {
   const { isAuthenticated } = useAuthStore();
 
-  useEffect(() => {
-    // Initialize dark mode on app startup
-    initDarkMode();
-    
-    // Setup dark mode listener
-    const cleanup = setupDarkModeListener();
-    
-    return () => {
-      cleanup();
-    };
-  }, []);
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <ErrorBoundary fallback={<div>Something went wrong</div>}>
-        <AuthProvider>
-          <Suspense fallback={<LoadingFallback />}>
-            <div className="min-h-screen bg-gray-50 dark-mode-transition">
-              <Toaster position="top-right" />
-              <NotificationCenter />
-              <Routes>
-                {/* Public Routes */}
-                <Route
-                  path="/"
-                  element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Home />}
-                />
-                <Route
-                  path="/login"
-                  element={isAuthenticated() ? <Navigate to="/dashboard" /> : <LoginPage />}
-                />
-                <Route
-                  path="/register"
-                  element={isAuthenticated() ? <Navigate to="/dashboard" /> : <RegisterPage />}
-                />
-                <Route path="/unauthorized" element={<Unauthorized />} />
-                <Route path="/password-reset" element={<PasswordResetRequest />} />
-                <Route path="/password-reset-confirm" element={<PasswordResetConfirm />} />
-                <Route path="/discover/interests" element={<InterestWizard />} />
-                <Route path="/discover/newsletters" element={<NewsletterSearch />} />
-
-                {/* Protected Routes */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-
-                {/* 404 Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </Suspense>
-        </AuthProvider>
-      </ErrorBoundary>
-    </QueryClientProvider>
+    <Router>
+      <Layout>
+        <Routes>
+          <Route
+            path="/auth"
+            element={!isAuthenticated ? <AuthPage /> : <Navigate to="/newsletters" replace />}
+          />
+          <Route
+            path="/newsletters"
+            element={
+              isAuthenticated ? <NewsletterDiscoveryPage /> : <Navigate to="/auth" replace />
+            }
+          />
+          <Route
+            path="/newsletters/:newsletterId"
+            element={isAuthenticated ? <NewsletterDetailPage /> : <Navigate to="/auth" replace />}
+          />
+          <Route
+            path="/profile"
+            element={isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" replace />}
+          />
+          <Route path="/" element={<HomePage />} />
+          {/* Catch-all route to handle undefined routes */}
+          <Route
+            path="*"
+            element={<Navigate to={isAuthenticated ? '/newsletters' : '/auth'} replace />}
+          />
+        </Routes>
+        <Toaster position="top-right" />
+      </Layout>
+    </Router>
   );
-};
+}
 
 export default App;

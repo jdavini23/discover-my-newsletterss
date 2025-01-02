@@ -1,22 +1,4 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-# Run linting
-npm run lint
-
-# Run type checking
-npm run tsc -- --noEmit
-
-# Run tests
-npm test
-
-# Check for console.log statements
-if grep -r "console.log" src; then
-  echo "❌ Remove console.log statements before committing"
-  exit 1
-fi
-
-# Check for TODO comments
-if grep -r "TODO:" src; then
-  echo "⚠️ TODO comments found. Consider resolving them."
-fi
+npx lint-staged
