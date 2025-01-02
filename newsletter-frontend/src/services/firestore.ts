@@ -17,7 +17,7 @@ import {
   Query,
 } from 'firebase/firestore';
 import { auth } from '@/config/firebase';
-import { User, Newsletter, Subscription, NewsletterFilter } from '@/types/firestore';
+import { User, Newsletter, NewsletterFilter } from '@/types/firestore';
 import { UserProfile, UpdateProfileParams, UserActivity } from '@/types/profile';
 
 const db = getFirestore();
@@ -92,7 +92,7 @@ export const getUserNewsletters = async () => {
 
 // Newsletter Discovery Methods
 export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
-  const { topics, sortBy = 'popularity', searchQuery, page = 1, pageSize = 12 } = filters;
+  const { topics, sortBy = 'popularity', searchQuery, page: _page = 1, pageSize = 12 } = filters;
 
   // Base query
   let newsletterQuery: Query = collection(db, 'newsletters');
@@ -131,13 +131,32 @@ export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
 
   const newsletterSnapshot = await getDocs(newsletterQuery);
 
-  return newsletterSnapshot.docs.map(
-    doc =>
-      ({
-        id: doc.id,
-        ...doc.data(),
-      }) as Newsletter
-  );
+  return newsletterSnapshot.docs.map(doc => {
+    const data = doc.data();
+    console.log('Raw newsletter data:', data);
+
+    // Validate newsletter data
+    const newsletter: Newsletter = {
+      id: doc.id,
+      title: data.title || '',
+      description: data.description || '',
+      url: data.url || '',
+      topics: data.topics || [],
+      author: data.author || '',
+      coverImageUrl: data.coverImageUrl,
+      subscriberCount: data.subscriberCount || 0,
+      createdAt: data.createdAt,
+      popularity: data.popularity || 0,
+      averageRating: data.averageRating,
+      recommendationMetadata: data.recommendationMetadata || {
+        topicWeights: {},
+        similarNewsletters: [],
+        contentQualityScore: 0,
+      },
+    };
+
+    return newsletter;
+  });
 };
 
 // Subscribe to a newsletter

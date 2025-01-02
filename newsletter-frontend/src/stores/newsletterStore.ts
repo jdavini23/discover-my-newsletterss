@@ -1,222 +1,153 @@
-import { create } from 'zustand';
-import {
-  fetchNewsletters,
-  subscribeToNewsletter,
-  unsubscribeFromNewsletter,
-  fetchUserSubscriptions,
-} from '@/services/firestore';
-import {
-  generatePersonalizedRecommendations,
-  recordNewsletterInteraction,
-} from '@/services/recommendationService';
-import { Newsletter, NewsletterFilter } from '@/types/firestore';
-import { UserProfile, User } from '../types/profile';
-import { useUserProfileStore } from './userProfileStore';
+import { create, StateCreator } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { NewsletterService, NewsletterFilters as ApiFilters } from '@/services/newsletterService';
 
-interface NewsletterState {
-  newsletters: Newsletter[];
-  userSubscriptions: (Newsletter & { subscriptionId: string })[];
-  recommendedNewsletters: Newsletter[];
-  isLoading: boolean;
-  error: string | null;
-  hasMore: boolean;
-
-  // Actions
-  discoverNewsletters: (filters?: NewsletterFilter) => Promise<void>;
-  getRecommendedNewsletters: () => Promise<void>;
-  subscribeNewsletter: (newsletterId: string) => Promise<void>;
-  unsubscribeNewsletter: (newsletterId: string) => Promise<void>;
-  fetchSubscriptions: () => Promise<void>;
-  recordInteraction: (
-    newsletterId: string,
-    interactionType: 'view' | 'subscribe' | 'unsubscribe' | 'read',
-    duration?: number
-  ) => Promise<void>;
+// Types remain the same
+export interface Newsletter {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  category: string;
+  tags: string[];
+  subscribers: number;
+  rating?: number;
+  imageUrl?: string;
 }
 
-// Helper function to map UserProfile to User
-const mapProfileToUser = (profile: UserProfile): User => ({
-  id: profile.uid,
-  email: profile.email,
-  displayName: profile.displayName,
-  createdAt: profile.accountCreatedAt,
-  newsletterPreferences: {
-    interestedTopics: profile.interests,
-    frequencyPreference: profile.newsletterPreferences.frequency,
-    receiveRecommendations: true, // Default or derive from profile
-  },
-  recommendationProfile: {
-    viewedNewsletters: profile.activityLog
-      .filter(log => log.type === 'newsletter_view')
-      .map(log => log.newsletterId),
-    subscribedNewsletters: profile.activityLog
-      .filter(log => log.type === 'newsletter_subscribe')
-      .map(log => log.newsletterId),
-    interactionScores: {}, // You might want to implement a more sophisticated scoring mechanism
-  },
-  interestedTopics: profile.interests,
-  frequencyPreference: profile.newsletterPreferences.frequency,
-  receiveRecommendations: true,
-  interests: profile.interests,
-  readingHistory: profile.activityLog
-    .filter(log => log.type === 'newsletter_view')
-    .map(log => log.newsletterId),
-});
+// Align with API service filters
+export type NewsletterFilters = ApiFilters;
 
-const useNewsletterStore = create<NewsletterState>((set, get) => ({
-  newsletters: [],
-  userSubscriptions: [],
-  recommendedNewsletters: [],
-  isLoading: false,
-  error: null,
-  hasMore: true,
+// Store interface
+interface NewsletterStore {
+  // State
+  newsletters: Newsletter[];
+  filteredNewsletters: Newsletter[];
+  favorites: string[]; // Newsletter IDs
+  isLoading: boolean;
+  error: string | null;
 
-  discoverNewsletters: async (filters = {}) => {
-    set({ isLoading: true, error: null });
-    try {
-      const newsletters = await fetchNewsletters(filters);
+  // Pagination
+  total: number;
+  page: number;
+  pageSize: number;
 
-      set({
-        newsletters,
-        isLoading: false,
-        hasMore: newsletters.length === (filters.pageSize || 12),
-      });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : 'Failed to fetch newsletters',
-        isLoading: false,
-      });
-      throw error;
+  // Actions
+  fetchNewsletters: (filters?: NewsletterFilters) => Promise<void>;
+  searchNewsletters: (filters: NewsletterFilters) => Promise<void>;
+  addToFavorites: (newsletterId: string) => void;
+  removeFromFavorites: (newsletterId: string) => void;
+
+  // Utility methods
+  isInFavorites: (newsletterId: string) => boolean;
+
+  // Subscription methods
+  subscribeNewsletter: (newsletterId: string) => Promise<boolean>;
+  unsubscribeNewsletter: (newsletterId: string) => Promise<boolean>;
+}
+
+// Create Zustand store with persistence
+const useNewsletterStore = create<NewsletterStore>(
+  persist(
+    (set, get) => ({
+      newsletters: [],
+      filteredNewsletters: [],
+      favorites: [],
+      isLoading: false,
+      error: null,
+      total: 0,
+      page: 1,
+      pageSize: 12,
+
+      // Fetch newsletters with optional filtering
+      fetchNewsletters: async (filters = {}) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await NewsletterService.fetchNewsletters({
+            page: get().page,
+            pageSize: get().pageSize,
+            ...filters,
+          });
+
+          set({
+            newsletters: response.newsletters,
+            filteredNewsletters: response.newsletters,
+            total: response.total,
+            isLoading: false,
+          });
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to fetch newsletters',
+            isLoading: false,
+          });
+        }
+      },
+
+      // Advanced search with multiple filters
+      searchNewsletters: async filters => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await NewsletterService.fetchNewsletters(filters);
+
+          set({
+            filteredNewsletters: response.newsletters,
+            total: response.total,
+            isLoading: false,
+          });
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to search newsletters',
+            isLoading: false,
+          });
+        }
+      },
+
+      // Favorites management
+      addToFavorites: newsletterId => {
+        set(state => ({
+          favorites: [...state.favorites, newsletterId],
+        }));
+      },
+
+      removeFromFavorites: newsletterId => {
+        set(state => ({
+          favorites: state.favorites.filter(id => id !== newsletterId),
+        }));
+      },
+
+      // Check if newsletter is in favorites
+      isInFavorites: newsletterId => {
+        return get().favorites.includes(newsletterId);
+      },
+
+      // Newsletter subscription methods
+      subscribeNewsletter: async newsletterId => {
+        try {
+          return await NewsletterService.subscribeNewsletter(newsletterId);
+        } catch (error) {
+          console.error('Subscription failed', error);
+          return false;
+        }
+      },
+
+      unsubscribeNewsletter: async newsletterId => {
+        try {
+          return await NewsletterService.unsubscribeNewsletter(newsletterId);
+        } catch (error) {
+          console.error('Unsubscription failed', error);
+          return false;
+        }
+      },
+    }),
+    {
+      name: 'newsletter-storage', // unique name
+      storage: createJSONStorage(() => localStorage),
+      partialize: state => ({
+        favorites: state.favorites, // Only persist favorites
+      }),
     }
-  },
+  ) as StateCreator<NewsletterStore, [], []>
+);
 
-  getRecommendedNewsletters: async () => {
-    set({ isLoading: true, error: null });
-    try {
-      // Get user profile from store
-      const { profile } = useUserProfileStore.getState();
-
-      if (!profile) {
-        // If no profile, return an empty list of recommended newsletters
-        set({
-          recommendedNewsletters: [],
-          isLoading: false,
-        });
-        return;
-      }
-
-      const user = mapProfileToUser(profile);
-      const recommendedNewsletters = await generatePersonalizedRecommendations(user, {
-        sortBy: 'recommended',
-      });
-
-      set({
-        recommendedNewsletters,
-        isLoading: false,
-      });
-    } catch (error) {
-      set({
-        recommendedNewsletters: [], // Ensure recommended newsletters is reset
-        error: error instanceof Error ? error.message : 'Failed to fetch recommendations',
-        isLoading: false,
-      });
-      throw error;
-    }
-  },
-
-  subscribeNewsletter: async (newsletterId: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      await subscribeToNewsletter(newsletterId);
-
-      // Record interaction for recommendation
-      await get().recordInteraction(newsletterId, 'subscribe');
-
-      // Optimistically update state
-      const currentNewsletters = get().newsletters;
-      const updatedNewsletters = currentNewsletters.map(newsletter =>
-        newsletter.id === newsletterId
-          ? { ...newsletter, subscriberCount: (newsletter.subscriberCount || 0) + 1 }
-          : newsletter
-      );
-
-      set({
-        newsletters: updatedNewsletters,
-        isLoading: false,
-      });
-
-      // Refresh subscriptions
-      await get().fetchSubscriptions();
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : 'Failed to subscribe',
-        isLoading: false,
-      });
-      throw error;
-    }
-  },
-
-  unsubscribeNewsletter: async (newsletterId: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      await unsubscribeFromNewsletter(newsletterId);
-
-      // Record interaction for recommendation
-      await get().recordInteraction(newsletterId, 'unsubscribe');
-
-      // Optimistically update state
-      const currentNewsletters = get().newsletters;
-      const updatedNewsletters = currentNewsletters.map(newsletter =>
-        newsletter.id === newsletterId
-          ? { ...newsletter, subscriberCount: Math.max((newsletter.subscriberCount || 0) - 1, 0) }
-          : newsletter
-      );
-
-      set({
-        newsletters: updatedNewsletters,
-        isLoading: false,
-      });
-
-      // Refresh subscriptions
-      await get().fetchSubscriptions();
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : 'Failed to unsubscribe',
-        isLoading: false,
-      });
-      throw error;
-    }
-  },
-
-  fetchSubscriptions: async () => {
-    set({ isLoading: true, error: null });
-    try {
-      const subscriptions = await fetchUserSubscriptions();
-
-      set({
-        userSubscriptions: subscriptions,
-        isLoading: false,
-      });
-    } catch (error) {
-      set({
-        error: error instanceof Error ? error.message : 'Failed to fetch subscriptions',
-        isLoading: false,
-      });
-      throw error;
-    }
-  },
-
-  recordInteraction: async (
-    newsletterId: string,
-    interactionType: 'view' | 'subscribe' | 'unsubscribe' | 'read',
-    duration?: number
-  ) => {
-    try {
-      await recordNewsletterInteraction(newsletterId, interactionType, duration);
-    } catch (error) {
-      console.error('Failed to record interaction', error);
-    }
-  },
-}));
-
+export default useNewsletterStore;
 export { useNewsletterStore };

@@ -64,7 +64,7 @@ const Navigation: React.FC = () => {
                   to={link.path}
                   className="text-gray-600 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center"
                 >
-                  <link.icon className="w-5 h-5 mr-2" />
+                  {React.createElement(link.icon, { className: 'w-5 h-5 mr-2' })}
                   {link.name}
                 </Link>
               ))}
@@ -74,7 +74,7 @@ const Navigation: React.FC = () => {
                   onClick={handleLogout}
                   className="text-red-600 hover:bg-red-50 hover:text-red-800 px-3 py-2 rounded-md text-sm font-medium flex items-center"
                 >
-                  <LogoutIcon className="w-5 h-5 mr-2" />
+                  {React.createElement(LogoutIcon, { className: 'w-5 h-5 mr-2' })}
                   Logout
                 </button>
               )}
@@ -89,11 +89,12 @@ const Navigation: React.FC = () => {
               className="bg-gray-50 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
             >
               <span className="sr-only">Open main menu</span>
-              {isMobileMenuOpen ? (
-                <XIcon className="block h-6 w-6" aria-hidden="true" />
-              ) : (
-                <MenuIcon className="block h-6 w-6" aria-hidden="true" />
-              )}
+              {isMobileMenuOpen
+                ? React.createElement(XIcon, { className: 'block h-6 w-6', 'aria-hidden': 'true' })
+                : React.createElement(MenuIcon, {
+                    className: 'block h-6 w-6',
+                    'aria-hidden': 'true',
+                  })}
             </button>
           </div>
         </div>
@@ -106,17 +107,17 @@ const Navigation: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden"
+            className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50">
+            <div className="px-2 pt-2 pb-3 space-y-1">
               {navLinks.map(link => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  onClick={toggleMobileMenu}
                   className="text-gray-600 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <link.icon className="w-5 h-5 mr-3" />
+                  {React.createElement(link.icon, { className: 'w-5 h-5 mr-2' })}
                   {link.name}
                 </Link>
               ))}
@@ -125,11 +126,11 @@ const Navigation: React.FC = () => {
                 <button
                   onClick={() => {
                     handleLogout();
-                    toggleMobileMenu();
+                    setIsMobileMenuOpen(false);
                   }}
-                  className="w-full text-left text-red-600 hover:bg-red-50 hover:text-red-800 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                  className="w-full text-left text-red-600 hover:bg-red-50 hover:text-red-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
                 >
-                  <LogoutIcon className="w-5 h-5 mr-3" />
+                  {React.createElement(LogoutIcon, { className: 'w-5 h-5 mr-2' })}
                   Logout
                 </button>
               )}
