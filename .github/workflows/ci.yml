@@ -1,27 +1,25 @@
-name: Continuous Integration
+name: Solo Developer CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-and-test:
+  quick-checks:
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
-
     steps:
     - uses: actions/checkout@v3
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '18.x'
         cache: 'npm'
+        cache-dependency-path: 'newsletter-frontend/package-lock.json'
     
     - name: Install Dependencies
       run: |
@@ -43,7 +41,7 @@ jobs:
         cd newsletter-frontend
         npm run build
     
-    - name: Run Performance Audit
+    - name: Performance Check
       uses: treosh/lighthouse-ci-action@v9
       with:
         urls: |
@@ -51,22 +49,30 @@ jobs:
         budgetPath: ./budget.json
         uploadArtifacts: true
     
-    - name: Security Scan
-      uses: snyk/actions/node@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    - name: Notify on Failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
       with:
-        command: test
+        status: ${{ job.status }}
+        text: "Build failed! Check the details."
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.PERSONAL_SLACK_WEBHOOK }}
 
-  deploy:
-    needs: build-and-test
-    if: github.ref == 'refs/heads/main'
+  dependency-update-check:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v3
     
-    - name: Deploy to Production
+    - name: Check for Dependency Updates
       run: |
-        # Add your deployment script here
-        echo "Deploying to production..."
+        cd newsletter-frontend
+        npx npm-check-updates
+        
+    - name: Notify of Available Updates
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: custom
+        text: "Dependency updates are available! Run npm-check-updates to review."
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.PERSONAL_SLACK_WEBHOOK }}

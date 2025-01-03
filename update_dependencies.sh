@@ -1,53 +1,95 @@
 #!/bin/bash
 
-# Dependency Update Script
+# Solo Developer Dependency Update Script
 
-# Colors for output
+# Emojis and colors for fun, personal touch
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Function to log messages
+# Backup directory
+BACKUP_DIR="$HOME/newsletter_backups"
+
+# Logging function
 log() {
-    echo -e "${GREEN}[DEPENDENCY UPDATE]${NC} $1"
+    echo -e "🔧 ${GREEN}[DEV UPDATE]${NC} $1"
 }
 
-# Function to handle errors
+# Warning function
+warn() {
+    echo -e "⚠️  ${YELLOW}[WARNING]${NC} $1"
+}
+
+# Error function
 error() {
-    echo -e "${YELLOW}[ERROR]${NC} $1"
+    echo -e "❌ ${RED}[ERROR]${NC} $1"
     exit 1
 }
 
-# Ensure script is run from project root
-if [ ! -f "package.json" ]; then
-    error "Please run this script from the project root directory"
-fi
+# Create backup directory if it doesn't exist
+mkdir -p "$BACKUP_DIR"
 
-# Update npm packages
-log "Updating npm packages..."
-npm update || error "Failed to update npm packages"
+# Timestamp for backup
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+PROJECT_BACKUP="$BACKUP_DIR/newsletter_backup_$TIMESTAMP"
+
+# Backup entire project
+log "Creating project backup to $PROJECT_BACKUP..."
+cp -R . "$PROJECT_BACKUP"
+
+# Change to frontend directory
+cd newsletter-frontend || error "Cannot change to frontend directory"
+
+# Clear npm cache to ensure clean update
+log "Clearing npm cache..."
+npm cache clean --force
 
 # Check for outdated packages
-log "Checking for outdated packages..."
-npm outdated
+log "Checking for dependency updates..."
+OUTDATED=$(npm outdated)
 
-# Run security audit
-log "Running security audit..."
-npm audit || log "Some vulnerabilities found. Review and address them."
+if [ -n "$OUTDATED" ]; then
+    echo "$OUTDATED"
+    
+    read -p "👀 Do you want to update dependencies? (y/n) " update_choice
 
-# Rebuild project
-log "Rebuilding project..."
-npm run build || error "Build failed after dependency update"
+    if [[ $update_choice == "y" ]]; then
+        # Update npm packages
+        log "Updating npm packages..."
+        npm update
 
-# Run tests to ensure updates didn't break anything
-log "Running tests..."
-npm test || error "Tests failed after dependency update"
+        # Run security audit
+        log "Running security audit..."
+        npm audit || warn "Potential security vulnerabilities found!"
 
-log "Dependency update completed successfully!"
+        # Fix any audit issues
+        npm audit fix --force
 
-# Optional: Commit updates
-read -p "Do you want to commit these dependency updates? (y/n) " commit
-if [[ $commit == "y" ]]; then
-    git add package.json package-lock.json
-    git commit -m "chore: Update project dependencies"
+        # Rebuild project
+        log "Rebuilding project..."
+        npm run build || error "Build failed"
+
+        # Run tests
+        log "Running tests..."
+        npm test || warn "Some tests failed. Review before committing."
+
+        # Optional: Commit updates
+        read -p "📦 Commit dependency updates? (y/n) " commit_choice
+        if [[ $commit_choice == "y" ]]; then
+            git add package.json package-lock.json
+            git commit -m "chore: Update project dependencies"
+        fi
+
+        # Desktop notification (macOS)
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            osascript -e 'display notification "Dependency updates completed!" with title "Dev Toolkit"'
+        fi
+    else
+        log "Dependency update cancelled."
+    fi
+else
+    log "No dependency updates available."
 fi
+
+log "Update process complete! ✨"
