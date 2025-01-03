@@ -1,6 +1,8 @@
 // Custom type declarations to resolve build issues
 
 import { User as FirebaseUser } from 'firebase/auth';
+import { DocumentData, Query } from 'firebase/firestore';
+import { EventOptions } from 'plausible-tracker';
 
 // Extend existing types
 declare module 'firebase/auth' {
@@ -8,10 +10,17 @@ declare module 'firebase/auth' {
     displayName?: string | null;
     photoURL?: string | null;
   }
+
+  // Add FirebaseError type
+  export interface FirebaseError extends Error {
+    code: string;
+    message: string;
+    name: string;
+  }
 }
 
 // Define missing types
-interface Newsletter {
+export interface Newsletter {
   id: string;
   name: string;
   description?: string;
@@ -24,37 +33,37 @@ interface Newsletter {
   subscribersCount?: number;
 }
 
-interface UserProfile {
+export interface UserProfile {
   id: string;
   email: string;
   displayName?: string;
   profileImage?: string;
 }
 
-interface EventData {
+export interface EventData {
   message: string;
   provider?: string;
   method?: string;
   email?: string;
 }
 
-interface SubscriptionData {
+export interface SubscriptionData {
   newsletterId: string;
   userId: string;
 }
 
-enum DeliveryPreference {
+export enum DeliveryPreference {
   DAILY = 'daily',
   WEEKLY = 'weekly',
   MONTHLY = 'monthly',
 }
 
-interface NewsletterStats {
+export interface NewsletterStats {
   totalSubscribers: number;
   engagementRate: number;
 }
 
-interface NewsletterEngagement {
+export interface NewsletterEngagement {
   newsletterId: string;
   openRate: number;
   clickRate: number;
@@ -62,7 +71,32 @@ interface NewsletterEngagement {
 
 // Extend Plausible Tracker
 declare module 'plausible-tracker' {
-  interface TrackEvent {
+  export interface TrackEvent {
     (eventName: string, options?: Record<string, unknown>): void;
+  }
+
+  export interface ErrorContext {
+    message?: string;
+    stack?: string;
+    source?: string;
+    category?: string;
+  }
+
+  export interface EventOptions {
+    props?: Record<string, unknown>;
+  }
+}
+
+// Extend Firestore Query
+declare module 'firebase/firestore' {
+  interface Query<T = DocumentData, U = DocumentData> {
+    (): Query<T, U>;
+  }
+}
+
+// Global type augmentations
+declare global {
+  interface Window {
+    trackEvent?: (eventName: string, options?: Record<string, unknown>) => void;
   }
 }
