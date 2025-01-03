@@ -13,7 +13,8 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "prepare": "husky install",
-    "deploy:indexes": "npx firebase deploy --only firestore:indexes"
+    "deploy:indexes": "npx firebase deploy --only firestore:indexes",
+    "vercel-build": "tsc && vite build"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
