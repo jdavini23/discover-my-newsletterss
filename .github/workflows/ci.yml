@@ -1,0 +1,72 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install Dependencies
+      run: |
+        cd newsletter-frontend
+        npm ci
+    
+    - name: Lint Code
+      run: |
+        cd newsletter-frontend
+        npm run lint
+    
+    - name: Run Tests
+      run: |
+        cd newsletter-frontend
+        npm test
+    
+    - name: Build Project
+      run: |
+        cd newsletter-frontend
+        npm run build
+    
+    - name: Run Performance Audit
+      uses: treosh/lighthouse-ci-action@v9
+      with:
+        urls: |
+          https://your-staging-url.com
+        budgetPath: ./budget.json
+        uploadArtifacts: true
+    
+    - name: Security Scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        command: test
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Production
+      run: |
+        # Add your deployment script here
+        echo "Deploying to production..."
