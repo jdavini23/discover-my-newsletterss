@@ -23,21 +23,34 @@ declare module 'firebase/auth' {
 export interface Newsletter {
   id: string;
   name: string;
-  description?: string;
-  logoUrl?: string;
-  category?: string;
-  categories?: string[];
-  author?: string;
-  tags?: string[];
-  subscribers?: number;
-  subscribersCount?: number;
+  title?: string;
+  description: string;
+  logoUrl: string;
+  category: string;
+  categories: string[];
+  author: string;
+  tags: string[];
+  subscribers: number;
+  subscribersCount: number;
+  rating?: number;
+  imageUrl?: string;
 }
 
 export interface UserProfile {
   id: string;
   email: string;
   displayName?: string;
-  profileImage?: string;
+  profileImage: string;
+  newsletterPreferences?: {
+    categories?: string[];
+    frequency?: string;
+    topics?: string[];
+  };
+  activityLog?: Array<{
+    action: string;
+    timestamp: Date;
+    details?: Record<string, any>;
+  }>;
 }
 
 export interface EventData {
@@ -45,28 +58,48 @@ export interface EventData {
   provider?: string;
   method?: string;
   email?: string;
+  timestamp?: string;
+  category?: string;
+  source?: string;
+  severity?: string;
+  query?: string;
+  stack?: string;
+  context?: ErrorContext;
 }
 
 export interface SubscriptionData {
   newsletterId: string;
   userId: string;
+  createdAt: Date;
+  deliveryPreference: DeliveryPreference;
+  status: 'active' | 'paused' | 'cancelled';
 }
 
 export enum DeliveryPreference {
   DAILY = 'daily',
   WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
+  MONTHLY = 'monthly'
 }
 
 export interface NewsletterStats {
   totalSubscribers: number;
   engagementRate: number;
+  averageReadTime?: number;
 }
 
 export interface NewsletterEngagement {
   newsletterId: string;
   openRate: number;
   clickRate: number;
+  totalReads?: number;
+}
+
+export interface SubscriptionOption {
+  id: string;
+  name: string;
+  price?: number;
+  features: string[];
+  deliveryPreference: DeliveryPreference;
 }
 
 // Extend Plausible Tracker
