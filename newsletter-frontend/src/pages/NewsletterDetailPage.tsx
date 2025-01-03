@@ -32,6 +32,17 @@ interface NewsletterReview {
   createdAt: Date;
 }
 
+interface Newsletter {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  author: string;
+  category: string;
+  tags?: string[];
+  frequency: string; // Add frequency property to Newsletter type
+}
+
 const NewsletterDetailPage: React.FC = () => {
   const { newsletterId } = useParams<{ newsletterId: string }>();
   const navigate = useNavigate();
@@ -211,7 +222,7 @@ const NewsletterDetailPage: React.FC = () => {
                 </div>
                 <div className="flex items-center">
                   <ClockIcon className="w-6 h-6 mr-2 text-green-500" />
-                  <span>{newsletter.frequency || 'Weekly'}</span>
+                  <span>{newsletter.frequency}</span>
                 </div>
               </div>
 

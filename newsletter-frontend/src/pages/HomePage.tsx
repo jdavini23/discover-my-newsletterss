@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trackEvent } from '../utils/analytics';
 import { measurePerformance } from '../utils/performance';
+
+// Define EventData type
+type EventData = {
+  source?: string;
+  message?: string;
+  severity?: 'info' | 'warning' | 'error';
+  error?: string;
+};
+
 import {
   UserIcon,
   MagnifyingGlassIcon as SearchIcon,
@@ -225,13 +234,9 @@ const HomePage: React.FC = () => {
       if (email) {
         // Track subscription attempt
         trackEvent('newsletter_signup_attempt', {
-          message: `Signup attempt from homepage`,
-          context: {
-            email: email.replace(/(.{2}).*(?=@)/, '***'),
-            source: 'homepage_signup',
-          },
+          source: 'homepage_signup',
           severity: 'info',
-        });
+        } as EventData);
 
         setIsSubscribing(true);
 
@@ -241,7 +246,7 @@ const HomePage: React.FC = () => {
             // Simulate API call
             trackEvent('newsletter_signup_success', {
               source: 'homepage_signup',
-            });
+            } as EventData);
 
             alert(`Thanks for subscribing with ${email}!`);
             setEmail('');
@@ -249,7 +254,8 @@ const HomePage: React.FC = () => {
             trackEvent('newsletter_signup_error', {
               error: error instanceof Error ? error.message : 'Unknown error',
               source: 'homepage_signup',
-            });
+              severity: 'error',
+            } as EventData);
             alert('Failed to subscribe. Please try again.');
           } finally {
             setIsSubscribing(false);

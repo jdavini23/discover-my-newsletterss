@@ -21,8 +21,16 @@ import NewsletterCard from '@/components/newsletter/NewsletterCard';
 import { trackEvent } from '@/utils/analytics';
 
 // Types
+import { Newsletter } from '@/types/newsletter';
 type ViewMode = 'grid' | 'list';
 type SortOption = 'newest' | 'alphabetical' | 'mostRead';
+type Category = string;
+type EventData = {
+  source?: string;
+  message?: string;
+  newsletterId?: string;
+  severity?: 'info' | 'warning' | 'error';
+};
 
 const SubscriptionsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -33,12 +41,14 @@ const SubscriptionsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
   // Compute unique categories from subscriptions
   const availableCategories = useMemo(() => {
-    const categories = new Set<string>();
-    subscriptions.forEach(newsletter => newsletter.categories?.forEach(cat => categories.add(cat)));
+    const categories = new Set<Category>();
+    subscriptions.forEach(newsletter =>
+      newsletter.categories?.forEach((cat: Category) => categories.add(cat))
+    );
     return Array.from(categories);
   }, [subscriptions]);
 
@@ -88,14 +98,40 @@ const SubscriptionsPage: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchSubscriptions(user.uid);
+      trackEvent('page_view', {
+        source: 'SubscriptionsPage',
+        message: 'User viewed subscriptions',
+        severity: 'info',
+      } as EventData);
     }
   }, [user, fetchSubscriptions]);
 
   // Unsubscribe handler
   const handleUnsubscribe = (newsletterId: string) => {
     unsubscribeNewsletter(newsletterId);
-    trackEvent('newsletter_unsubscribe', { newsletterId });
+    trackEvent('newsletter_unsubscribe', {
+      source: 'SubscriptionsPage',
+      message: `Unsubscribed from newsletter ${newsletterId}`,
+      newsletterId,
+      severity: 'info',
+    } as EventData);
   };
+
+  const renderNewsletterCard = (newsletter: Newsletter) => (
+    <motion.div
+      key={newsletter.id}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.3 }}
+    >
+      <NewsletterCard
+        newsletter={newsletter}
+        onUnsubscribe={() => handleUnsubscribe(newsletter.id)}
+        viewMode={viewMode}
+      />
+    </motion.div>
+  );
 
   return (
     <motion.div
@@ -221,11 +257,7 @@ const SubscriptionsPage: React.FC = () => {
                 transition={{ duration: 0.3 }}
                 className="relative group"
               >
-                <NewsletterCard
-                  newsletter={newsletter}
-                  onClick={() => navigate(`/newsletters/${newsletter.id}`)}
-                  viewMode={viewMode}
-                />
+                {renderNewsletterCard(newsletter)}
                 <button
                   onClick={() => handleUnsubscribe(newsletter.id)}
                   className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600"

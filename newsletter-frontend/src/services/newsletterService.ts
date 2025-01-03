@@ -356,10 +356,8 @@ export class NewsletterService {
   }
 
   // Simulate newsletter unsubscription
-  static async unsubscribeNewsletter(_newsletterId: string): Promise<boolean> {
-    await simulateDelay(1000);
-    // In a real app, this would call a backend endpoint
-    return Math.random() > 0.1; // 90% success rate
+  unsubscribeNewsletter(_newsletterId: string): Promise<boolean> {
+    return NewsletterService.unsubscribeNewsletter(_newsletterId);
   }
 
   // Enhanced subscription process
@@ -590,6 +588,14 @@ export class NewsletterService {
         }));
       }
 
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        console.error(`User with ID ${userId} not found`);
+        return [];
+      }
+
       const subscriptionsRef = collection(db, 'userSubscriptions');
       const q = query(
         subscriptionsRef,
@@ -615,7 +621,7 @@ export class NewsletterService {
           id: newsletterId,
           ...newsletterDoc.data(),
           subscribedAt: subscriptionData.subscribedAt?.toDate() || new Date(),
-        } as Newsletter;
+        } as unknown as Newsletter;
       });
 
       // Filter out any null results (newsletters that weren't found)

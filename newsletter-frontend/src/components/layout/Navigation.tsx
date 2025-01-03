@@ -4,20 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
 
 // Icons
-import {
-  UserCircleIcon,
-  BookOpenIcon,
-  StarIcon,
-  LoginIcon,
-  LogoutIcon,
-  HomeIcon,
-  SearchIcon,
-  MagnifyingGlassIcon as SearchIcon,
-  ArrowRightOnRectangleIcon as LoginIcon,
-  ArrowLeftOnRectangleIcon as LogoutIcon,
-  Bars3Icon as MenuIcon,
-  XMarkIcon as XIcon,
-} from '@heroicons/react/24/outline';
+import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
+import ArrowRightOnRectangleIcon from '@heroicons/react/24/outline/ArrowRightOnRectangleIcon';
+import ArrowLeftOnRectangleIcon from '@heroicons/react/24/outline/ArrowLeftOnRectangleIcon';
+import HomeIcon from '@heroicons/react/24/outline/HomeIcon';
+import MagnifyingGlassIcon from '@heroicons/react/24/outline/MagnifyingGlassIcon';
+import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
+import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
+import BookOpenIcon from '@heroicons/react/24/outline/BookOpenIcon';
+import StarIcon from '@heroicons/react/24/outline/StarIcon';
 
 const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -47,88 +42,96 @@ const Navigation: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <NavLink
-                  to="/newsletters"
+                  to="/"
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-lg transition-colors ${
+                    `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                       isActive
-                        ? 'bg-primary-100 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                     }`
                   }
                 >
-                  Newsletters
+                  <HomeIcon className="h-5 w-5 mr-2" />
+                  Home
                 </NavLink>
                 <NavLink
-                  to="/subscriptions"
+                  to="/newsletters"
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-lg transition-colors ${
+                    `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                       isActive
-                        ? 'bg-primary-100 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                     }`
                   }
                 >
-                  Subscriptions
+                  <BookOpenIcon className="h-5 w-5 mr-2" />
+                  Newsletters
                 </NavLink>
                 <NavLink
                   to="/reading-history"
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-lg transition-colors ${
+                    `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                       isActive
-                        ? 'bg-primary-100 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                     }`
                   }
                 >
+                  <StarIcon className="h-5 w-5 mr-2" />
                   Reading History
                 </NavLink>
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-lg transition-colors ${
+                    `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                       isActive
-                        ? 'bg-primary-100 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                     }`
                   }
                 >
+                  <UserCircleIcon className="h-5 w-5 mr-2" />
                   Profile
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
                 >
+                  <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-2" />
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    `inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                      isActive
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    }`
+                  }
                 >
-                  Sign Up
-                </Link>
+                  <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" />
+                  Login
+                </NavLink>
               </>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="-mr-2 flex md:hidden">
+          <div className="-mr-2 flex items-center md:hidden">
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               type="button"
-              className="bg-gray-50 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              aria-expanded={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
             >
               <span className="sr-only">Open main menu</span>
               {isMobileMenuOpen ? (
-                <XIcon className="block h-6 w-6" aria-hidden="true" />
+                <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
               ) : (
-                <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -149,6 +152,19 @@ const Navigation: React.FC = () => {
               {isAuthenticated ? (
                 <>
                   <NavLink
+                    to="/"
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Home
+                  </NavLink>
+                  <NavLink
                     to="/newsletters"
                     className={({ isActive }) =>
                       `block px-3 py-2 rounded-lg transition-colors ${
@@ -160,19 +176,6 @@ const Navigation: React.FC = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Newsletters
-                  </NavLink>
-                  <NavLink
-                    to="/subscriptions"
-                    className={({ isActive }) =>
-                      `block px-3 py-2 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-primary-100 text-primary-700'
-                          : 'text-gray-600 hover:bg-gray-100'
-                      }`
-                    }
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Subscriptions
                   </NavLink>
                   <NavLink
                     to="/reading-history"

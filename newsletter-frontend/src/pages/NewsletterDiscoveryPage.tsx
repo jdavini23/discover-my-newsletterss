@@ -15,6 +15,20 @@ import { OnboardingModal } from '@/components/onboarding/OnboardingModal';
 import { NewsletterPreviewModal } from '@/components/newsletter/NewsletterPreviewModal';
 import { useAuthStore } from '@/stores/authStore';
 
+// Define EventData type
+type EventData = {
+  source?: string;
+  message?: string;
+  categories?: string[];
+  query?: string;
+  sortBy?: 'rating' | 'popularity' | 'newest';
+  filters?: {
+    minSubscribers?: number;
+    minRating?: number;
+  };
+  severity?: 'info' | 'warning' | 'error';
+};
+
 const CATEGORIES = [
   'Technology',
   'Science',
@@ -55,7 +69,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [minSubscribers, setMinSubscribers] = useState<number | undefined>();
   const [minRating, setMinRating] = useState<number | undefined>();
-  const [sortBy, setSortBy] = useState<string>('newest');
+  const [sortBy, setSortBy] = useState<'rating' | 'popularity' | 'newest'>('newest');
   const [totalNewsletters, setTotalNewsletters] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -96,7 +110,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
           minSubscribers,
           minRating,
         },
-      });
+      } as EventData);
     } catch (error) {
       console.error('Failed to fetch newsletters', error);
     } finally {
@@ -289,7 +303,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
                   value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
+                  onChange={e => setSortBy(e.target.value as 'rating' | 'popularity' | 'newest')}
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   {SORT_OPTIONS.map(option => (
