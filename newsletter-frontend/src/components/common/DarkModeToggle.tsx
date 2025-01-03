@@ -1,53 +1,63 @@
-import React from 'react';
-import { toggleDarkMode } from '../../utils/darkMode';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 
 export const DarkModeToggle: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = React.useState(() => {
-    return document.documentElement.classList.contains('dark');
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const handleToggle = () => {
-    toggleDarkMode();
-    setIsDarkMode(!isDarkMode);
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDarkMode(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setIsDarkMode(false);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
   return (
-    <button 
-      onClick={handleToggle} 
-      className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 transition-colors"
-      aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+    <motion.button
+      onClick={toggleDarkMode}
+      whileTap={{ scale: 0.9 }}
+      className="
+        p-2 
+        rounded-full 
+        bg-gray-100 
+        dark:bg-gray-800 
+        text-gray-800 
+        dark:text-gray-200 
+        hover:bg-gray-200 
+        dark:hover:bg-gray-700 
+        transition-colors 
+        duration-300
+      "
+      aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
-      {isDarkMode ? (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-6 w-6 text-yellow-500" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M12 3v1m0 16v1m9-9h-1M4 12H3m3.343-5.657L5.929 5.929m12.728 12.728L18.071 18.07M12 7a5 5 0 110 10 5 5 0 010-10z" 
-          />
-        </svg>
-      ) : (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-6 w-6 text-gray-800" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" 
-          />
-        </svg>
-      )}
-    </button>
+      <motion.div
+        initial={false}
+        animate={{ rotate: isDarkMode ? 180 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {isDarkMode ? (
+          <SunIcon className="h-6 w-6 text-yellow-500" />
+        ) : (
+          <MoonIcon className="h-6 w-6 text-indigo-600" />
+        )}
+      </motion.div>
+    </motion.button>
   );
 };

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class', // Enable class-based dark mode
   theme: {
     extend: {
       colors: {
@@ -8,7 +9,12 @@ export default {
           DEFAULT: '#4A90E2',
           hover: '#357ABD',
           light: '#6BA5E7',
-          dark: '#3576C4',
+          dark: {
+            DEFAULT: '#2F6C9F',
+            50: '#1B4D7A',
+            100: '#235A8D',
+            500: '#4A90E2',
+          },
           50: '#E5F0FF',
           100: '#C7D9F5',
           200: '#A5C9F2',
@@ -24,7 +30,12 @@ export default {
           DEFAULT: '#F5A623',
           hover: '#E0911A',
           light: '#F7B94D',
-          dark: '#D68C1A',
+          dark: {
+            DEFAULT: '#D68C1A',
+            50: '#9F5C09',
+            100: '#B36C0E',
+            500: '#F5A623',
+          },
           50: '#FFF7E5',
           100: '#FFE4C7',
           200: '#FFD7A5',
@@ -77,12 +88,65 @@ export default {
             dark: '#A1A1A1',
           },
         },
+        dark: {
+          background: '#121212',
+          surface: '#1E1E1E',
+          text: '#E0E0E0',
+          muted: '#A0A0A0',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      fontSize: {
+        'xs-mobile': '0.65rem',
+        'sm-mobile': '0.75rem',
+        'base-mobile': '0.875rem',
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-up': {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.5s ease-out',
+        'slide-up': 'slide-up 0.6s ease-out',
+      },
+      screens: {
+        xs: '375px', // Extra small devices
+        sm: '640px', // Small devices
+        md: '768px', // Medium devices
+        lg: '1024px', // Large devices
+        xl: '1280px', // Extra large devices
+        '2xl': '1536px', // 2X large devices
+      },
+      boxShadow: {
+        'dark-sm': '0 1px 3px 0 rgba(255, 255, 255, 0.1)',
+        'dark-md':
+          '0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -1px rgba(255, 255, 255, 0.06)',
+      },
     },
   },
-  darkMode: 'class',
-  plugins: [],
+  plugins: [
+    // Optional: Add responsive font size plugin
+    function ({ addUtilities }) {
+      const responsiveFontSizes = {
+        '.text-responsive-xs': {
+          '@apply text-xs-mobile sm:text-xs': {},
+        },
+        '.text-responsive-sm': {
+          '@apply text-sm-mobile sm:text-sm': {},
+        },
+        '.text-responsive-base': {
+          '@apply text-base-mobile sm:text-base': {},
+        },
+      };
+      addUtilities(responsiveFontSizes);
+    },
+  ],
 };

@@ -4,7 +4,7 @@ import App from './App.tsx';
 import './index.css';
 import { useAuthStore } from './stores/authStore';
 
-function AppWrapper() {
+export function AppWrapper() {
   // Initialize auth when the app starts
   React.useEffect(() => {
     useAuthStore.getState().initializeAuth();

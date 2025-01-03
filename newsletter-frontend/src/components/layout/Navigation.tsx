@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
 
 // Icons
 import {
-  HomeIcon,
-  MagnifyingGlassIcon as SearchIcon,
   UserCircleIcon,
+  BookOpenIcon,
+  StarIcon,
+  LoginIcon,
+  LogoutIcon,
+  HomeIcon,
+  SearchIcon,
+  MagnifyingGlassIcon as SearchIcon,
   ArrowRightOnRectangleIcon as LoginIcon,
   ArrowLeftOnRectangleIcon as LogoutIcon,
   Bars3Icon as MenuIcon,
@@ -16,85 +21,115 @@ import {
 
 const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
-    navigate('/');
-  };
-
-  const navLinks = isAuthenticated
-    ? [
-        { name: 'Home', path: '/', icon: HomeIcon },
-        { name: 'Discover', path: '/newsletters', icon: SearchIcon },
-        { name: 'Profile', path: '/profile', icon: UserCircleIcon },
-      ]
-    : [
-        { name: 'Welcome', path: '/welcome', icon: HomeIcon },
-        { name: 'Login', path: '/auth', icon: LoginIcon },
-      ];
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    navigate('/login');
+    setIsMobileMenuOpen(false);
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+    <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <div className="w-10 h-10 bg-[#FF7E5F] rounded-lg flex items-center justify-center mr-2">
-                <span className="text-white font-bold text-xl">D</span>
-              </div>
-              <span className="text-xl font-bold text-gray-800 hidden md:inline">
-                Discover My Newsletters
-              </span>
+              <img className="h-8 w-auto" src="/logo.svg" alt="Newsletter Discovery Logo" />
+              <span className="ml-2 text-xl font-bold text-gray-800">Discover</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              {navLinks.map(link => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className="text-gray-600 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center"
+          <div className="hidden md:flex md:items-center md:space-x-4">
+            {isAuthenticated ? (
+              <>
+                <NavLink
+                  to="/newsletters"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`
+                  }
                 >
-                  {React.createElement(link.icon, { className: 'w-5 h-5 mr-2' })}
-                  {link.name}
-                </Link>
-              ))}
-
-              {isAuthenticated && (
+                  Newsletters
+                </NavLink>
+                <NavLink
+                  to="/subscriptions"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`
+                  }
+                >
+                  Subscriptions
+                </NavLink>
+                <NavLink
+                  to="/reading-history"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`
+                  }
+                >
+                  Reading History
+                </NavLink>
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`
+                  }
+                >
+                  Profile
+                </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="text-red-600 hover:bg-red-50 hover:text-red-800 px-3 py-2 rounded-md text-sm font-medium flex items-center"
+                  className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                 >
-                  {React.createElement(LogoutIcon, { className: 'w-5 h-5 mr-2' })}
                   Logout
                 </button>
-              )}
-            </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="-mr-2 flex md:hidden">
             <button
-              onClick={toggleMobileMenu}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               type="button"
               className="bg-gray-50 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              aria-expanded={isMobileMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
-              {isMobileMenuOpen
-                ? React.createElement(XIcon, { className: 'block h-6 w-6', 'aria-hidden': 'true' })
-                : React.createElement(MenuIcon, {
-                    className: 'block h-6 w-6',
-                    'aria-hidden': 'true',
-                  })}
+              {isMobileMenuOpen ? (
+                <XIcon className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
@@ -107,32 +142,88 @@ const Navigation: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg"
+            transition={{ duration: 0.3 }}
+            className="md:hidden overflow-hidden"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navLinks.map(link => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className="text-gray-600 hover:bg-gray-100 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium flex items-center"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {React.createElement(link.icon, { className: 'w-5 h-5 mr-2' })}
-                  {link.name}
-                </Link>
-              ))}
-
-              {isAuthenticated && (
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="w-full text-left text-red-600 hover:bg-red-50 hover:text-red-800 px-3 py-2 rounded-md text-base font-medium flex items-center"
-                >
-                  {React.createElement(LogoutIcon, { className: 'w-5 h-5 mr-2' })}
-                  Logout
-                </button>
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              {isAuthenticated ? (
+                <>
+                  <NavLink
+                    to="/newsletters"
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Newsletters
+                  </NavLink>
+                  <NavLink
+                    to="/subscriptions"
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Subscriptions
+                  </NavLink>
+                  <NavLink
+                    to="/reading-history"
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Reading History
+                  </NavLink>
+                  <NavLink
+                    to="/profile"
+                    className={({ isActive }) =>
+                      `block px-3 py-2 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      }`
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Profile
+                  </NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="block px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="block px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-center"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </>
               )}
             </div>
           </motion.div>

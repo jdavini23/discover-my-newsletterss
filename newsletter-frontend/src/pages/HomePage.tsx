@@ -47,17 +47,13 @@ const WaveDivider = () => (
   </svg>
 );
 
-interface FeatureIllustrationProps {
-  icon: React.ComponentType<{ className?: string }>;
+interface Feature {
   title: string;
   description: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-const FeatureIllustration: React.FC<FeatureIllustrationProps> = ({
-  icon: Icon,
-  title,
-  description,
-}) => (
+const FeatureIllustration: React.FC<Feature> = ({ icon: Icon, title, description }) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
     className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center space-y-4 transform transition-all duration-300 hover:shadow-xl"
@@ -147,7 +143,7 @@ const NewsletterCarousel: React.FC<{
           onClick={prevNewsletter}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-md hover:bg-white/90 transition-all"
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-md hover:bg-white/90 transition-all focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-opacity-50"
         >
           {React.createElement(ChevronLeftIcon, { className: 'w-5 h-5 text-primary-600' })}
         </motion.button>
@@ -155,7 +151,7 @@ const NewsletterCarousel: React.FC<{
           onClick={nextNewsletter}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-md hover:bg-white/90 transition-all"
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-md hover:bg-white/90 transition-all focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-opacity-50"
         >
           {React.createElement(ChevronRightIcon, { className: 'w-5 h-5 text-primary-600' })}
         </motion.button>
@@ -207,6 +203,7 @@ const HomePage: React.FC = () => {
     return () => performanceTracker.end();
   }, []);
 
+  // Enhanced search handler
   const handleSearch = useCallback(() => {
     if (searchQuery.trim()) {
       // Track search event
@@ -264,7 +261,7 @@ const HomePage: React.FC = () => {
   );
 
   // Sample categories (you can expand or fetch these dynamically)
-  const categories = [
+  const categoriesList = [
     { name: 'Technology', icon: PersonalizedIcon, color: 'bg-blue-100' },
     { name: 'Health', icon: FilteredIcon, color: 'bg-red-100' },
     { name: 'Productivity', icon: CommunityIcon, color: 'bg-green-100' },
@@ -315,6 +312,24 @@ const HomePage: React.FC = () => {
       role: 'Freelance Writer',
       quote: 'Easy to use and discover new content.',
       avatar: 'https://via.placeholder.com/150?text=ER',
+    },
+  ];
+
+  const features: Feature[] = [
+    {
+      title: 'Discover Newsletters',
+      description: 'Find the best newsletters tailored to your interests',
+      icon: SparklesIcon,
+    },
+    {
+      title: 'Personalized Recommendations',
+      description: 'Get curated newsletters based on your preferences',
+      icon: PersonalizedIcon,
+    },
+    {
+      title: 'Community Insights',
+      description: 'Learn from our community of readers and experts',
+      icon: CommunityIcon,
     },
   ];
 
@@ -382,14 +397,12 @@ const HomePage: React.FC = () => {
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full px-6 py-4 rounded-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
               />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={handleSearch}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary-600 text-white p-3 rounded-full hover:bg-primary-700 transition-all"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary-600 text-white p-3 rounded-full hover:bg-primary-700 transition-all hover:scale-105 active:scale-95"
               >
                 {React.createElement(SearchIcon, { className: 'w-5 h-5' })}
-              </motion.button>
+              </button>
             </div>
           </div>
 
@@ -402,9 +415,10 @@ const HomePage: React.FC = () => {
               Get Started
             </motion.button>
             <motion.button
+              onClick={() => navigate('/newsletters')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border-2 border-white text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-white/20 transition-all"
+              className="bg-primary-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-primary-700 transition-all"
             >
               Explore Now
             </motion.button>
@@ -432,7 +446,7 @@ const HomePage: React.FC = () => {
             Explore Newsletter Categories
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {categories.map(category => (
+            {categoriesList.map(category => (
               <motion.div
                 key={category.name}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -447,6 +461,18 @@ const HomePage: React.FC = () => {
                   {category.name}
                 </h3>
               </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-gray-100 py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">What We Offer</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <FeatureIllustration key={index} {...feature} />
             ))}
           </div>
         </div>
@@ -545,7 +571,7 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
-                key={testimonial.name}
+                key={`${testimonial.name}-${index}`}
                 initial={{ opacity: 0, translateY: 20 }}
                 animate={{ opacity: 1, translateY: 0 }}
                 transition={{ delay: index * 0.2, duration: 0.5 }}

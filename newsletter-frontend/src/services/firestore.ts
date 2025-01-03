@@ -15,6 +15,7 @@ import {
   limit,
   increment,
   Query,
+  startAfter,
 } from 'firebase/firestore';
 import { auth } from '@/config/firebase';
 import { User, Newsletter, NewsletterFilter } from '@/types/firestore';
@@ -91,8 +92,8 @@ export const getUserNewsletters = async () => {
 };
 
 // Newsletter Discovery Methods
-export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
-  const { topics, sortBy = 'popularity', searchQuery, page: _page = 1, pageSize = 12 } = filters;
+export const fetchNewsletters = async (filters: NewsletterFilter = {}, page = 1, pageSize = 10) => {
+  const { topics, sortBy = 'popularity', searchQuery } = filters;
 
   // Base query
   let newsletterQuery: Query = collection(db, 'newsletters');
@@ -127,6 +128,10 @@ export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
   }
 
   // Apply pagination
+  const lastVisible = await getLastVisible(newsletterQuery, page, pageSize);
+  if (lastVisible) {
+    newsletterQuery = query(newsletterQuery, startAfter(lastVisible));
+  }
   newsletterQuery = query(newsletterQuery, limit(pageSize));
 
   const newsletterSnapshot = await getDocs(newsletterQuery);
@@ -158,6 +163,16 @@ export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
     return newsletter;
   });
 };
+
+async function getLastVisible(query: Query, page: number, pageSize: number) {
+  if (page <= 1) return null;
+
+  const lastPageQuery = query(limit(pageSize * (page - 1)));
+  const lastPageSnapshot = await getDocs(lastPageQuery);
+  if (lastPageSnapshot.empty) return null;
+
+  return lastPageSnapshot.docs[lastPageSnapshot.docs.length - 1];
+}
 
 // Subscribe to a newsletter
 export const subscribeToNewsletter = async (newsletterId: string) => {
