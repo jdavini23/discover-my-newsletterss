@@ -5,6 +5,12 @@ import './index.css';
 import { useAuthStore } from './stores/authStore';
 
 function AppWrapper() {
+import { React } from 'react';
+import { ReactDOM } from 'react-dom/client';
+import { App } from './App.tsx';
+import './index.css';
+
+export function AppWrapper() {
   // Initialize auth when the app starts
   React.useEffect(() => {
     useAuthStore.getState().initializeAuth();

@@ -12,12 +12,24 @@ dist
 dist-ssr
 *.local
 
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 # Environment files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 
 # Editor directories and files
 .vscode/*
@@ -29,3 +41,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.vercel

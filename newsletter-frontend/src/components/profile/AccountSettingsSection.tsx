@@ -3,6 +3,7 @@ import { UserProfile } from '../../types/profile';
 import { auth } from '../../config/firebase';
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../src/../stores/authStore';
 
 interface AccountSettingsSectionProps {
   profile: UserProfile;
@@ -10,6 +11,7 @@ interface AccountSettingsSectionProps {
 
 const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile: _profile }) => {
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -65,6 +67,15 @@ const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Logout failed');
+    }
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
@@ -115,6 +126,19 @@ const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             Change Password
+          </button>
+        </div>
+      </div>
+
+      <div className="border-t pt-6 mt-6">
+        <h3 className="text-lg font-semibold mb-4">Session Management</h3>
+        <div className="bg-gray-50 border border-gray-200 p-4 rounded-md">
+          <p className="text-sm text-gray-700 mb-4">Log out of your account on this device.</p>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg transition hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+          >
+            Logout
           </button>
         </div>
       </div>
