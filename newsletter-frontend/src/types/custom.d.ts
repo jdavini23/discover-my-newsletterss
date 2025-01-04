@@ -1,9 +1,5 @@
 // Custom type declarations to resolve build issues
 
-import { User as FirebaseUser } from 'firebase/auth';
-import { DocumentData, Query } from 'firebase/firestore';
-import { EventOptions } from 'plausible-tracker';
-
 // Extend existing types
 declare module 'firebase/auth' {
   interface User extends FirebaseUser {
@@ -49,7 +45,7 @@ export interface UserProfile {
   activityLog?: Array<{
     action: string;
     timestamp: Date;
-    details?: Record<string, any>;
+    details?: Record<string, unknown>;
   }>;
 }
 
@@ -78,7 +74,7 @@ export interface SubscriptionData {
 export enum DeliveryPreference {
   DAILY = 'daily',
   WEEKLY = 'weekly',
-  MONTHLY = 'monthly'
+  MONTHLY = 'monthly',
 }
 
 export interface NewsletterStats {
@@ -102,28 +98,28 @@ export interface SubscriptionOption {
   deliveryPreference: DeliveryPreference;
 }
 
+export interface ErrorContext {
+  message?: string;
+  stack?: string;
+  source?: string;
+  category?: string;
+}
+
+export interface NewsletterReview {
+  id: string;
+  userId: string;
+  newsletterId: string;
+  rating: number;
+  comment?: string;
+  createdAt: Date;
+  userDisplayName?: string;
+  userProfileImage?: string;
+}
+
 // Extend Plausible Tracker
 declare module 'plausible-tracker' {
   export interface TrackEvent {
-    (eventName: string, options?: Record<string, unknown>): void;
-  }
-
-  export interface ErrorContext {
-    message?: string;
-    stack?: string;
-    source?: string;
-    category?: string;
-  }
-
-  export interface EventOptions {
-    props?: Record<string, unknown>;
-  }
-}
-
-// Extend Firestore Query
-declare module 'firebase/firestore' {
-  interface Query<T = DocumentData, U = DocumentData> {
-    (): Query<T, U>;
+    // Define TrackEvent properties if needed
   }
 }
 
