@@ -6,6 +6,7 @@ import hpp from 'hpp';
 import { initializeDatabase } from './config/database';
 import dotenv from 'dotenv';
 import adminRoutes from './routes/admin.routes';
+import './config/firebase'; // Import Firebase configuration
 
 // Load environment variables
 dotenv.config();

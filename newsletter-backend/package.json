@@ -39,6 +39,7 @@
     "@types/hpp": "^0.2.5",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.5",
+    "@types/pg": "^8.6.5",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",

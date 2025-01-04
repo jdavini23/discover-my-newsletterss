@@ -15,25 +15,13 @@ import {
   limit,
   increment,
   Query,
+  startAfter,
 } from 'firebase/firestore';
 import { auth } from '@/config/firebase';
 import { User, Newsletter, NewsletterFilter } from '@/types/firestore';
 import { UserProfile, UpdateProfileParams, UserActivity } from '@/types/profile';
 
 const db = getFirestore();
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-  deleteDoc,
-  addDoc,
-  Query,
-  startAfter,
-  where,
-  orderBy,
-  limit,
-  query,
-} from 'firebase/firestore';
 
 // Fetch user profile
 export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
@@ -104,8 +92,6 @@ export const getUserNewsletters = async () => {
 };
 
 // Newsletter Discovery Methods
-export const fetchNewsletters = async (filters: NewsletterFilter = {}) => {
-  const { topics, sortBy = 'popularity', searchQuery, page: _page = 1, pageSize = 12 } = filters;
 export const fetchNewsletters = async (filters: NewsletterFilter = {}, page = 1, pageSize = 10) => {
   const { topics, sortBy = 'popularity', searchQuery } = filters;
 

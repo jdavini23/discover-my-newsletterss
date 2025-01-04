@@ -1,4 +1,3 @@
-import { defineConfig } from 'vite';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
@@ -6,27 +5,6 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      src: path.resolve(__dirname, './src'),
-    },
-  },
-  server: {
-    port: 3000,
-    open: true,
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
-  },
-  css: {
-    postcss: {
-      plugins: [tailwindcss, autoprefixer],
-    },
-  },
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode`
   const env = loadEnv(mode, process.cwd(), '');
@@ -40,8 +18,22 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      host: '127.0.0.1',
       port: 3000,
+      strictPort: true,
       open: true,
+      cors: true,
+      hmr: {
+        host: '127.0.0.1',
+        port: 3001,
+        protocol: 'ws',
+      },
+      fs: {
+        // Allow serving files from one level up to the project root
+        allow: [path.resolve(__dirname, '..'), path.resolve(__dirname, '.')],
+      },
+      // Add more detailed logging
+      middlewareMode: true,
     },
     build: {
       outDir: 'dist',
@@ -49,8 +41,17 @@ export default defineConfig(({ mode }) => {
     },
     css: {
       postcss: {
-        plugins: [tailwindcss, autoprefixer],
+        plugins: [
+          tailwindcss({
+            config: path.resolve(__dirname, 'tailwind.config.js'),
+          }),
+          autoprefixer(),
+        ],
       },
+    },
+    optimizeDeps: {
+      // Force pre-bundling of dependencies
+      force: true,
     },
     define: {
       // Expose environment variables to the app

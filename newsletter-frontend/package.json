@@ -52,7 +52,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "firebase-admin": "^11.11.1",
+    "firebase-admin": "^13.0.2",
     "firebase-tools": "^13.29.1",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
