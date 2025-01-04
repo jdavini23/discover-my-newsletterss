@@ -1,7 +1,4 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BookmarkIcon, ShareIcon, StarIcon } from '@heroicons/react/24/outline';
-import { Newsletter } from '@/stores/newsletterStore';
+import { React } from 'react';
 
 interface NewsletterPreviewModalProps {
   newsletter: Newsletter;

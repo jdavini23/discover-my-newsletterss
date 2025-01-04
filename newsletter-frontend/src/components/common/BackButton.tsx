@@ -1,6 +1,4 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { React } from 'react';
 
 interface BackButtonProps {
   fallbackPath?: string;

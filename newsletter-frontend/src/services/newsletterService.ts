@@ -1,18 +1,16 @@
-import { Newsletter } from '@/stores/newsletterStore';
-import axios from 'axios'; // Import axios
 import {
+  getFirestore,
   collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
   query,
   where,
-  getDocs,
-  getDoc,
-  doc,
-  deleteDoc,
-  updateDoc,
   orderBy,
   increment,
 } from 'firebase/firestore';
-import { db, auth } from '@/services/firebaseConfig';
 
 // Expanded mock newsletter data with more diverse and realistic content
 const MOCK_NEWSLETTERS: Newsletter[] = [

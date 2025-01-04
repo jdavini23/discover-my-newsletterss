@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '@/stores/authStore';
+import { UserCircleIcon } from '@heroicons/react/24/outline/UserCircleIcon';
+import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline/ArrowRightOnRectangleIcon';
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline/ArrowLeftOnRectangleIcon';
+import { HomeIcon } from '@heroicons/react/24/outline/HomeIcon';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline/MagnifyingGlassIcon';
+import { Bars3Icon } from '@heroicons/react/24/outline/Bars3Icon';
+import { XMarkIcon } from '@heroicons/react/24/outline/XMarkIcon';
+import { BookOpenIcon } from '@heroicons/react/24/outline/BookOpenIcon';
+import { StarIcon } from '@heroicons/react/24/outline/StarIcon';
 
 // Icons
-import UserCircleIcon from '@heroicons/react/24/outline/UserCircleIcon';
-import ArrowRightOnRectangleIcon from '@heroicons/react/24/outline/ArrowRightOnRectangleIcon';
-import ArrowLeftOnRectangleIcon from '@heroicons/react/24/outline/ArrowLeftOnRectangleIcon';
-import HomeIcon from '@heroicons/react/24/outline/HomeIcon';
-import MagnifyingGlassIcon from '@heroicons/react/24/outline/MagnifyingGlassIcon';
-import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
-import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import BookOpenIcon from '@heroicons/react/24/outline/BookOpenIcon';
-import StarIcon from '@heroicons/react/24/outline/StarIcon';
 
 const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

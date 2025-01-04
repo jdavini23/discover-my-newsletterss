@@ -1,13 +1,3 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { UserProfile } from '@/types/profile';
-import {
-  fetchUserProfile,
-  updateUserProfile,
-  updateNewsletterPreferences,
-  fetchAvailableTopics,
-} from '@/services/firestore';
-
 interface UserProfileState {
   profile: UserProfile | null;
   isLoading: boolean;

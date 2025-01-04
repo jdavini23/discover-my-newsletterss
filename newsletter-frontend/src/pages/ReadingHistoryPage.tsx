@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useReadingHistoryStore from '@/stores/readingHistoryStore';
-import BackButton from '@/components/common/BackButton';
-import { ChartBarIcon, BookOpenIcon, StarIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { useReadingHistoryStore } from '../src/stores/readingHistoryStore';
+import { BackButton } from '../src/components/common/BackButton';
 
 const ReadingHistoryPage: React.FC = () => {
   const navigate = useNavigate();

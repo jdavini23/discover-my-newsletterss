@@ -1,5 +1,4 @@
-import React from 'react';
-import { Newsletter } from '@/stores/newsletterStore';
+import { React } from 'react';
 
 interface NewsletterCardProps {
   newsletter: Newsletter;

@@ -1,5 +1,6 @@
+import { Plausible } from 'plausible-tracker';
+
 // src/utils/analytics.ts
-import Plausible from 'plausible-tracker';
 
 // Configuration for different environments
 const ANALYTICS_CONFIG = {

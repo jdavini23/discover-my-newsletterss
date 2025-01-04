@@ -1,33 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+
+import { Newsletter, EventData } from '../types';
+import { NewsletterCard } from '../components/newsletter/NewsletterCard';
+import { useNewsletterStore } from '../stores/newsletterStore';
+import { useAuthStore } from '../stores/authStore';
+
 import {
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-
-import { NewsletterService, NewsletterFilters } from '@/services/newsletterService';
-import { Newsletter } from '@/stores/newsletterStore';
-import { trackEvent } from '@/utils/analytics';
-import NewsletterCard from '@/components/newsletter/NewsletterCard';
-import { OnboardingModal } from '@/components/onboarding/OnboardingModal';
-import { NewsletterPreviewModal } from '@/components/newsletter/NewsletterPreviewModal';
-import { useAuthStore } from '@/stores/authStore';
-
-// Define EventData type
-type EventData = {
-  source?: string;
-  message?: string;
-  categories?: string[];
-  query?: string;
-  sortBy?: 'rating' | 'popularity' | 'newest';
-  filters?: {
-    minSubscribers?: number;
-    minRating?: number;
-  };
-  severity?: 'info' | 'warning' | 'error';
-};
 
 const CATEGORIES = [
   'Technology',
@@ -303,7 +288,12 @@ const NewsletterDiscoveryPage: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
                   value={sortBy}
-                  onChange={e => setSortBy(e.target.value as 'rating' | 'popularity' | 'newest')}
+                  onChange={e => {
+                    const value = e.target.value;
+                    if (value === 'rating' || value === 'popularity' || value === 'newest') {
+                      setSortBy(value);
+                    }
+                  }}
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   {SORT_OPTIONS.map(option => (

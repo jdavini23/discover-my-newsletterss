@@ -1,8 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import { React } from 'react';
+import { ReactDOM } from 'react-dom/client';
+import { App } from './App.tsx';
 import './index.css';
-import { useAuthStore } from './stores/authStore';
 
 export function AppWrapper() {
   // Initialize auth when the app starts

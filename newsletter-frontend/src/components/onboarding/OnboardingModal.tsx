@@ -1,11 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import {
-  SparklesIcon,
-  MagnifyingGlassIcon,
-  HeartIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
 
 interface OnboardingModalProps {
   isOpen: boolean;

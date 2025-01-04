@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+
+import useReadingHistoryStore, { ReadingHistoryItem } from '../stores/readingHistoryStore';
+import { useNewsletterStore } from '../stores/newsletterStore';
+import { useAuthStore } from '../stores/authStore';
+
+import { Newsletter, NewsletterStats, NewsletterReview } from '../types';
+import BackButton from '../components/common/BackButton';
+
 import {
   ClockIcon,
   StarIcon,
@@ -9,39 +19,7 @@ import {
   BookmarkIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
-import { Newsletter } from '@/stores/newsletterStore';
 import { NewsletterService } from '@/services/newsletterService';
-import useReadingHistoryStore from '@/stores/readingHistoryStore';
-import BackButton from '@/components/common/BackButton';
-import { useAuthStore } from '@/stores/authStore';
-import { motion } from 'framer-motion';
-
-// Types for additional newsletter details
-interface NewsletterStats {
-  subscribersCount: number;
-  averageRating: number;
-  totalReviews: number;
-}
-
-interface NewsletterReview {
-  id: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt: Date;
-}
-
-interface Newsletter {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  author: string;
-  category: string;
-  tags?: string[];
-  frequency: string; // Add frequency property to Newsletter type
-}
 
 const NewsletterDetailPage: React.FC = () => {
   const { newsletterId } = useParams<{ newsletterId: string }>();

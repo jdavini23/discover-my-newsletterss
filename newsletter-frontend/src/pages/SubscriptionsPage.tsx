@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 
 // Icons
 import {
@@ -13,15 +11,11 @@ import {
 } from '@heroicons/react/24/outline';
 
 // Stores
-import useAuthStore from '@/stores/authStore';
-import useSubscriptionsStore from '@/stores/subscriptionsStore';
 
 // Components
-import NewsletterCard from '@/components/newsletter/NewsletterCard';
-import { trackEvent } from '@/utils/analytics';
 
 // Types
-import { Newsletter } from '@/types/newsletter';
+
 type ViewMode = 'grid' | 'list';
 type SortOption = 'newest' | 'alphabetical' | 'mostRead';
 type Category = string;

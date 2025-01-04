@@ -1,9 +1,3 @@
-import { create, StateCreator } from 'zustand';
-import { devtools } from 'zustand/middleware';
-import { Newsletter } from '@/types/newsletter';
-import { NewsletterService } from '@/services/newsletterService';
-import { toast } from 'react-hot-toast';
-
 interface SubscriptionsState {
   subscriptions: Newsletter[];
   isLoading: boolean;

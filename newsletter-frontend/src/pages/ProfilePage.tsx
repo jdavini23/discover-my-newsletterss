@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+
+// Heroicons
 import {
   PencilIcon,
   UserIcon,
@@ -12,17 +12,10 @@ import {
 } from '@heroicons/react/24/outline';
 
 // Profile Page Sections
-import ProfileInfoSection from '../components/profile/ProfileInfoSection';
-import PreferencesSection from '../components/profile/PreferencesSection';
-import AccountSettingsSection from '../components/profile/AccountSettingsSection';
-import InteractionInsightsSection from '../components/profile/InteractionInsightsSection';
 
 // Stores
-import useUserProfileStore from '../stores/userProfileStore';
-import useAuthStore from '../stores/authStore';
 
 // Modal for Customization
-import { ProfileCustomizationModal } from '../components/profile/ProfileCustomizationModal';
 
 // Define profile sections as a const to remove redundancy
 const PROFILE_SECTIONS = [

@@ -1,5 +1,4 @@
-import React from 'react';
-import { trackEvent } from '../utils/analytics';
+import { React } from 'react';
 
 interface ErrorFallbackProps {
   error?: Error;

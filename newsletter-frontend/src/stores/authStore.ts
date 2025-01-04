@@ -1,8 +1,3 @@
-import { create } from 'zustand';
-import { User, UserCredential } from 'firebase/auth';
-import { signIn, signUp, logOut, onAuthChange } from '@/config/firebase';
-import { createUserProfile } from '@/services/firestore';
-
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 
 export const DarkModeToggle: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);

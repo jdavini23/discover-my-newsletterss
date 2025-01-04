@@ -1,5 +1,4 @@
-import React from 'react';
-import { UserProfile } from '../../types/profile';
+import { React } from 'react';
 
 const DEFAULT_AVATAR = '/src/assets/images/default-avatar.svg';
 

@@ -1,19 +1,18 @@
 import axios, { AxiosError } from 'axios';
+
 import {
   getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  GithubAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  confirmPasswordReset,
+  signOut,
   FirebaseError,
   User,
 } from 'firebase/auth';
-import { toast } from 'react-hot-toast';
-import { trackEvent } from '@/utils/analytics';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
+
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+
+import { GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
 
 interface UserProfile {
   id: string;

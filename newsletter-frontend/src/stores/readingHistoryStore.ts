@@ -1,7 +1,3 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Newsletter } from './newsletterStore';
-
 export interface ReadingHistoryItem {
   newsletter: Newsletter;
   readAt: Date;

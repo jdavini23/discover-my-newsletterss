@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
-import { AuthService } from '@/services/authService';
-import { toast } from 'react-hot-toast';
 
 interface PasswordResetModalProps {
   isOpen: boolean;

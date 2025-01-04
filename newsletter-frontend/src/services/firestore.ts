@@ -2,26 +2,19 @@ import {
   getFirestore,
   collection,
   doc,
-  setDoc,
   getDoc,
-  updateDoc,
-  where,
-  query,
   getDocs,
-  addDoc,
+  setDoc,
+  updateDoc,
   deleteDoc,
-  Timestamp,
-  orderBy,
-  limit,
-  increment,
+  addDoc,
   Query,
   startAfter,
+  where,
+  orderBy,
+  limit,
+  query,
 } from 'firebase/firestore';
-import { auth } from '@/config/firebase';
-import { User, Newsletter, NewsletterFilter } from '@/types/firestore';
-import { UserProfile, UpdateProfileParams, UserActivity } from '@/types/profile';
-
-const db = getFirestore();
 
 // Fetch user profile
 export const fetchUserProfile = async (userId: string): Promise<UserProfile> => {

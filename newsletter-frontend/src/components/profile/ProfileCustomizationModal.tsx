@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+import { useAuthStore } from '../../stores/authStore';
+import AuthService from '../../services/authService';
+
 import {
   UserIcon,
   EnvelopeIcon,
@@ -9,9 +13,6 @@ import {
   MoonIcon,
   CogIcon,
 } from '@heroicons/react/24/outline';
-import { AuthService } from '@/services/authService';
-import { useAuthStore } from '@/stores/authStore';
-import { toast } from 'react-hot-toast';
 
 const NEWSLETTER_CATEGORIES = [
   'Technology',
@@ -131,11 +132,11 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
 
       // Close modal and refresh profile
       onClose();
-    } catch (error: Error) {
+    } catch (error: unknown) {
       console.error('Profile update error:', error);
 
       // Specific error handling
-      if (error.message === 'Unauthorized') {
+      if (error instanceof Error && error.message === 'Unauthorized') {
         toast.error('Your session has expired. Please log in again.');
         // Optional: Trigger logout or redirect to login
         AuthService.signOut();
