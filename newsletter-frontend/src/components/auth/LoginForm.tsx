@@ -2,113 +2,111 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthStore } from '../../stores/authStore';
-import { useNavigate, Link } from 'react-router-dom';
+import { useAuthStore } from '@/stores/authStore';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 // Validation schema
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters')
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
-  const { login } = useAuthStore();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors, isSubmitting } 
+  const { login } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
-      setError(null);
       await login(data.email, data.password);
-      // Redirect to dashboard or home page
-      navigate('/dashboard');
+      toast.success('Successfully logged in');
+      navigate('/');
     } catch (error) {
-      setError('Login failed. Please check your credentials.');
+      const errorMessage =
+        error instanceof Error ? error.message : 'Login failed. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            {error}
-          </div>
-        )}
-        
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input 
-            id="email"
-            {...register('email')}
-            type="email" 
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="you@example.com" 
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          Email address
+        </label>
+        <input
+          id="email"
+          type="email"
+          {...register('email')}
+          className={`mt-1 block w-full rounded-md border ${
+            errors.email ? 'border-red-500' : 'border-gray-300'
+          } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
+          placeholder="you@example.com"
+        />
+        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
+      </div>
+
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          {...register('password')}
+          className={`mt-1 block w-full rounded-md border ${
+            errors.password ? 'border-red-500' : 'border-gray-300'
+          } shadow-sm py-2 px-3 focus:ring-primary-500 focus:border-primary-500`}
+          placeholder="••••••••"
+        />
+        {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <input
+            id="remember-me"
+            type="checkbox"
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
           />
-          {errors.email && (
-            <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
-        
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+          <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+            Remember me
           </label>
-          <input 
-            id="password"
-            {...register('password')}
-            type="password" 
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Password" 
-          />
-          {errors.password && (
-            <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
-          )}
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="text-sm">
-            <Link to="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Forgot your password?
-            </Link>
-          </div>
         </div>
 
-        <div>
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+        <div className="text-sm">
+          <a
+            href="/forgot-password"
+            className="font-medium text-primary-600 hover:text-primary-500"
           >
-            {isSubmitting ? 'Logging in...' : 'Login'}
-          </button>
+            Forgot your password?
+          </a>
         </div>
-        
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-600">
-            Don't have an account? {' '}
-            <a 
-              href="/register" 
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Register
-            </a>
-          </p>
-        </div>
-      </form>
-    </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-2 px-4 border border-primary-600 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+        >
+          {isLoading ? 'Signing in...' : 'Sign in'}
+        </button>
+      </div>
+    </form>
   );
 };

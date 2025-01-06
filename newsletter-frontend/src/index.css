@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './styles/colors.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply antialiased bg-background-light text-text-primary-light transition-colors duration-200;
+  }
+
+  .dark html, .dark body {
+    @apply bg-background-dark text-text-primary-dark;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-text-primary-light dark:text-text-primary-dark;
+  }
+
+  p {
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+  }
+
+  /* Focus states */
+  *:focus {
+    @apply outline-none ring-2 ring-primary-100;
+  }
+
+  /* Custom scrollbar */
+  *::-webkit-scrollbar {
+    @apply w-2 bg-transparent;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-background-light dark:bg-background-dark;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-background-400 dark:bg-background-600 rounded-full;
+  }
+
+  /* Transition classes */
+  html,
+  body {
+    @apply antialiased 
+      bg-white 
+      text-gray-900 
+      transition-colors 
+      duration-300 
+      ease-in-out 
+      selection:bg-primary-200 
+      selection:text-primary-800;
+  }
+
+  .dark {
+    @apply bg-dark-background 
+      text-dark-text 
+      selection:bg-primary-700 
+      selection:text-white;
+  }
+
+  /* Responsive Typography */
+  html {
+    @apply text-base;
+  }
+
+  @screen xs {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  @screen sm {
+    html {
+      font-size: 16px;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold 
+      text-gray-900 
+      dark:text-white 
+      tracking-tight 
+      leading-tight;
+  }
+
+  p {
+    @apply text-gray-700 
+      dark:text-gray-300 
+      leading-relaxed;
+  }
+
+  /* Enhanced Focus States */
+  *:focus-visible {
+    @apply outline-none 
+      ring-2 
+      ring-primary-500 
+      ring-offset-2 
+      dark:ring-primary-400;
+  }
+
+  /* Improved Scrollbar */
+  *::-webkit-scrollbar {
+    @apply w-2 
+      bg-transparent;
+  }
+
+  *::-webkit-scrollbar-track {
+    @apply bg-gray-100 
+      dark:bg-dark-surface;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply bg-primary-300 
+      dark:bg-primary-700 
+      rounded-full 
+      hover:bg-primary-400 
+      dark:hover:bg-primary-600;
+  }
+
+  /* Transition Utilities */
+  .transition-fast {
+    @apply transition-all duration-150 ease-in-out;
+  }
+
+  .transition-medium {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Utility classes */
+  .container-max {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+  }
+  a:hover {
+    color: #535bf2;
+  }
+
+  button {
+    @apply px-4 py-2 rounded-md bg-primary-500 text-white font-medium transition-colors duration-300 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  :root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    
+    --color-primary-50: 240 249 255;
+    --color-primary-100: 224 242 254;
+    --color-primary-200: 186 230 253;
+    --color-primary-300: 125 211 252;
+    --color-primary-400: 56 189 248;
+    --color-primary-500: 14 165 233;
+    --color-primary-600: 2 132 199;
+    --color-primary-700: 3 105 161;
+    --color-primary-800: 7 89 133;
+    --color-primary-900: 12 74 110;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      color: #213547;
+      background-color: #ffffff;
+    }
+    a:hover {
+      color: #747bff;
+  .transition-slow {
+    @apply transition-all duration-500 ease-in-out;
+  }
+
+  /* Responsive Animations */
+  @screen sm {
+    .animate-slide-in-right {
+      animation: slide-in-right 0.5s ease-out;
+    }
+
+    @keyframes slide-in-right {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white font-medium py-2 px-4 rounded-lg 
+           transition-all duration-200 hover:bg-primary-hover
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white font-medium py-2 px-4 rounded-lg 
+           transition-all duration-200 hover:bg-secondary-hover
+           focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50;
+  }
+
+  .card {
+    @apply bg-white dark:bg-background-surface rounded-xl shadow-sm p-6 
+           border border-gray-100 dark:border-gray-800;
+  }
+
+  .input {
+    @apply w-full bg-white dark:bg-background-surface 
+           border border-gray-200 dark:border-gray-700 
+           rounded-lg px-4 py-2 
+           text-text-primary-light dark:text-text-primary-dark
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary to-primary-light;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-secondary to-secondary-light;
+/* Global Accessibility Improvements */
+@layer utilities {
+  .sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    clip: auto;
+  }
+}

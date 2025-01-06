@@ -1,59 +1,83 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { LoginForm } from './components/auth/LoginForm';
-import { RegisterForm } from './components/auth/RegisterForm';
-import { ProtectedRoute, RoleProtectedRoute } from './components/auth/ProtectedRoute';
-import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
-import NewsletterList from './pages/NewsletterList';
-import Profile from './pages/Profile';
-import NotFound from './pages/NotFound';
-import Unauthorized from './pages/Unauthorized';
-import { PasswordResetRequest } from './pages/PasswordResetRequest';
-import { PasswordResetConfirm } from './pages/PasswordResetConfirm';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { useAuthStore } from '@/stores/authStore';
+import AuthPage from './pages/AuthPage';
+import NewsletterDiscoveryPage from './pages/NewsletterDiscoveryPage';
+import NewsletterDetailPage from './pages/NewsletterDetailPage';
+import ProfilePage from './pages/ProfilePage';
+import HomePage from './pages/HomePage';
+import Layout from './components/layout/Layout';
+import { AuthPage } from './pages/AuthPage';
+import { NewsletterDiscoveryPage } from './pages/NewsletterDiscoveryPage';
+import { NewsletterDetailPage } from './pages/NewsletterDetailPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { HomePage } from './pages/HomePage';
+import { Layout } from './components/layout/Layout';
+import { SubscriptionsPage } from './pages/SubscriptionsPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ReadingHistoryPage } from './pages/ReadingHistoryPage';
 
-// New Imports
-import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { NotificationCenter } from './components/common/Notification';
-import { Tooltip } from './components/common/Tooltip';
-import { InterestWizard } from './components/discovery/InterestWizard';
-import { NewsletterSearch } from './components/discovery/NewsletterSearch';
+function App() {
+  const { isAuthenticated } = useAuthStore();
 
-const App: React.FC = () => {
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
-        <NotificationCenter />
+    <Router>
+      <Layout>
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/forgot-password" element={<PasswordResetRequest />} />
-          <Route path="/reset-password" element={<PasswordResetConfirm />} />
-
-          {/* Discovery Routes */}
-          <Route path="/discover/interests" element={<InterestWizard />} />
-          <Route path="/discover/newsletters" element={<NewsletterSearch />} />
-
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            
-            {/* Role-based Protected Routes */}
-            <Route element={<RoleProtectedRoute allowedRoles={['admin']} />}>
-              <Route path="/newsletters" element={<NewsletterList />} />
-            </Route>
-          </Route>
-
-          {/* 404 Not Found */}
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path="/auth"
+            element={!isAuthenticated ? <AuthPage /> : <Navigate to="/newsletters" replace />}
+          />
+          <Route
+            path="/newsletters"
+            element={
+              isAuthenticated ? <NewsletterDiscoveryPage /> : <Navigate to="/auth" replace />
+            }
+          />
+          <Route path="/newsletters" element={<NewsletterDiscoveryPage />} />
+          <Route
+            path="/newsletters/:newsletterId"
+            element={isAuthenticated ? <NewsletterDetailPage /> : <Navigate to="/auth" replace />}
+          />
+          <Route
+            path="/profile"
+            element={isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" replace />}
+          />
+          <Route path="/" element={<HomePage />} />
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/subscriptions"
+            element={
+              <ProtectedRoute>
+                <SubscriptionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reading-history"
+            element={
+              <ProtectedRoute>
+                <ReadingHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Catch-all route to handle undefined routes */}
+          <Route
+            path="*"
+            element={<Navigate to={isAuthenticated ? '/newsletters' : '/auth'} replace />}
+          />
         </Routes>
-      </div>
-    </ErrorBoundary>
+        <Toaster position="top-right" />
+      </Layout>
+    </Router>
   );
-};
+}
 
 export default App;

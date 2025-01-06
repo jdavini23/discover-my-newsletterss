@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import Router from './Router';
-import './styles/global.css';
+import App from './App.tsx';
+import './index.css';
+import { useAuthStore } from './stores/authStore';
+
+export function AppWrapper() {
+  // Initialize auth when the app starts
+  React.useEffect(() => {
+    useAuthStore.getState().initializeAuth();
+  }, []);
+
+  return <App />;
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Router />
-    </BrowserRouter>
+    <AppWrapper />
   </React.StrictMode>
 );
