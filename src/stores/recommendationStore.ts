@@ -17,7 +17,7 @@ interface RecommendationState {
   fetchRecommendations: () => Promise<void>;
 }
 
-export const useRecommendationStore = create<RecommendationState>(set => ({
+export const useRecommendationStore = create<RecommendationState>((set) => ({
   recommendations: [],
   isLoading: false,
   error: null,
@@ -36,7 +36,7 @@ export const useRecommendationStore = create<RecommendationState>(set => ({
         topics: [], // You can populate this from user preferences
       });
 
-      const formattedRecommendations: Recommendation[] = recommendations.map(rec => ({
+      const formattedRecommendations: Recommendation[] = recommendations.map((rec) => ({
         id: rec.newsletterId,
         title: rec.newsletter.title,
         description: rec.newsletter.description,

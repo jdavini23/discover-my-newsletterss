@@ -78,7 +78,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
         className="bg-white rounded-2xl p-8 max-w-md w-full"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="text-center mb-6">
           <LockClosedIcon className="mx-auto h-12 w-12 text-primary-600 mb-4" />
@@ -103,7 +103,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
                   type="email"
                   id="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Enter your email"
@@ -130,7 +130,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
                 type="text"
                 id="resetCode"
                 value={resetCode}
-                onChange={e => setResetCode(e.target.value)}
+                onChange={(e) => setResetCode(e.target.value)}
                 required
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter 6-digit reset code"
@@ -156,7 +156,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
                 type="password"
                 id="newPassword"
                 value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
+                onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={8}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
@@ -174,7 +174,7 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={8}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"

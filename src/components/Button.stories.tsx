@@ -7,15 +7,15 @@ export const Disabled = () => <Button disabled>Disabled Button</Button>;
 
 Primary.ladle = {
   name: 'Primary Button',
-  description: 'A primary action button'
+  description: 'A primary action button',
 };
 
 Secondary.ladle = {
   name: 'Secondary Button',
-  description: 'A secondary action button'
+  description: 'A secondary action button',
 };
 
 Disabled.ladle = {
   name: 'Disabled Button',
-  description: 'A button in disabled state'
+  description: 'A button in disabled state',
 };

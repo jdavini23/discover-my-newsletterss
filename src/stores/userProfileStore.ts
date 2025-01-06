@@ -43,7 +43,7 @@ const useUserProfileStore = create<UserProfileState>()(
         }
       },
 
-      updateProfile: async updates => {
+      updateProfile: async (updates) => {
         const { profile } = get();
         if (!profile) {
           throw new Error('No profile to update');
@@ -61,7 +61,7 @@ const useUserProfileStore = create<UserProfileState>()(
         }
       },
 
-      updateNewsletterPrefs: async preferences => {
+      updateNewsletterPrefs: async (preferences) => {
         const { profile } = get();
         if (!profile) {
           throw new Error('No profile to update newsletter preferences');
@@ -85,7 +85,7 @@ const useUserProfileStore = create<UserProfileState>()(
         try {
           const topics = await fetchAvailableTopics();
           set({
-            availableTopics: topics.map(topic => topic.id),
+            availableTopics: topics.map((topic) => topic.id),
             isLoading: false,
           });
         } catch (error) {
@@ -96,7 +96,7 @@ const useUserProfileStore = create<UserProfileState>()(
         }
       },
 
-      addActivityLog: async activity => {
+      addActivityLog: async (activity) => {
         const { profile } = get();
         if (!profile) {
           throw new Error('No profile to update activity log');
@@ -120,7 +120,7 @@ const useUserProfileStore = create<UserProfileState>()(
     }),
     {
       name: 'user-profile-storage',
-      partialize: state => ({ profile: state.profile }),
+      partialize: (state) => ({ profile: state.profile }),
     }
   )
 );

@@ -1,3 +1,5 @@
+/* eslint-disable no-console, no-undef, @typescript-eslint/no-unused-vars */
+module.exports = /* eslint-disable no-console, no-undef */
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -48,3 +50,4 @@ async function buildScript() {
 }
 
 buildScript();
+;

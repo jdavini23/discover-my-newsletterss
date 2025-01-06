@@ -7,7 +7,7 @@ import containerQueries from '@tailwindcss/container-queries';
 export default {
   // Explicitly define content sources to resolve Tailwind warning
   content: [
-    './index.html', 
+    './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
     './src/**/*.stories.{js,ts,jsx,tsx}',
     // Add Storybook files to content sources
@@ -46,12 +46,12 @@ export default {
       },
       // Add custom spacing and sizing
       spacing: {
-        '128': '32rem',
-        '144': '36rem',
+        128: '32rem',
+        144: '36rem',
       },
       // Add custom border radius
       borderRadius: {
-        'xl': '1rem',
+        xl: '1rem',
         '2xl': '1.5rem',
       },
       // Add custom shadows
@@ -61,21 +61,21 @@ export default {
       },
       // Responsive breakpoints
       screens: {
-        'xs': '480px',
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
+        xs: '480px',
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
         '2xl': '1536px',
       },
     },
     // Override default values if needed
     fontSize: {
-      'xs': '.75rem',
-      'sm': '.875rem',
-      'base': '1rem',
-      'lg': '1.125rem',
-      'xl': '1.25rem',
+      xs: '.75rem',
+      sm: '.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
       '2xl': '1.5rem',
       '3xl': '1.875rem',
       '4xl': '2.25rem',
@@ -84,19 +84,10 @@ export default {
     },
   },
   // Explicitly add plugins to resolve configuration
-  plugins: [
-    forms,
-    typography,
-    aspectRatio,
-    containerQueries,
-  ],
+  plugins: [forms, typography, aspectRatio, containerQueries],
   // Ensure optimal purging in production
   purge: {
-    content: [
-      './index.html', 
-      './src/**/*.{js,ts,jsx,tsx}',
-      './src/**/*.stories.{js,ts,jsx,tsx}',
-    ],
+    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './src/**/*.stories.{js,ts,jsx,tsx}'],
     // Safelist critical classes that might be dynamically generated
     safelist: [
       'bg-primary',
@@ -109,15 +100,10 @@ export default {
       'opacity-100',
       'translate-x-0',
       'translate-x-full',
-    ]
+    ],
   },
   // Add safelist to ensure specific classes are always included
-  safelist: [
-    'bg-primary',
-    'bg-secondary',
-    'text-success',
-    'text-error',
-  ],
+  safelist: ['bg-primary', 'bg-secondary', 'text-success', 'text-error'],
   // Dark mode configuration
   darkMode: 'class',
 };

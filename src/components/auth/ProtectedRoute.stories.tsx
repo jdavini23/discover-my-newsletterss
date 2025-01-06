@@ -7,13 +7,13 @@ const DummyComponent = () => <div>Protected Content</div>;
 export const AuthenticatedRoute = () => (
   <BrowserRouter>
     <Routes>
-      <Route 
-        path="/" 
+      <Route
+        path="/"
         element={
           <ProtectedRoute>
             <DummyComponent />
           </ProtectedRoute>
-        } 
+        }
       />
     </Routes>
   </BrowserRouter>
@@ -22,13 +22,13 @@ export const AuthenticatedRoute = () => (
 export const UnauthorizedRoute = () => (
   <BrowserRouter>
     <Routes>
-      <Route 
-        path="/" 
+      <Route
+        path="/"
         element={
           <ProtectedRoute requireAdmin={true}>
             <DummyComponent />
           </ProtectedRoute>
-        } 
+        }
       />
     </Routes>
   </BrowserRouter>
@@ -36,10 +36,10 @@ export const UnauthorizedRoute = () => (
 
 AuthenticatedRoute.ladle = {
   name: 'Authenticated Protected Route',
-  description: 'Protected route for authenticated users'
+  description: 'Protected route for authenticated users',
 };
 
 UnauthorizedRoute.ladle = {
   name: 'Admin-Only Protected Route',
-  description: 'Protected route requiring admin privileges'
+  description: 'Protected route requiring admin privileges',
 };

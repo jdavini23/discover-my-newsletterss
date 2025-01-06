@@ -52,7 +52,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({ profile }) => {
             type="text"
             id="displayName"
             value={displayName}
-            onChange={e => setDisplayName(e.target.value)}
+            onChange={(e) => setDisplayName(e.target.value)}
             className="mt-1 block w-full rounded-md border-neutralBackground-500 shadow-soft focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
           />
         </div>
@@ -64,7 +64,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({ profile }) => {
           <textarea
             id="bio"
             value={bio}
-            onChange={e => setBio(e.target.value)}
+            onChange={(e) => setBio(e.target.value)}
             rows={4}
             className="mt-1 block w-full rounded-md border-neutralBackground-500 shadow-soft focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
           />

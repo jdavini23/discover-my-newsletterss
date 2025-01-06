@@ -141,7 +141,7 @@ const MOCK_NEWSLETTERS: Newsletter[] = [
 ];
 
 // Simulated delay to mimic real API call
-const simulateDelay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
+const simulateDelay = (ms: number = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Mock image URLs for newsletters
 const NEWSLETTER_IMAGES = [
@@ -228,7 +228,7 @@ export const NewsletterService = {
 
     // Apply category filter
     if (categories && categories.length > 0) {
-      filteredNewsletters = filteredNewsletters.filter(newsletter =>
+      filteredNewsletters = filteredNewsletters.filter((newsletter) =>
         categories.includes(newsletter.category)
       );
     }
@@ -237,10 +237,10 @@ export const NewsletterService = {
     if (searchQuery) {
       const lowerCaseQuery = searchQuery.toLowerCase();
       filteredNewsletters = filteredNewsletters.filter(
-        newsletter =>
+        (newsletter) =>
           newsletter.title.toLowerCase().includes(lowerCaseQuery) ||
           newsletter.description.toLowerCase().includes(lowerCaseQuery) ||
-          newsletter.tags.some(tag => tag.toLowerCase().includes(lowerCaseQuery))
+          newsletter.tags.some((tag) => tag.toLowerCase().includes(lowerCaseQuery))
       );
     }
 
@@ -278,7 +278,7 @@ export const NewsletterService = {
       }
 
       // Find the newsletter
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
       if (!newsletter) {
         throw new Error('Newsletter not found');
       }
@@ -294,7 +294,7 @@ export const NewsletterService = {
   async getNewslettersByCategory(category: string): Promise<Newsletter[]> {
     try {
       await simulateDelay();
-      return MOCK_NEWSLETTERS.filter(newsletter => newsletter.category === category);
+      return MOCK_NEWSLETTERS.filter((newsletter) => newsletter.category === category);
     } catch (error) {
       console.error('Error fetching newsletters by category:', error);
       return [];
@@ -304,7 +304,7 @@ export const NewsletterService = {
   async getNewsletterEngagement(newsletterId: string): Promise<NewsletterEngagement> {
     try {
       await simulateDelay();
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
 
       return {
         subscribers: newsletter?.subscribers || 0,
@@ -330,7 +330,7 @@ export const NewsletterService = {
   }> {
     try {
       await simulateDelay();
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
 
       return {
         subscribersCount: newsletter?.subscribers || 0,
@@ -365,31 +365,42 @@ export const NewsletterService = {
     }
   },
   async getNewsletterById(newsletterId: string): Promise<Newsletter | null> {
-    try {
-      await simulateDelay();
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
-      return newsletter || null;
-    } catch (error) {
-      console.error('Error fetching newsletter by ID:', error);
-      return null;
-    }
+    return new Promise((resolve) => {
+      simulateDelay();
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
+      resolve(newsletter || null);
+    });
   },
   async getNewsletterReviews(newsletterId: string): Promise<NewsletterReview[]> {
-    // Mock implementation
-    return Promise.resolve([
-      {
-        id: '1',
-        userId: 'user123',
-        userName: 'John Doe',
-        rating: 4.5,
-        comment: 'Great newsletter with insightful content!',
-        timestamp: new Date().toISOString(),
-      },
-    ]);
+    return new Promise((resolve) => {
+      simulateDelay();
+      const mockReviews: NewsletterReview[] = [
+        {
+          id: '1',
+          userId: 'user1',
+          userName: 'Tech Enthusiast',
+          rating: 4.5,
+          comment: 'Fantastic newsletter with cutting-edge insights!',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          userId: 'user2',
+          userName: 'Innovation Seeker',
+          rating: 4.0,
+          comment: 'Great content, always keeps me informed.',
+          timestamp: new Date().toISOString(),
+        },
+      ];
+      resolve(mockReviews);
+    });
   },
   async checkSubscriptionStatus(newsletterId: string): Promise<boolean> {
-    // Mock implementation
-    return Promise.resolve(false);
+    return new Promise((resolve) => {
+      simulateDelay();
+      // Simulate subscription status based on newsletter ID
+      resolve(Math.random() > 0.5);
+    });
   },
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-console, no-undef, @typescript-eslint/no-unused-vars */
 module.exports = {
   ci: {
     collect: {

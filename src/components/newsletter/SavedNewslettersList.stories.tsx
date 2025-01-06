@@ -14,7 +14,7 @@ const mockNewsletters: Newsletter[] = [
     url: 'https://techinsider.com',
     price: { amount: 0, currency: '$', interval: 'monthly' },
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   },
   {
     id: '2',
@@ -27,37 +27,34 @@ const mockNewsletters: Newsletter[] = [
     url: 'https://businesshorizons.com',
     price: { amount: 10, currency: '$', interval: 'monthly' },
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
-export const Default: Story = () => (
-  <SavedNewslettersList newsletters={mockNewsletters} />
-);
+export const Default: Story = () => <SavedNewslettersList newsletters={mockNewsletters} />;
 
-export const EmptyState: Story = () => (
-  <SavedNewslettersList newsletters={[]} />
-);
+export const EmptyState: Story = () => <SavedNewslettersList newsletters={[]} />;
 
 export const ManyNewsletters: Story = () => (
-  <SavedNewslettersList 
+  <SavedNewslettersList
     newsletters={[
       ...mockNewsletters,
       ...mockNewsletters.map((nl, index) => ({
         ...nl,
         id: `duplicate-${index}`,
-        title: `Duplicate ${nl.title}`
-      }))
-    ]} 
+        title: `Duplicate ${nl.title}`,
+      })),
+    ]}
   />
 );
 
 export const LongTitlesAndDescriptions: Story = () => (
-  <SavedNewslettersList 
-    newsletters={mockNewsletters.map(newsletter => ({
+  <SavedNewslettersList
+    newsletters={mockNewsletters.map((newsletter) => ({
       ...newsletter,
       title: 'A Very Long Newsletter Title That Goes On and On and On',
-      description: 'An extremely long description that provides extensive details about the newsletter, its content, its mission, and its incredible value to readers who are interested in learning more about this particular publication.'
-    }))} 
+      description:
+        'An extremely long description that provides extensive details about the newsletter, its content, its mission, and its incredible value to readers who are interested in learning more about this particular publication.',
+    }))}
   />
 );

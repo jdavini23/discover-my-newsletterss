@@ -19,10 +19,9 @@ const PasswordResetRequest: React.FC = () => {
       addNotification('Password reset email sent. Check your inbox.', 'success');
       navigate('/login');
     } catch (error) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : 'Failed to send password reset email';
-      
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to send password reset email';
+
       addNotification(errorMessage, 'error');
     } finally {
       setIsLoading(false);
@@ -63,9 +62,8 @@ const PasswordResetRequest: React.FC = () => {
               type="submit"
               disabled={isLoading}
               className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white 
-                ${isLoading 
-                  ? 'bg-gray-500 cursor-not-allowed' 
-                  : 'bg-blue-600 hover:bg-blue-700'
+                ${
+                  isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                 } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
             >
               {isLoading ? 'Sending...' : 'Send Reset Link'}
@@ -74,9 +72,9 @@ const PasswordResetRequest: React.FC = () => {
         </form>
         <div className="text-center">
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Remember your password? {' '}
-            <a 
-              href="/login" 
+            Remember your password?{' '}
+            <a
+              href="/login"
               className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
             >
               Sign in

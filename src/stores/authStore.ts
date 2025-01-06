@@ -90,7 +90,7 @@ export const useAuthStore = create<AuthState>()(
 
       initializeAuth: async () => {
         try {
-          const unsubscribe = onAuthChange(async user => {
+          const unsubscribe = onAuthChange(async (user) => {
             if (user) {
               set({
                 user,
@@ -123,7 +123,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage', // name of the item in the storage (must be unique)
-      partialize: state => ({
+      partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),

@@ -3,12 +3,12 @@ import { InterestWizard } from './InterestWizard';
 
 /**
  * InterestWizard component for selecting newsletter interests
- * 
+ *
  * @component
  * @example
  * // Basic usage
- * <InterestWizard 
- *   onInterestsSelected={(interests) => handleInterestSelection(interests)} 
+ * <InterestWizard
+ *   onInterestsSelected={(interests) => handleInterestSelection(interests)}
  * />
  */
 export const DefaultInterestWizard = () => {
@@ -19,12 +19,7 @@ export const DefaultInterestWizard = () => {
     setSelectedInterests(interests);
   };
 
-  return (
-    <InterestWizard 
-      onInterestsSelected={handleInterestsSelection}
-      initialInterests={[]}
-    />
-  );
+  return <InterestWizard onInterestsSelected={handleInterestsSelection} initialInterests={[]} />;
 };
 
 export const PreselectedInterestWizard = () => {
@@ -36,7 +31,7 @@ export const PreselectedInterestWizard = () => {
   };
 
   return (
-    <InterestWizard 
+    <InterestWizard
       onInterestsSelected={handleInterestsSelection}
       initialInterests={['Technology', 'Science']}
     />
@@ -52,7 +47,7 @@ export const LimitedInterestWizard = () => {
   };
 
   return (
-    <InterestWizard 
+    <InterestWizard
       onInterestsSelected={handleInterestsSelection}
       initialInterests={[]}
       maxSelections={3}
@@ -62,15 +57,15 @@ export const LimitedInterestWizard = () => {
 
 DefaultInterestWizard.ladle = {
   name: 'Default Interest Wizard',
-  description: 'Interest selection wizard with no initial selections'
+  description: 'Interest selection wizard with no initial selections',
 };
 
 PreselectedInterestWizard.ladle = {
   name: 'Preselected Interest Wizard',
-  description: 'Interest selection wizard with initial selections'
+  description: 'Interest selection wizard with initial selections',
 };
 
 LimitedInterestWizard.ladle = {
   name: 'Limited Interest Wizard',
-  description: 'Interest selection wizard with maximum selection limit'
+  description: 'Interest selection wizard with maximum selection limit',
 };

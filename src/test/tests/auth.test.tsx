@@ -53,36 +53,21 @@ vi.mock('react-router-dom', () => ({
 
 // Test component to exercise auth context
 const TestAuthComponent = () => {
-  const {
-    currentUser,
-    signUp,
-    signIn,
-    logout,
-    resetPassword,
-  } = useAuth();
+  const { currentUser, signUp, signIn, logout, resetPassword } = useAuth();
 
   return (
     <div>
       <div data-testid="user-email">{currentUser?.email}</div>
-      <button
-        data-testid="signup-button"
-        onClick={() => signUp('test@example.com', 'password123')}
-      >
+      <button data-testid="signup-button" onClick={() => signUp('test@example.com', 'password123')}>
         Sign Up
       </button>
-      <button
-        data-testid="signin-button"
-        onClick={() => signIn('test@example.com', 'password123')}
-      >
+      <button data-testid="signin-button" onClick={() => signIn('test@example.com', 'password123')}>
         Sign In
       </button>
       <button data-testid="logout-button" onClick={logout}>
         Logout
       </button>
-      <button
-        data-testid="reset-password-button"
-        onClick={() => resetPassword('test@example.com')}
-      >
+      <button data-testid="reset-password-button" onClick={() => resetPassword('test@example.com')}>
         Reset Password
       </button>
     </div>
@@ -160,10 +145,7 @@ describe('Authentication Context', () => {
     fireEvent.click(resetPasswordButton);
 
     await waitFor(() => {
-      expect(sendPasswordResetEmail).toHaveBeenCalledWith(
-        expect.anything(),
-        'test@example.com'
-      );
+      expect(sendPasswordResetEmail).toHaveBeenCalledWith(expect.anything(), 'test@example.com');
     });
   });
 });

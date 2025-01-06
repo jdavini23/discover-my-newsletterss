@@ -1,9 +1,7 @@
 import type { Story } from '@ladle/react';
 import SkeletonLoader from './SkeletonLoader';
 
-export const NewsletterCardSkeleton: Story = () => (
-  <SkeletonLoader variant="newsletter-card" />
-);
+export const NewsletterCardSkeleton: Story = () => <SkeletonLoader variant="newsletter-card" />;
 
 export const SearchResultsSkeleton: Story = () => (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

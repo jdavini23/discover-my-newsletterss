@@ -22,22 +22,22 @@ export const AccessibilityTest: Story = () => {
 export const FilledForm: Story = () => <Login />;
 FilledForm.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  
+
   // Simulate filling out the form
   await userEvent.type(canvas.getByLabelText(/email/i), 'user@example.com');
   await userEvent.type(canvas.getByLabelText(/password/i), 'StrongPassword123!');
-  
+
   await userEvent.click(canvas.getByRole('button', { name: /log in/i }));
 };
 
 export const ErrorState: Story = () => <Login />;
 ErrorState.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  
+
   // Simulate invalid login attempt
   await userEvent.type(canvas.getByLabelText(/email/i), 'invalidemail');
   await userEvent.type(canvas.getByLabelText(/password/i), 'incorrectpassword');
-  
+
   await userEvent.click(canvas.getByRole('button', { name: /log in/i }));
 };
 
@@ -46,7 +46,7 @@ export const LoadingState: Story = () => <Login isLoading={true} />;
 export const ForgotPasswordLink: Story = () => <Login />;
 ForgotPasswordLink.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  
+
   const forgotPasswordLink = canvas.getByRole('link', { name: /forgot password/i });
   await userEvent.click(forgotPasswordLink);
 };

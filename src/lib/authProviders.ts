@@ -1,10 +1,10 @@
-import { 
-  getAuth, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  GithubAuthProvider, 
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
   FacebookAuthProvider,
-  User 
+  User,
 } from 'firebase/auth';
 
 export type AuthProviderType = 'google' | 'github' | 'facebook';
@@ -12,7 +12,7 @@ export type AuthProviderType = 'google' | 'github' | 'facebook';
 const providerMap = {
   google: new GoogleAuthProvider(),
   github: new GithubAuthProvider(),
-  facebook: new FacebookAuthProvider()
+  facebook: new FacebookAuthProvider(),
 };
 
 export const signInWithProvider = async (providerName: AuthProviderType): Promise<User> => {

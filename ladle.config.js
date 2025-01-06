@@ -5,11 +5,11 @@ export default {
     colors: {
       primary: '#007BFF', // Match your branding
       background: '#F4F4F4',
-      text: '#333333'
+      text: '#333333',
     },
     typography: {
-      fontFamily: "'Inter', sans-serif"
-    }
+      fontFamily: "'Inter', sans-serif",
+    },
   },
   vite: {
     resolve: {
@@ -21,27 +21,27 @@ export default {
         '@stores': '/src/stores',
         '@types': '/src/types',
         '@utils': '/src/utils',
-        '@styles': '/src/styles'
+        '@styles': '/src/styles',
       },
-      extensions: ['.js', '.ts', '.jsx', '.tsx', '.json']
+      extensions: ['.js', '.ts', '.jsx', '.tsx', '.json'],
     },
     optimizeDeps: {
       include: [
-        'react', 
-        'react-dom', 
-        'tailwindcss', 
-        'firebase', 
-        'styled-components', 
+        'react',
+        'react-dom',
+        'tailwindcss',
+        'firebase',
+        'styled-components',
         'framer-motion',
         '@tanstack/react-query',
         'react-error-boundary',
         'zustand',
         '@radix-ui/react-icons',
-        'react-hot-toast'
-      ]
+        'react-hot-toast',
+      ],
     },
     css: {
-      postcss: './postcss.config.cjs'
+      postcss: './postcss.config.cjs',
     },
     define: {
       // Mock Firebase environment variables for Ladle
@@ -50,7 +50,7 @@ export default {
       'import.meta.env.VITE_FIREBASE_PROJECT_ID': JSON.stringify('mock-project-id'),
       'import.meta.env.VITE_FIREBASE_STORAGE_BUCKET': JSON.stringify('mock-storage-bucket'),
       'import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID': JSON.stringify('mock-sender-id'),
-      'import.meta.env.VITE_FIREBASE_APP_ID': JSON.stringify('mock-app-id')
-    }
-  }
+      'import.meta.env.VITE_FIREBASE_APP_ID': JSON.stringify('mock-app-id'),
+    },
+  },
 };

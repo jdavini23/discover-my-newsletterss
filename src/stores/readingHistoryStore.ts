@@ -16,13 +16,15 @@ interface ReadingHistoryState {
 
 const useReadingHistoryStore = create<ReadingHistoryState>(
   persist(
-    set => ({
+    (set) => ({
       history: [],
 
       addToHistory: (newsletterId, newsletterTitle) =>
-        set(state => {
+        set((state) => {
           // Prevent duplicates and keep only unique entries
-          const existingIndex = state.history.findIndex(item => item.newsletterId === newsletterId);
+          const existingIndex = state.history.findIndex(
+            (item) => item.newsletterId === newsletterId
+          );
 
           if (existingIndex !== -1) {
             // Update timestamp if already exists
@@ -44,9 +46,9 @@ const useReadingHistoryStore = create<ReadingHistoryState>(
           return { history: newHistory };
         }),
 
-      removeFromHistory: newsletterId =>
-        set(state => ({
-          history: state.history.filter(item => item.newsletterId !== newsletterId),
+      removeFromHistory: (newsletterId) =>
+        set((state) => ({
+          history: state.history.filter((item) => item.newsletterId !== newsletterId),
         })),
 
       clearHistory: () => set({ history: [] }),

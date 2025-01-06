@@ -72,7 +72,7 @@ const useNewsletterStore = create<NewsletterStore>(
       },
 
       // Advanced search with multiple filters
-      searchNewsletters: async filters => {
+      searchNewsletters: async (filters) => {
         set({ isLoading: true, error: null });
         try {
           const response = await NewsletterService.fetchNewsletters(filters);
@@ -91,25 +91,25 @@ const useNewsletterStore = create<NewsletterStore>(
       },
 
       // Favorites management
-      addToFavorites: newsletterId => {
-        set(state => ({
+      addToFavorites: (newsletterId) => {
+        set((state) => ({
           favorites: [...state.favorites, newsletterId],
         }));
       },
 
-      removeFromFavorites: newsletterId => {
-        set(state => ({
-          favorites: state.favorites.filter(id => id !== newsletterId),
+      removeFromFavorites: (newsletterId) => {
+        set((state) => ({
+          favorites: state.favorites.filter((id) => id !== newsletterId),
         }));
       },
 
       // Check if newsletter is in favorites
-      isInFavorites: newsletterId => {
+      isInFavorites: (newsletterId) => {
         return get().favorites.includes(newsletterId);
       },
 
       // Newsletter subscription methods
-      subscribeNewsletter: async newsletterId => {
+      subscribeNewsletter: async (newsletterId) => {
         try {
           return await NewsletterService.subscribeNewsletter(newsletterId);
         } catch (error) {
@@ -118,7 +118,7 @@ const useNewsletterStore = create<NewsletterStore>(
         }
       },
 
-      unsubscribeNewsletter: async newsletterId => {
+      unsubscribeNewsletter: async (newsletterId) => {
         try {
           return await NewsletterService.unsubscribeNewsletter(newsletterId);
         } catch (error) {
@@ -130,7 +130,7 @@ const useNewsletterStore = create<NewsletterStore>(
     {
       name: 'newsletter-storage', // unique name
       storage: createJSONStorage(() => localStorage),
-      partialize: state => ({
+      partialize: (state) => ({
         favorites: state.favorites, // Only persist favorites
       }),
     }

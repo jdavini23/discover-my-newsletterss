@@ -11,8 +11,8 @@ import '../src/components/auth/EditProfileForm.stories';
 
 // Visual regression configuration
 const getMatchOptions = () => ({
-  failureThreshold: 0.01,  // 1% pixel difference allowed
-  failureThresholdType: 'percent' as const
+  failureThreshold: 0.01, // 1% pixel difference allowed
+  failureThresholdType: 'percent' as const,
 });
 
 // Custom test function for visual regression
@@ -23,8 +23,8 @@ const customTest = imageSnapshot({
       headless: true,
       defaultViewport: {
         width: 1440,
-        height: 900
-      }
+        height: 900,
+      },
     });
   },
   beforeScreenshot: async (page) => {
@@ -40,14 +40,14 @@ const customTest = imageSnapshot({
       `;
       document.head.appendChild(style);
     });
-  }
+  },
 });
 
 // Initialize storyshots with custom image snapshot
 initStoryshots({
   test: customTest,
   framework: 'react',
-  configPath: '.storybook'
+  configPath: '.storybook',
 });
 
 // Additional custom visual regression tests

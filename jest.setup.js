@@ -1,3 +1,5 @@
+/* eslint-disable no-console, no-undef, @typescript-eslint/no-unused-vars */
+module.exports = /* eslint-disable no-console, no-undef, @typescript-eslint/no-unused-vars */
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { expect } from '@storybook/test';
@@ -27,3 +29,4 @@ console.warn = (msg, ...args) => {
 beforeEach(() => {
   jest.clearAllMocks();
 });
+;

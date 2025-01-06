@@ -3,25 +3,25 @@ import { DefaultTheme } from 'styled-components';
 // Color Palette
 const COLORS = {
   primary: {
-    light: '#3182ce',   // Blue for light theme
-    dark: '#63b3ed',    // Lighter blue for dark theme
+    light: '#3182ce', // Blue for light theme
+    dark: '#63b3ed', // Lighter blue for dark theme
   },
   secondary: {
-    light: '#38a169',   // Green for light theme
-    dark: '#48bb78',    // Lighter green for dark theme
+    light: '#38a169', // Green for light theme
+    dark: '#48bb78', // Lighter green for dark theme
   },
   background: {
-    light: '#ffffff',   // White
-    dark: '#1a202c',    // Dark blue-gray
+    light: '#ffffff', // White
+    dark: '#1a202c', // Dark blue-gray
   },
   text: {
-    light: '#2d3748',   // Dark gray for light theme
-    dark: '#e2e8f0',    // Light gray for dark theme
+    light: '#2d3748', // Dark gray for light theme
+    dark: '#e2e8f0', // Light gray for dark theme
   },
   accent: {
-    light: '#ed64a6',   // Pink for light theme
-    dark: '#f687b3',    // Lighter pink for dark theme
-  }
+    light: '#ed64a6', // Pink for light theme
+    dark: '#f687b3', // Lighter pink for dark theme
+  },
 };
 
 // Typography
@@ -31,13 +31,13 @@ const TYPOGRAPHY = {
     small: '0.875rem',
     base: '1rem',
     large: '1.25rem',
-    heading: '1.5rem'
+    heading: '1.5rem',
   },
   lineHeight: {
     normal: 1.5,
     tight: 1.25,
-    loose: 2
-  }
+    loose: 2,
+  },
 };
 
 // Spacing System
@@ -46,7 +46,7 @@ const SPACING = {
   sm: '0.5rem',
   md: '1rem',
   lg: '1.5rem',
-  xl: '2rem'
+  xl: '2rem',
 };
 
 // Border Radius
@@ -54,7 +54,7 @@ const BORDER_RADIUS = {
   sm: '0.25rem',
   md: '0.5rem',
   lg: '1rem',
-  full: '9999px'
+  full: '9999px',
 };
 
 // Light Theme

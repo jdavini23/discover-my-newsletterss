@@ -27,7 +27,7 @@ const NewsletterDetailPage: React.FC = () => {
   });
 
   // Reading history tracking
-  const addToHistory = useReadingHistoryStore(state => state.addToHistory);
+  const addToHistory = useReadingHistoryStore((state) => state.addToHistory);
   const { user } = useAuthStore();
 
   useEffect(() => {
@@ -193,7 +193,7 @@ const NewsletterDetailPage: React.FC = () => {
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-2">Tags</h3>
               <div className="flex flex-wrap gap-2">
-                {newsletter?.tags.map(tag => (
+                {newsletter?.tags.map((tag) => (
                   <span
                     key={tag}
                     className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm"
@@ -217,13 +217,13 @@ const NewsletterDetailPage: React.FC = () => {
             <div className="mb-6 border-b pb-6">
               <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
               <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map(star => (
+                {[1, 2, 3, 4, 5].map((star) => (
                   <StarIcon
                     key={star}
                     className={`w-6 h-6 cursor-pointer ${
                       star <= userReview.rating ? 'text-yellow-500' : 'text-gray-300'
                     }`}
-                    onClick={() => setUserReview(prev => ({ ...prev, rating: star }))}
+                    onClick={() => setUserReview((prev) => ({ ...prev, rating: star }))}
                   />
                 ))}
               </div>
@@ -231,7 +231,7 @@ const NewsletterDetailPage: React.FC = () => {
                 className="w-full border rounded-lg p-2"
                 placeholder="Share your thoughts about this newsletter"
                 value={userReview.comment}
-                onChange={e => setUserReview(prev => ({ ...prev, comment: e.target.value }))}
+                onChange={(e) => setUserReview((prev) => ({ ...prev, comment: e.target.value }))}
               />
               <button
                 onClick={handleSubmitReview}
@@ -245,7 +245,7 @@ const NewsletterDetailPage: React.FC = () => {
           {/* Existing Reviews */}
           {reviews.length > 0 ? (
             <div className="space-y-4">
-              {reviews.map(review => (
+              {reviews.map((review) => (
                 <div key={review.id} className="border-b pb-4">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="font-semibold">{review.userName}</h4>

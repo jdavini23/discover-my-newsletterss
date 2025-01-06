@@ -1,11 +1,4 @@
-import { 
-  Newsletter, 
-  User, 
-  Category, 
-  Tag, 
-  PaginatedNewsletters, 
-  ApiError 
-} from '../types';
+import { Newsletter, User, Category, Tag, PaginatedNewsletters, ApiError } from '../types';
 
 // Comprehensive list of categories
 export const categories: Category[] = [
@@ -96,7 +89,7 @@ export const mockNewsletters: Newsletter[] = [
     frequency: 'Bi-weekly',
     isFavorite: false,
     status: 'archived',
-  }
+  },
 ];
 
 // Paginated newsletters mock
@@ -105,7 +98,7 @@ export const paginatedNewsletters: PaginatedNewsletters = {
   total: 50,
   page: 1,
   pageSize: 5,
-  totalPages: 10
+  totalPages: 10,
 };
 
 // Enhanced mock user profile
@@ -121,8 +114,8 @@ export const mockUser: User = {
     darkMode: false,
     language: 'en',
     newsletterFrequency: 'weekly',
-    emailNotifications: true
-  }
+    emailNotifications: true,
+  },
 };
 
 // Mock API Errors
@@ -130,21 +123,21 @@ export const mockApiErrors: Record<string, ApiError> = {
   networkError: {
     code: 'NETWORK_ERROR',
     message: 'Unable to connect to the server. Please check your internet connection.',
-    details: 'Connection timeout after 30 seconds'
+    details: 'Connection timeout after 30 seconds',
   },
   unauthorized: {
     code: 'UNAUTHORIZED',
     message: 'You do not have permission to access this resource.',
-    details: 'Invalid or expired authentication token'
+    details: 'Invalid or expired authentication token',
   },
   notFound: {
     code: 'NOT_FOUND',
     message: 'The requested resource could not be found.',
-    details: 'No newsletters match the specified search criteria'
+    details: 'No newsletters match the specified search criteria',
   },
   validationError: {
     code: 'VALIDATION_ERROR',
     message: 'Invalid input provided.',
-    details: 'One or more fields do not meet the required validation criteria'
-  }
+    details: 'One or more fields do not meet the required validation criteria',
+  },
 };

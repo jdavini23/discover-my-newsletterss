@@ -3,7 +3,7 @@ import React from 'react';
 
 /**
  * Typography Style Guide
- * 
+ *
  * This guide documents the typography system used across the application.
  * It provides a comprehensive overview of font sizes, weights, and usage guidelines.
  */
@@ -11,7 +11,7 @@ export const TypographyGuide: Story = () => (
   <div className="p-8 space-y-8">
     <section>
       <h1 className="text-4xl font-bold mb-4">Typography System</h1>
-      
+
       <div className="grid grid-cols-2 gap-8">
         <div>
           <h2 className="text-2xl font-semibold mb-4">Headings</h2>
@@ -22,7 +22,7 @@ export const TypographyGuide: Story = () => (
             <h4 className="text-2xl font-normal">H4 - Small Heading</h4>
           </div>
         </div>
-        
+
         <div>
           <h2 className="text-2xl font-semibold mb-4">Body Text</h2>
           <div className="space-y-4">
@@ -34,7 +34,7 @@ export const TypographyGuide: Story = () => (
         </div>
       </div>
     </section>
-    
+
     <section>
       <h2 className="text-2xl font-semibold mb-4">Font Weights</h2>
       <div className="grid grid-cols-4 gap-4">
@@ -47,7 +47,7 @@ export const TypographyGuide: Story = () => (
         ))}
       </div>
     </section>
-    
+
     <section>
       <h2 className="text-2xl font-semibold mb-4">Developer Guidelines</h2>
       <div className="bg-gray-100 p-4 rounded">
@@ -67,9 +67,10 @@ export const TypographyGuide: Story = () => (
 TypographyGuide.parameters = {
   docs: {
     description: {
-      component: 'A comprehensive guide to the application\'s typography system, showcasing font sizes, weights, and usage guidelines.'
-    }
-  }
+      component:
+        "A comprehensive guide to the application's typography system, showcasing font sizes, weights, and usage guidelines.",
+    },
+  },
 };
 
 export const FontSizeComparison: Story = () => (

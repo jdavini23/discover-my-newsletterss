@@ -24,7 +24,7 @@ export const NewsletterPreviewModal: React.FC<NewsletterPreviewModalProps> = ({
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
         className="bg-white rounded-2xl p-6 max-w-2xl w-full shadow-xl"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start mb-6">
           <img
@@ -59,7 +59,7 @@ export const NewsletterPreviewModal: React.FC<NewsletterPreviewModalProps> = ({
           <div>
             <h3 className="text-md font-semibold mb-2">Categories</h3>
             <div className="flex flex-wrap gap-2">
-              {newsletter.categories?.map(category => (
+              {newsletter.categories?.map((category) => (
                 <span
                   key={category}
                   className="px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"

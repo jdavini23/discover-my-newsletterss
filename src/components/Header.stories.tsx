@@ -22,15 +22,15 @@ export const AdminHeader = () => (
 
 DefaultHeader.ladle = {
   name: 'Default Header',
-  description: 'Header in default state'
+  description: 'Header in default state',
 };
 
 LoggedInHeader.ladle = {
   name: 'Logged In Header',
-  description: 'Header for authenticated users'
+  description: 'Header for authenticated users',
 };
 
 AdminHeader.ladle = {
   name: 'Admin Header',
-  description: 'Header with admin navigation options'
+  description: 'Header with admin navigation options',
 };

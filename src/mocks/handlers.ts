@@ -1,34 +1,28 @@
 import { http, HttpResponse, delay } from 'msw';
-import { 
-  mockNewsletters, 
-  mockUser, 
-  mockApiErrors,
-  categories,
-  tags
-} from './data';
-import { 
-  SearchParams, 
-  UserPreferencesUpdate, 
+import { mockNewsletters, mockUser, mockApiErrors, categories, tags } from './data';
+import {
+  SearchParams,
+  UserPreferencesUpdate,
   PaginatedNewsletters,
   ApiError,
-  Newsletter
+  Newsletter,
 } from '../types';
 
 // Utility function for paginated search
 function paginateResults(
-  items: Newsletter[], 
-  page: number = 1, 
+  items: Newsletter[],
+  page: number = 1,
   pageSize: number = 5
 ): PaginatedNewsletters {
   const startIndex = (page - 1) * pageSize;
   const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-  
+
   return {
     data: paginatedItems,
     total: items.length,
     page,
     pageSize,
-    totalPages: Math.ceil(items.length / pageSize)
+    totalPages: Math.ceil(items.length / pageSize),
   };
 }
 
@@ -42,27 +36,29 @@ export const handlers = [
       tags: url.searchParams.getAll('tags'),
       sortBy: url.searchParams.get('sortBy') as 'subscribers' | 'recent' | undefined,
       page: parseInt(url.searchParams.get('page') || '1'),
-      pageSize: parseInt(url.searchParams.get('pageSize') || '5')
+      pageSize: parseInt(url.searchParams.get('pageSize') || '5'),
     };
 
     // Simulate network delay
     await delay(500);
 
     // Filter newsletters based on search parameters
-    const filteredNewsletters = mockNewsletters.filter(newsletter => {
+    const filteredNewsletters = mockNewsletters.filter((newsletter) => {
       // Query filter
-      const matchesQuery = !params.query || 
+      const matchesQuery =
+        !params.query ||
         newsletter.title.toLowerCase().includes(params.query.toLowerCase()) ||
         newsletter.description.toLowerCase().includes(params.query.toLowerCase());
-      
+
       // Categories filter
-      const matchesCategories = !params.categories?.length || 
-        params.categories.some(cat => newsletter.categories.includes(cat));
-      
+      const matchesCategories =
+        !params.categories?.length ||
+        params.categories.some((cat) => newsletter.categories.includes(cat));
+
       // Tags filter
-      const matchesTags = !params.tags?.length || 
-        params.tags.some(tag => newsletter.tags.includes(tag));
-      
+      const matchesTags =
+        !params.tags?.length || params.tags.some((tag) => newsletter.tags.includes(tag));
+
       return matchesQuery && matchesCategories && matchesTags;
     });
 
@@ -77,11 +73,7 @@ export const handlers = [
     }
 
     // Paginate results
-    const paginatedResults = paginateResults(
-      filteredNewsletters, 
-      params.page, 
-      params.pageSize
-    );
+    const paginatedResults = paginateResults(filteredNewsletters, params.page, params.pageSize);
 
     // Simulate different response scenarios
     if (paginatedResults.total === 0) {
@@ -100,17 +92,17 @@ export const handlers = [
   http.post('/api/user/preferences', async ({ request }) => {
     try {
       const updates: UserPreferencesUpdate = await request.json();
-      
+
       // Validate and update user preferences
       const updatedPreferences = {
         ...mockUser.preferences,
-        ...updates
+        ...updates,
       };
 
       return HttpResponse.json(updatedPreferences);
     } catch (error) {
       return HttpResponse.json<ApiError>(
-        { code: 'BAD_REQUEST', message: 'Invalid preferences update' }, 
+        { code: 'BAD_REQUEST', message: 'Invalid preferences update' },
         { status: 400 }
       );
     }
@@ -133,5 +125,5 @@ export const handlers = [
 
   http.get('/api/error/unauthorized', () => {
     return HttpResponse.json(mockApiErrors.unauthorized, { status: 401 });
-  })
+  }),
 ];

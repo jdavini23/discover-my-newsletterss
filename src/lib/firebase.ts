@@ -16,21 +16,21 @@ const firebaseConfig = {
 // Validate configuration before initialization
 function validateFirebaseConfig() {
   const requiredKeys: (keyof typeof firebaseConfig)[] = [
-    'apiKey', 
-    'authDomain', 
-    'projectId', 
-    'storageBucket', 
-    'messagingSenderId', 
-    'appId'
+    'apiKey',
+    'authDomain',
+    'projectId',
+    'storageBucket',
+    'messagingSenderId',
+    'appId',
   ];
 
-  const missingKeys = requiredKeys.filter(key => !firebaseConfig[key]);
+  const missingKeys = requiredKeys.filter((key) => !firebaseConfig[key]);
 
   if (missingKeys.length > 0) {
     console.error(
-      'Missing Firebase configuration keys: ' + 
-      missingKeys.join(', ') + 
-      '. Please check your .env file and .env.example.'
+      'Missing Firebase configuration keys: ' +
+        missingKeys.join(', ') +
+        '. Please check your .env file and .env.example.'
     );
     throw new Error('Incomplete Firebase configuration');
   }

@@ -5,18 +5,18 @@ import { z } from 'zod';
 /**
  * Password strength validation schema
  */
-export const passwordSchema = z.string()
-  .min(8, { message: "Password must be at least 8 characters long" })
-  .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-  .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
-  .regex(/[0-9]/, { message: "Password must contain at least one number" })
-  .regex(/[!@#$%^&*()]/, { message: "Password must contain at least one special character" });
+export const passwordSchema = z
+  .string()
+  .min(8, { message: 'Password must be at least 8 characters long' })
+  .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+  .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
+  .regex(/[0-9]/, { message: 'Password must contain at least one number' })
+  .regex(/[!@#$%^&*()]/, { message: 'Password must contain at least one special character' });
 
 /**
  * Email validation schema
  */
-export const emailSchema = z.string()
-  .email({ message: "Invalid email address" });
+export const emailSchema = z.string().email({ message: 'Invalid email address' });
 
 /**
  * Check if a password meets security requirements
@@ -56,29 +56,26 @@ export function generateSecurePassword(length: number = 16): string {
   const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
   const numberChars = '0123456789';
   const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-  
+
   const allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
-  
-  const getRandomChar = (chars: string) => 
-    chars[Math.floor(Math.random() * chars.length)];
-  
+
+  const getRandomChar = (chars: string) => chars[Math.floor(Math.random() * chars.length)];
+
   // Ensure at least one character from each required set
   const password = [
     getRandomChar(uppercaseChars),
     getRandomChar(lowercaseChars),
     getRandomChar(numberChars),
-    getRandomChar(specialChars)
+    getRandomChar(specialChars),
   ];
-  
+
   // Fill the rest with random characters
   while (password.length < length) {
     password.push(getRandomChar(allChars));
   }
-  
+
   // Shuffle the password
-  return password
-    .sort(() => Math.random() - 0.5)
-    .join('');
+  return password.sort(() => Math.random() - 0.5).join('');
 }
 
 /**
@@ -99,13 +96,13 @@ export function generateSecurityToken(userId: string): string {
  * @returns Token validity status
  */
 export function validateSecurityToken(
-  token: string, 
+  token: string,
   maxAgeMs: number = 3600000 // 1 hour
 ): boolean {
   try {
     const [userId, timestampStr] = token.split('-');
     const timestamp = parseInt(timestampStr, 10);
-    
+
     // Check if token is not too old
     const currentTime = Date.now();
     return currentTime - timestamp <= maxAgeMs;
@@ -120,10 +117,11 @@ export function validateSecurityToken(
  * @returns Security risk level
  */
 export function assessSecurityRisk(activities: string[]): 'low' | 'medium' | 'high' {
-  const riskFactors = activities.filter(activity => 
-    activity.includes('login') || 
-    activity.includes('password change') || 
-    activity.includes('device')
+  const riskFactors = activities.filter(
+    (activity) =>
+      activity.includes('login') ||
+      activity.includes('password change') ||
+      activity.includes('device')
   ).length;
 
   if (riskFactors <= 1) return 'low';

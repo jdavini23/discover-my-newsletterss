@@ -32,10 +32,8 @@ const InterestWizard: React.FC = () => {
   }, [user, navigate]);
 
   const toggleInterest = (categoryId: string) => {
-    setSelectedInterests(prev => 
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
+    setSelectedInterests((prev) =>
+      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     );
   };
 
@@ -48,7 +46,7 @@ const InterestWizard: React.FC = () => {
     try {
       // TODO: Implement actual backend call to save user interests
       console.log('Saving interests:', selectedInterests);
-      
+
       addNotification('Interests saved successfully!', 'success');
       navigate('/dashboard');
     } catch (error) {
@@ -73,9 +71,11 @@ const InterestWizard: React.FC = () => {
               onClick={() => toggleInterest(category.id)}
               className={`
                 flex flex-col items-center justify-center p-4 rounded-lg transition-all duration-300
-                ${selectedInterests.includes(category.id) 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}
+                ${
+                  selectedInterests.includes(category.id)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                }
                 hover:scale-105 hover:shadow-md
               `}
             >
@@ -91,9 +91,11 @@ const InterestWizard: React.FC = () => {
             disabled={selectedInterests.length === 0}
             className={`
               px-6 py-3 rounded-lg text-white font-bold transition-all duration-300
-              ${selectedInterests.length > 0 
-                ? 'bg-blue-600 hover:bg-blue-700' 
-                : 'bg-gray-400 cursor-not-allowed'}
+              ${
+                selectedInterests.length > 0
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-gray-400 cursor-not-allowed'
+              }
             `}
           >
             Save My Interests
