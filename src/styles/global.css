@@ -1,0 +1,86 @@
+/* Global Styles */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --background-color: #f4f4f4;
+  --background-color-light: #f4f4f4;
+  --background-color-dark: #333;
+  --text-color: #333;
+  color-scheme: light dark;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  @apply bg-gray-50 text-black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  @apply bg-gray-900 text-white;
+}
+
+/* Custom dark mode transitions */
+.dark-mode-transition {
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+/* Accessibility and focus states */
+*:focus {
+  @apply outline-blue-500 ring-2 ring-blue-500 ring-opacity-50;
+}
+
+/* Scrollbar styling for dark mode */
+::-webkit-scrollbar {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-sans font-semibold;
+}
+
+/* Responsive typography */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+}
+
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.app-container {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}
