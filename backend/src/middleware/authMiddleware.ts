@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth';
 
 // Decoded token interface
@@ -14,7 +14,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 // Authentication middleware with explicit return type
-export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
@@ -30,7 +30,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction):
       return;
     }
 
-    (req as AuthenticatedRequest).user = decoded;
+    req.user = decoded;
     next();
   } catch (error: unknown) {
     res.status(401).json({ 
@@ -41,14 +41,13 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction):
 };
 
 // Admin-specific middleware with explicit return type
-export const adminMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const authReq = req as AuthenticatedRequest;
-  if (!authReq.user) {
+export const adminMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+  if (!req.user) {
     res.status(403).json({ error: 'Access denied. Authentication required.' });
     return;
   }
 
-  if (authReq.user.role !== 'admin') {
+  if (req.user.role !== 'admin') {
     res.status(403).json({ error: 'Access denied. Admin rights required.' });
     return;
   }
@@ -58,14 +57,13 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
 
 // Role-based authorization middleware
 export const roleMiddleware = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const authReq = req as AuthenticatedRequest;
-    if (!authReq.user) {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
       res.status(403).json({ error: 'Access denied. Authentication required.' });
       return;
     }
 
-    if (!authReq.user.role || !roles.includes(authReq.user.role)) {
+    if (!req.user.role || !roles.includes(req.user.role)) {
       res.status(403).json({ error: 'Access denied. Required role not found.' });
       return;
     }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany,  } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Interest } from './Interest';
 import { Subscription } from './Subscription';
 import { UserInteraction } from './UserInteraction';
@@ -14,7 +14,7 @@ export class User {
   @Column({ unique: true, length: 255 })
   email!: string;
 
-  @Column()
+  @Column({ nullable: true })
   passwordHash!: string;
 
   @Column({
@@ -35,6 +35,26 @@ export class User {
 
   @Column({ nullable: true, type: 'varchar' })
   emailVerificationToken!: string | null;
+
+  // Social Login Fields
+  @Column({ nullable: true, unique: true })
+  googleId!: string | null;
+
+  @Column({ nullable: true, unique: true })
+  facebookId!: string | null;
+
+  @Column({ 
+    type: 'enum', 
+    enum: ['local', 'google', 'facebook'], 
+    default: 'local' 
+  })
+  authProvider!: string;
+
+  @Column({ default: false })
+  mfaEnabled!: boolean;
+
+  @Column({ nullable: true })
+  mfaSecret!: string | null;
 
   @ManyToMany(() => Interest, (interest) => interest.users, { cascade: true })
   @JoinTable({

@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:5000"
+  target: "https://localhost:3000"
   phases:
     - duration: 60
       arrivalRate: 5
@@ -10,16 +10,23 @@ config:
       name: Sustained load
   defaults:
     headers:
-      Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJlbWFpbCI6InRlc3RAdXNlci5jb20ifQ.example_token"
+      Authorization: "Bearer ${ARTILLERY_TOKEN}"
 
 scenarios:
-  - name: "Get Newsletter Recommendations"
+  - name: "API Endpoints Load Test"
     flow:
       - get:
-          url: "/api/recommendations/newsletters"
+          url: "/api/newsletters"
           expect:
             - statusCode: 200
-          capture:
-            - json: "$.newsletters.length"
-              as: "newsletterCount"
-      - log: "Received {{ newsletterCount }} newsletters"
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "testpassword"
+          expect:
+            - statusCode: 200
+      - get:
+          url: "/api/recommendations"
+          expect:
+            - statusCode: 200
