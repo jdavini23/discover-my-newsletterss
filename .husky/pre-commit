@@ -1,2 +1,3 @@
 #!/bin/sh
-# No pre-commit checks for now
+# No pre-commit checks
+exit 0
