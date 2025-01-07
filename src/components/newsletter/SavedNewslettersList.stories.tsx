@@ -50,7 +50,7 @@ export const ManyNewsletters: Story = () => (
 
 export const LongTitlesAndDescriptions: Story = () => (
   <SavedNewslettersList
-    newsletters={mockNewsletters.map((newsletter) => ({
+    newsletters={mockNewsletters.map(newsletter => ({
       ...newsletter,
       title: 'A Very Long Newsletter Title That Goes On and On and On',
       description:

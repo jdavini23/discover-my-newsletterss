@@ -2,18 +2,18 @@ import React from 'react';
 import { DarkModeToggle } from './DarkModeToggle';
 
 export const DefaultDarkModeToggle = () => (
-  <DarkModeToggle onToggle={(isDarkMode) => console.log('Dark mode:', isDarkMode)} />
+  <DarkModeToggle onToggle={isDarkMode => console.log('Dark mode:', isDarkMode)} />
 );
 
 export const InitiallyDarkMode = () => (
   <DarkModeToggle
     initialMode="dark"
-    onToggle={(isDarkMode) => console.log('Dark mode:', isDarkMode)}
+    onToggle={isDarkMode => console.log('Dark mode:', isDarkMode)}
   />
 );
 
 export const DisabledDarkModeToggle = () => (
-  <DarkModeToggle disabled onToggle={(isDarkMode) => console.log('Dark mode:', isDarkMode)} />
+  <DarkModeToggle disabled onToggle={isDarkMode => console.log('Dark mode:', isDarkMode)} />
 );
 
 DefaultDarkModeToggle.ladle = {

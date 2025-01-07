@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from '@/stores/authStore';
@@ -13,22 +13,29 @@ import ReadingHistoryPage from './pages/ReadingHistoryPage';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 function App() {
+  const authStore = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
-  const { isAuthenticated, initializeAuth } = useAuthStore();
+  const [initializationError, setInitializationError] = useState<string | null>(null);
+
+  const handleInitialize = useCallback(async () => {
+    console.log('Starting initialization process');
+    try {
+      const isAuthenticated = await authStore.checkAuthStatus();
+      console.log('Authentication check completed. Authenticated:', isAuthenticated);
+      setIsInitialized(true);
+    } catch (error) {
+      console.error('Initialization failed:', error);
+      setInitializationError(
+        error instanceof Error ? error.message : 'An unknown error occurred during initialization'
+      );
+      setIsInitialized(true);
+    }
+  }, [authStore]);
 
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        await initializeAuth();
-        setIsInitialized(true);
-      } catch (error) {
-        console.error('Failed to initialize authentication:', error);
-        setIsInitialized(false);
-      }
-    };
-
-    initAuth();
-  }, []);
+    console.log('Mounting App component, triggering initialization');
+    handleInitialize();
+  }, [handleInitialize]);
 
   if (!isInitialized) {
     return (
@@ -41,22 +48,43 @@ function App() {
     );
   }
 
+  if (initializationError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-red-100">
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Initialization Error</h2>
+          <p className="text-red-500 mb-4">{initializationError}</p>
+          <button
+            onClick={handleInitialize}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Retry Initialization
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <Router>
-        <Toaster position="top-right">{/* Explicit children prop */}</Toaster>
+        <Toaster position="top-right" />
         <Layout>
           <Routes>
             <Route
               path="/auth"
               element={
-                !isAuthenticated ? <AuthPage /> : <Navigate to="/newsletters" replace={true} />
+                !authStore.isAuthenticated ? (
+                  <AuthPage />
+                ) : (
+                  <Navigate to="/newsletters" replace={true} />
+                )
               }
             />
             <Route
               path="/newsletters"
               element={
-                isAuthenticated ? (
+                authStore.isAuthenticated ? (
                   <NewsletterDiscoveryPage />
                 ) : (
                   <Navigate to="/auth" replace={true} />
@@ -66,7 +94,11 @@ function App() {
             <Route
               path="/newsletters/:newsletterId"
               element={
-                isAuthenticated ? <NewsletterDetailPage /> : <Navigate to="/auth" replace={true} />
+                authStore.isAuthenticated ? (
+                  <NewsletterDetailPage />
+                ) : (
+                  <Navigate to="/auth" replace={true} />
+                )
               }
             />
             <Route

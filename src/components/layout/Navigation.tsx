@@ -63,7 +63,7 @@ const Navigation: React.FC = () => {
           <div className="hidden md:flex md:items-center md:space-x-4">
             {isAuthenticated ? (
               <>
-                {navLinks.map((link) => (
+                {navLinks.map(link => (
                   <NavLink
                     key={link.path}
                     to={link.path}
@@ -134,7 +134,7 @@ const Navigation: React.FC = () => {
             className="md:hidden"
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navLinks.map((link) => (
+              {navLinks.map(link => (
                 <Link
                   key={link.path}
                   to={link.path}

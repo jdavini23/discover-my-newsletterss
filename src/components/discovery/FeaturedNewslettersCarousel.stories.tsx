@@ -54,7 +54,7 @@ export const SingleNewsletter: Story = () => (
 
 export const LongTitlesAndDescriptions: Story = () => (
   <FeaturedNewslettersCarousel
-    newsletters={mockNewsletters.map((newsletter) => ({
+    newsletters={mockNewsletters.map(newsletter => ({
       ...newsletter,
       title: 'A Very Long Newsletter Title That Goes On and On and On',
       description:

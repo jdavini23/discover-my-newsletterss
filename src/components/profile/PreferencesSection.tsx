@@ -27,9 +27,7 @@ const PreferencesSection: React.FC<PreferencesSectionProps> = ({ profile }) => {
   );
 
   const handleTopicToggle = (topic: string) => {
-    setInterests((prev) =>
-      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
-    );
+    setInterests(prev => (prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]));
   };
 
   const handleSavePreferences = async () => {
@@ -53,7 +51,7 @@ const PreferencesSection: React.FC<PreferencesSectionProps> = ({ profile }) => {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-4">Interested Topics</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {NEWSLETTER_TOPICS.map((topic) => (
+          {NEWSLETTER_TOPICS.map(topic => (
             <label
               key={topic}
               className={`flex items-center space-x-2 p-2 rounded-md cursor-pointer ${
@@ -78,7 +76,7 @@ const PreferencesSection: React.FC<PreferencesSectionProps> = ({ profile }) => {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-4">Newsletter Frequency</h3>
         <div className="flex space-x-4">
-          {['daily', 'weekly', 'monthly'].map((freq) => (
+          {['daily', 'weekly', 'monthly'].map(freq => (
             <button
               key={freq}
               onClick={() => setNewsletterFrequency(freq as 'daily' | 'weekly' | 'monthly')}

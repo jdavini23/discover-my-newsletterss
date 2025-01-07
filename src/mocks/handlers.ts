@@ -43,7 +43,7 @@ export const handlers = [
     await delay(500);
 
     // Filter newsletters based on search parameters
-    const filteredNewsletters = mockNewsletters.filter((newsletter) => {
+    const filteredNewsletters = mockNewsletters.filter(newsletter => {
       // Query filter
       const matchesQuery =
         !params.query ||
@@ -53,11 +53,11 @@ export const handlers = [
       // Categories filter
       const matchesCategories =
         !params.categories?.length ||
-        params.categories.some((cat) => newsletter.categories.includes(cat));
+        params.categories.some(cat => newsletter.categories.includes(cat));
 
       // Tags filter
       const matchesTags =
-        !params.tags?.length || params.tags.some((tag) => newsletter.tags.includes(tag));
+        !params.tags?.length || params.tags.some(tag => newsletter.tags.includes(tag));
 
       return matchesQuery && matchesCategories && matchesTags;
     });

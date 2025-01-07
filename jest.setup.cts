@@ -15,7 +15,7 @@ console.error = (...args) => {
     /Warning: An update inside a test was not wrapped in act/,
   ];
 
-  if (!suppressedErrors.some((pattern) => pattern.test(args[0]))) {
+  if (!suppressedErrors.some(pattern => pattern.test(args[0]))) {
     originalConsoleError(...args);
   }
 };

@@ -8,17 +8,17 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const StyledButton = styled.button<{ theme: DefaultTheme } & ButtonProps>`
-  font-family: ${(props) => props.theme.typography.fontFamily};
+  font-family: ${props => props.theme.typography.fontFamily};
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: ${(props) => props.theme.borderRadius.md};
+  border-radius: ${props => props.theme.borderRadius.md};
 
   // Variant Styles
-  background-color: ${(props) => {
+  background-color: ${props => {
     switch (props.variant) {
       case 'primary':
         return props.theme.colors.primary;
@@ -31,10 +31,10 @@ const StyledButton = styled.button<{ theme: DefaultTheme } & ButtonProps>`
     }
   }};
 
-  color: ${(props) => props.theme.colors.background};
+  color: ${props => props.theme.colors.background};
 
   // Size Styles
-  padding: ${(props) => {
+  padding: ${props => {
     switch (props.size) {
       case 'sm':
         return `${props.theme.spacing.sm} ${props.theme.spacing.md}`;
@@ -45,7 +45,7 @@ const StyledButton = styled.button<{ theme: DefaultTheme } & ButtonProps>`
     }
   }};
 
-  font-size: ${(props) => {
+  font-size: ${props => {
     switch (props.size) {
       case 'sm':
         return props.theme.typography.fontSize.small;

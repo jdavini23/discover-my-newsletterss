@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.cts'],
+    setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**'],
     coverage: {
@@ -28,9 +28,6 @@ export default defineConfig({
           include: ['vitest-mock-extended']
         }
       }
-    },
-    resolveSnapshotPath: (testPath, snapExtension) => {
-      return testPath.replace(/\.{ts,tsx}$/, snapExtension);
     }
   },
   resolve: {

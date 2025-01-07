@@ -155,7 +155,7 @@ const ProfilePage: React.FC = () => {
         {/* Sidebar Navigation */}
         <div className="w-1/4 pr-8 hidden lg:block">
           <nav className="space-y-2">
-            {PROFILE_SECTIONS.map((section) => (
+            {PROFILE_SECTIONS.map(section => (
               <button
                 key={section.name}
                 className={`w-full text-left p-2 flex items-center ${

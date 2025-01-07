@@ -75,7 +75,7 @@ export const NewsletterCard: React.FC<NewsletterCardProps> = ({
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">{description}</p>
 
         <div className="flex flex-wrap gap-2 mb-4">
-          {tags.map((tag) => (
+          {tags.map(tag => (
             <span
               key={tag}
               className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs"

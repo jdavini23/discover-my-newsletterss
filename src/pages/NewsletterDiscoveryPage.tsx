@@ -116,8 +116,8 @@ const NewsletterDiscoveryPage: React.FC = () => {
   };
 
   const handleCategoryToggle = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
   };
 
@@ -220,7 +220,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-xl"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
@@ -237,7 +237,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
               <div className="mb-4">
                 <h3 className="text-md font-semibold mb-2">Categories</h3>
                 <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((category) => (
+                  {CATEGORIES.map(category => (
                     <button
                       key={category}
                       onClick={() => handleCategoryToggle(category)}
@@ -260,12 +260,12 @@ const NewsletterDiscoveryPage: React.FC = () => {
                 </label>
                 <select
                   value={minSubscribers}
-                  onChange={(e) =>
+                  onChange={e =>
                     setMinSubscribers(e.target.value ? Number(e.target.value) : undefined)
                   }
                   className="w-full px-3 py-2 border rounded-md"
                 >
-                  {SUBSCRIBER_RANGES.map((range) => (
+                  {SUBSCRIBER_RANGES.map(range => (
                     <option key={range.id} value={range.value}>
                       {range.label}
                     </option>
@@ -280,9 +280,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
                 </label>
                 <select
                   value={minRating || ''}
-                  onChange={(e) =>
-                    setMinRating(e.target.value ? Number(e.target.value) : undefined)
-                  }
+                  onChange={e => setMinRating(e.target.value ? Number(e.target.value) : undefined)}
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   <option key="any" value="">
@@ -302,7 +300,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
                 <select
                   value={sortBy}
-                  onChange={(e) => {
+                  onChange={e => {
                     const value = e.target.value;
                     setSortBy(value);
                   }}
@@ -348,7 +346,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {newsletters.map((newsletter) => (
+          {newsletters.map(newsletter => (
             <NewsletterCard
               key={newsletter.id}
               newsletter={newsletter}
@@ -362,7 +360,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
       {totalNewsletters > pageSize && (
         <div className="flex justify-center items-center space-x-4 mt-6">
           <button
-            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
             className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"
           >
@@ -373,7 +371,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
           </span>
           <button
             onClick={() =>
-              setCurrentPage((prev) => Math.min(Math.ceil(totalNewsletters / pageSize), prev + 1))
+              setCurrentPage(prev => Math.min(Math.ceil(totalNewsletters / pageSize), prev + 1))
             }
             disabled={currentPage === Math.ceil(totalNewsletters / pageSize)}
             className="px-4 py-2 bg-gray-200 rounded-md disabled:opacity-50"

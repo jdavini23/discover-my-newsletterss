@@ -76,7 +76,7 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
             required
           />
@@ -89,7 +89,7 @@ export const AdminUserCreation: React.FC<AdminUserCreationProps> = ({ adminSecre
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             className="w-full rounded-lg border px-3 py-2"
             required
             minLength={8}

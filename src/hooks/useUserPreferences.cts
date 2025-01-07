@@ -26,35 +26,35 @@ export const useUserPreferences = () => {
 
   const updatePreferences = useMutation({
     mutationFn: (data: UpdateUserPreferencesRequest) => userPreferencesApi.update(data),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const addFavorite = useMutation({
     mutationFn: userPreferencesApi.addFavorite,
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const removeFavorite = useMutation({
     mutationFn: userPreferencesApi.removeFavorite,
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const updateInterests = useMutation({
     mutationFn: userPreferencesApi.updateInterests,
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });
 
   const updateNotificationSettings = useMutation({
     mutationFn: userPreferencesApi.updateNotificationSettings,
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.setQueryData(['userPreferences'], data);
     },
   });

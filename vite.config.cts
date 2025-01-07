@@ -11,7 +11,7 @@ export default defineConfig(async ({ mode }) => {
 
   return {
     plugins: [
-      react(), 
+      react(),
       (await import('vite-tsconfig-paths')).default(),
       // Performance and bundle analysis
       visualizer({
@@ -24,7 +24,10 @@ export default defineConfig(async ({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src'),
-        '@components': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/components'),
+        '@components': path.resolve(
+          path.dirname(fileURLToPath(import.meta.url)),
+          './src/components'
+        ),
         '@services': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/services'),
         '@contexts': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/contexts'),
         '@hooks': path.resolve(path.dirname(fileURLToPath(import.meta.url)), './src/hooks'),
@@ -77,9 +80,9 @@ export default defineConfig(async ({ mode }) => {
           lines: 80,
           functions: 80,
           branches: 80,
-          statements: 80
-        }
-      }
-    }
+          statements: 80,
+        },
+      },
+    },
   };
 });

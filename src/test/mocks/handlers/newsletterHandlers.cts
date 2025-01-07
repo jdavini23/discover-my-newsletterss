@@ -7,7 +7,9 @@ const API_URL = getCurrentConfig().API_URL;
 const newsletters = Array.from({ length: 20 }, (_, index) => ({
   id: `newsletter-${index + 1}`,
   title: `Newsletter ${index + 1}`,
-  description: `This is a sample newsletter description for newsletter ${index + 1}. It contains interesting content about various topics.`,
+  description: `This is a sample newsletter description for newsletter ${
+    index + 1
+  }. It contains interesting content about various topics.`,
   author: `Author ${index + 1}`,
   url: `https://newsletter${index + 1}.example.com`,
   categories: ['Technology', 'Business', 'Productivity', 'Design'].slice(0, (index % 3) + 1),
@@ -40,20 +42,20 @@ export const newsletterHandlers = [
     if (query) {
       const searchQuery = query.toLowerCase();
       filteredNewsletters = filteredNewsletters.filter(
-        (newsletter) =>
+        newsletter =>
           newsletter.title.toLowerCase().includes(searchQuery) ||
           newsletter.description.toLowerCase().includes(searchQuery)
       );
     }
 
     if (categories.length > 0) {
-      filteredNewsletters = filteredNewsletters.filter((newsletter) =>
-        categories.some((category) => newsletter.categories.includes(category))
+      filteredNewsletters = filteredNewsletters.filter(newsletter =>
+        categories.some(category => newsletter.categories.includes(category))
       );
     }
 
     if (frequency.length > 0) {
-      filteredNewsletters = filteredNewsletters.filter((newsletter) =>
+      filteredNewsletters = filteredNewsletters.filter(newsletter =>
         frequency.includes(newsletter.frequency)
       );
     }
@@ -95,7 +97,7 @@ export const newsletterHandlers = [
 
   // Get newsletter by ID
   http.get(`${API_URL}/newsletters/:id`, ({ params }) => {
-    const newsletter = newsletters.find((n) => n.id === params.id);
+    const newsletter = newsletters.find(n => n.id === params.id);
 
     if (!newsletter) {
       return new HttpResponse(null, { status: 404 });

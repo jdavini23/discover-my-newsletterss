@@ -10,15 +10,17 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [react(), tsconfigPaths()],
-    server: {
-      port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
-      open: true,
+    define: {
+      'process.env': env,
     },
-    build: {
-      outDir: 'dist',
-      sourcemap: true,
-    },
+    plugins: [
+      react({
+        babel: {
+          plugins: ['babel-plugin-macros'],
+        },
+      }),
+      tsconfigPaths(),
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -33,7 +35,12 @@ export default defineConfig(({ mode }) => {
         '@tailwindcss/aspect-ratio': '@tailwindcss/aspect-ratio',
         '@tailwindcss/container-queries': '@tailwindcss/container-queries',
       },
+      dedupe: ['react', 'react-dom'],
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+    },
+    server: {
+      port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3001,
+      open: true,
     },
     optimizeDeps: {
       include: [
@@ -46,6 +53,7 @@ export default defineConfig(({ mode }) => {
         'firebase/auth',
         'firebase/firestore',
         'zustand',
+        'zustand/middleware',
         'uuid',
         'framer-motion',
         '@radix-ui/react-icons',
@@ -54,32 +62,34 @@ export default defineConfig(({ mode }) => {
         '@tailwindcss/aspect-ratio',
         '@tailwindcss/container-queries',
       ],
+      exclude: ['react-error-overlay'],
+    },
+    build: {
+      outDir: 'dist',
+      sourcemap: mode === 'development',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          },
+        },
+      },
+    },
+    esbuild: {
+      // Ensure consistent React runtime
+      jsxInject: `import React from 'react'`,
     },
     test: {
       globals: true,
       environment: 'jsdom',
-      setupFiles: ['./src/test/setup.cts'],
-      exclude: [...configDefaults.exclude, '**/playwright/**'],
+      setupFiles: './jest.setup.js',
+      exclude: [...configDefaults.exclude, '**/e2e/**'],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'html'],
       },
-    },
-    define: {
-      'import.meta.env.VITE_FIREBASE_API_KEY': JSON.stringify(env.VITE_FIREBASE_API_KEY || ''),
-      'import.meta.env.VITE_FIREBASE_AUTH_DOMAIN': JSON.stringify(
-        env.VITE_FIREBASE_AUTH_DOMAIN || ''
-      ),
-      'import.meta.env.VITE_FIREBASE_PROJECT_ID': JSON.stringify(
-        env.VITE_FIREBASE_PROJECT_ID || ''
-      ),
-      'import.meta.env.VITE_FIREBASE_STORAGE_BUCKET': JSON.stringify(
-        env.VITE_FIREBASE_STORAGE_BUCKET || ''
-      ),
-      'import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID': JSON.stringify(
-        env.VITE_FIREBASE_MESSAGING_SENDER_ID || ''
-      ),
-      'import.meta.env.VITE_FIREBASE_APP_ID': JSON.stringify(env.VITE_FIREBASE_APP_ID || ''),
     },
   };
 });

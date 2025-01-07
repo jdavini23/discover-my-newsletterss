@@ -20,7 +20,7 @@ export const DefaultPagination = () => {
     <Pagination
       currentPage={currentPage}
       totalPages={10}
-      onPageChange={(page) => {
+      onPageChange={page => {
         console.log(`Navigating to page ${page}`);
         setCurrentPage(page);
       }}
@@ -35,7 +35,7 @@ export const FirstPagePagination = () => {
     <Pagination
       currentPage={currentPage}
       totalPages={5}
-      onPageChange={(page) => {
+      onPageChange={page => {
         console.log(`Navigating to page ${page}`);
         setCurrentPage(page);
       }}
@@ -50,7 +50,7 @@ export const LastPagePagination = () => {
     <Pagination
       currentPage={currentPage}
       totalPages={5}
-      onPageChange={(page) => {
+      onPageChange={page => {
         console.log(`Navigating to page ${page}`);
         setCurrentPage(page);
       }}

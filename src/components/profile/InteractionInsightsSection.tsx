@@ -18,13 +18,10 @@ const InteractionInsightsSection: React.FC<InteractionInsightsSectionProps> = ({
     .sort((a, b) => b.timestamp.seconds - a.timestamp.seconds)
     .slice(0, 10); // Show last 10 activities
 
-  const activityCounts = profile.activityLog?.reduce(
-    (acc, activity) => {
-      acc[activity.type] = (acc[activity.type] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  const activityCounts = profile.activityLog?.reduce((acc, activity) => {
+    acc[activity.type] = (acc[activity.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   return (
     <div className="bg-neutralBackground-100 shadow-soft rounded-xl p-6">

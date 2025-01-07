@@ -20,15 +20,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const toggleCategory = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
   };
 
   const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    setSelectedTags(prev => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]));
   };
 
   const applyFilters = () => {
@@ -52,7 +50,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <div className="mb-6">
         <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Categories</h4>
         <div className="space-y-2">
-          {categories.map((category) => (
+          {categories.map(category => (
             <label key={category.value} className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -70,7 +68,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <div className="mb-6">
         <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">Tags</h4>
         <div className="space-y-2">
-          {tags.map((tag) => (
+          {tags.map(tag => (
             <label key={tag.value} className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"

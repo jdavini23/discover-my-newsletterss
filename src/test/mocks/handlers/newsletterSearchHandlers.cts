@@ -36,7 +36,7 @@ export const newsletterSearchHandlers = [
     const pageSize = parseInt(url.searchParams.get('pageSize') || '10', 10);
 
     const filteredNewsletters = newsletters.filter(
-      (nl) =>
+      nl =>
         nl.title.toLowerCase().includes(query.toLowerCase()) ||
         nl.description.toLowerCase().includes(query.toLowerCase())
     );
@@ -53,7 +53,7 @@ export const newsletterSearchHandlers = [
   http.get('*/newsletters/:id', async ({ params }) => {
     try {
       const { id } = params;
-      const newsletter = newsletters.find((nl) => nl.id === id);
+      const newsletter = newsletters.find(nl => nl.id === id);
 
       if (newsletter) {
         return HttpResponse.json(newsletter);

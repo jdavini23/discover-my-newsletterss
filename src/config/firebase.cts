@@ -42,7 +42,7 @@ function validateFirebaseConfig(config: FirebaseConfig) {
     'appId',
   ];
 
-  requiredKeys.forEach((key) => {
+  requiredKeys.forEach(key => {
     if (!config[key]) {
       throw new Error(`Missing Firebase configuration: ${key}`);
     }

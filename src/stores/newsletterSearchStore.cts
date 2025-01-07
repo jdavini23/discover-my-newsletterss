@@ -57,7 +57,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
 
     // Fetch newsletters based on current search parameters
     fetchNewsletters: async () => {
-      set((state) => {
+      set(state => {
         state.isLoading = true;
         state.error = null;
       });
@@ -65,7 +65,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
       try {
         const result = await newsletterService.searchNewsletters(get().searchParams);
 
-        set((state) => {
+        set(state => {
           state.newsletters = result.newsletters;
           state.total = result.total;
           state.page = result.page;
@@ -74,7 +74,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
           state.isLoading = false;
         });
       } catch (error) {
-        set((state) => {
+        set(state => {
           state.isLoading = false;
           state.error = error instanceof Error ? error.message : 'An unexpected error occurred';
         });
@@ -82,8 +82,8 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
     },
 
     // Update search parameters
-    setSearchParams: (params) => {
-      set((state) => {
+    setSearchParams: params => {
+      set(state => {
         // Merge new params with existing params
         state.searchParams = { ...state.searchParams, ...params };
       });
@@ -94,7 +94,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
 
     // Reset search to initial state
     resetSearch: () => {
-      set((state) => {
+      set(state => {
         state.searchParams = { page: 1, pageSize: 10 };
         state.newsletters = [];
         state.total = 0;
@@ -108,13 +108,13 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>()(
       try {
         const options = await newsletterService.getFilterOptions();
 
-        set((state) => {
+        set(state => {
           state.categories = options.categories;
           state.tags = options.tags;
           state.frequencies = options.frequencies;
         });
       } catch (error) {
-        set((state) => {
+        set(state => {
           state.error = error instanceof Error ? error.message : 'Failed to load filter options';
         });
       }

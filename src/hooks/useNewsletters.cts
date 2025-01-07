@@ -2,25 +2,25 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { newsletterApi } from '../services/api/newsletterApi';
 import type { NewsletterSearchFilters } from '../types/newsletter';
 
-export const useNewsletterSearch = (filters: NewsletterSearchFilters) => 
+export const useNewsletterSearch = (filters: NewsletterSearchFilters) =>
   useQuery({
     queryKey: ['newsletters', 'search', filters],
     queryFn: () => newsletterApi.search(filters),
   });
 
-export const useNewsletter = (id: string) => 
+export const useNewsletter = (id: string) =>
   useQuery({
     queryKey: ['newsletter', id],
     queryFn: () => newsletterApi.getById(id),
   });
 
-export const useRecommendedNewsletters = () => 
+export const useRecommendedNewsletters = () =>
   useQuery({
     queryKey: ['newsletters', 'recommended'],
     queryFn: () => newsletterApi.getRecommended(),
   });
 
-export const useFeaturedNewsletters = () => 
+export const useFeaturedNewsletters = () =>
   useQuery({
     queryKey: ['newsletters', 'featured'],
     queryFn: () => newsletterApi.getFeatured(),

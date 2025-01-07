@@ -36,7 +36,7 @@ const CreateAdminPage: React.FC = () => {
                 type="password"
                 id="adminSecret"
                 value={adminSecret}
-                onChange={(e) => setAdminSecret(e.target.value)}
+                onChange={e => setAdminSecret(e.target.value)}
                 className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
                 required
               />

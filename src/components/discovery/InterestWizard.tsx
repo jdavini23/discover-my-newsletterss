@@ -29,9 +29,9 @@ const InterestWizard: React.FC = () => {
 
   // Memoize interest selection handler to prevent unnecessary re-renders
   const handleInterestSelect = useCallback((interest: string) => {
-    setSelectedInterests((prevInterests) =>
+    setSelectedInterests(prevInterests =>
       prevInterests.includes(interest)
-        ? prevInterests.filter((i) => i !== interest)
+        ? prevInterests.filter(i => i !== interest)
         : [...prevInterests, interest]
     );
   }, []);
@@ -59,7 +59,7 @@ const InterestWizard: React.FC = () => {
   const renderedInterestCategories = useMemo(
     () => (
       <div className="space-y-6">
-        {interestCategories.map((category) => (
+        {interestCategories.map(category => (
           <div key={category.category} className="rounded-lg bg-white p-6 shadow-md">
             <h3 className="mb-4 text-xl font-semibold">{category.category}</h3>
             <div className="flex flex-wrap gap-3">

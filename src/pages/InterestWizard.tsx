@@ -32,8 +32,8 @@ const InterestWizard: React.FC = () => {
   }, [user, navigate]);
 
   const toggleInterest = (categoryId: string) => {
-    setSelectedInterests((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
+    setSelectedInterests(prev =>
+      prev.includes(categoryId) ? prev.filter(id => id !== categoryId) : [...prev, categoryId]
     );
   };
 
@@ -65,7 +65,7 @@ const InterestWizard: React.FC = () => {
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {INTEREST_CATEGORIES.map((category) => (
+          {INTEREST_CATEGORIES.map(category => (
             <button
               key={category.id}
               onClick={() => toggleInterest(category.id)}

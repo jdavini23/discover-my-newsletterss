@@ -18,7 +18,7 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>((set, get)
   isLoading: false,
   error: null,
 
-  setSearchQuery: (query) => set({ searchQuery: query }),
+  setSearchQuery: query => set({ searchQuery: query }),
 
   performSearch: async () => {
     const { searchQuery } = get();
@@ -55,10 +55,10 @@ export const useNewsletterSearchStore = create<NewsletterSearchState>((set, get)
       // Filter mock results based on search query
       const filteredResults = searchQuery
         ? mockResults.filter(
-            (newsletter) =>
+            newsletter =>
               newsletter.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
               newsletter.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              newsletter.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+              newsletter.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
           )
         : mockResults;
 

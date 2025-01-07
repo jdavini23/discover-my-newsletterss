@@ -27,7 +27,7 @@ class PerformanceMonitoringService {
     const metrics: PerformanceMetrics = {
       timeToFirstByte: navigation.responseStart - navigation.requestStart,
       firstContentfulPaint:
-        paint.find((entry) => entry.name === 'first-contentful-paint')?.startTime || 0,
+        paint.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0,
       loadTime: navigation.loadEventEnd - navigation.navigationStart,
     };
 
@@ -63,7 +63,7 @@ class PerformanceMonitoringService {
     if (!this.isEnabled) return;
 
     // Monitor route changes
-    const observer = new PerformanceObserver((list) => {
+    const observer = new PerformanceObserver(list => {
       for (const entry of list.getEntries()) {
         console.log('[Staging] Performance Entry:', entry);
       }

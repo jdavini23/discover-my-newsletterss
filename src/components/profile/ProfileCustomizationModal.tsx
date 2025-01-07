@@ -80,8 +80,8 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
   };
 
   const handleCategoryToggle = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
   };
 
@@ -163,7 +163,7 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
         className="bg-white dark:bg-dark-surface rounded-2xl p-8 max-w-2xl w-full"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className="text-center mb-6">
           <UserIcon className="mx-auto h-12 w-12 text-primary-600 mb-4" />
@@ -211,7 +211,7 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
                   type="text"
                   id="displayName"
                   value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
+                  onChange={e => setDisplayName(e.target.value)}
                   className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Enter your name"
                 />
@@ -241,7 +241,7 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
               Newsletter Interests
             </h3>
             <div className="flex flex-wrap gap-2">
-              {NEWSLETTER_CATEGORIES.map((category) => (
+              {NEWSLETTER_CATEGORIES.map(category => (
                 <button
                   key={category}
                   type="button"
@@ -272,7 +272,7 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
             <select
               id="newsletter-frequency"
               value={newsletterFrequency}
-              onChange={(e) =>
+              onChange={e =>
                 setNewsletterFrequency(e.target.value as 'daily' | 'weekly' | 'monthly')
               }
               className="
@@ -292,7 +292,7 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
                 dark:text-white
               "
             >
-              {NEWSLETTER_FREQUENCIES.map((freq) => (
+              {NEWSLETTER_FREQUENCIES.map(freq => (
                 <option key={freq.value} value={freq.value}>
                   {freq.label}
                 </option>

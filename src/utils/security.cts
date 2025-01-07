@@ -18,7 +18,7 @@ class SecurityService {
 
     // Add request interceptor to attach CSRF token
     this.axiosInstance.interceptors.request.use(
-      async (config) => {
+      async config => {
         if (!this.csrfToken) {
           await this.refreshCsrfToken();
         }
@@ -29,13 +29,13 @@ class SecurityService {
 
         return config;
       },
-      (error) => Promise.reject(error)
+      error => Promise.reject(error)
     );
 
     // Add response interceptor to handle CSRF token expiration
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
+      response => response,
+      async error => {
         if (
           error.response?.status === 403 &&
           error.response?.data?.error === 'CSRF Validation Failed'

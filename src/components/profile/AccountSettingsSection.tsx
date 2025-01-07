@@ -91,7 +91,7 @@ const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile
               type="password"
               id="currentPassword"
               value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
+              onChange={e => setCurrentPassword(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm py-2 px-3"
             />
           </div>
@@ -103,7 +103,7 @@ const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile
               type="password"
               id="newPassword"
               value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              onChange={e => setNewPassword(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm py-2 px-3"
             />
           </div>
@@ -115,7 +115,7 @@ const AccountSettingsSection: React.FC<AccountSettingsSectionProps> = ({ profile
               type="password"
               id="confirmPassword"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={e => setConfirmPassword(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm py-2 px-3"
             />
           </div>

@@ -17,9 +17,7 @@ let userPreferences = {
 
 export const userPreferencesHandlers = [
   // Get user preferences
-  http.get(`${API_URL}/user/preferences`, () => 
-    HttpResponse.json(userPreferences)
-  ),
+  http.get(`${API_URL}/user/preferences`, () => HttpResponse.json(userPreferences)),
 
   // Update user preferences
   http.put(`${API_URL}/user/preferences`, async ({ request }) => {
@@ -41,7 +39,7 @@ export const userPreferencesHandlers = [
   http.delete(`${API_URL}/user/preferences/favorites/:id`, ({ params }) => {
     const { id } = params;
     userPreferences.favoriteNewsletters = userPreferences.favoriteNewsletters.filter(
-      (newsletterId) => newsletterId !== id
+      newsletterId => newsletterId !== id
     );
     return HttpResponse.json(userPreferences);
   }),

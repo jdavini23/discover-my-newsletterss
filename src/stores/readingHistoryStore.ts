@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface ReadingHistoryItem {
   newsletterId: string;
@@ -14,17 +14,15 @@ interface ReadingHistoryState {
   clearHistory: () => void;
 }
 
-const useReadingHistoryStore = create<ReadingHistoryState>(
+const useReadingHistoryStore = create<ReadingHistoryState>()(
   persist(
-    (set) => ({
+    set => ({
       history: [],
 
       addToHistory: (newsletterId, newsletterTitle) =>
-        set((state) => {
+        set(state => {
           // Prevent duplicates and keep only unique entries
-          const existingIndex = state.history.findIndex(
-            (item) => item.newsletterId === newsletterId
-          );
+          const existingIndex = state.history.findIndex(item => item.newsletterId === newsletterId);
 
           if (existingIndex !== -1) {
             // Update timestamp if already exists
@@ -46,16 +44,19 @@ const useReadingHistoryStore = create<ReadingHistoryState>(
           return { history: newHistory };
         }),
 
-      removeFromHistory: (newsletterId) =>
-        set((state) => ({
-          history: state.history.filter((item) => item.newsletterId !== newsletterId),
+      removeFromHistory: newsletterId =>
+        set(state => ({
+          history: state.history.filter(item => item.newsletterId !== newsletterId),
         })),
 
       clearHistory: () => set({ history: [] }),
     }),
     {
-      name: 'reading-history-storage', // unique name
-      getStorage: () => localStorage, // use localStorage for persistence
+      name: 'reading-history-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: state => ({
+        history: state.history,
+      }),
     }
   )
 );

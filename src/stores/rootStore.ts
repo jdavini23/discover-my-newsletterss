@@ -18,15 +18,15 @@ interface NotificationStore {
   removeNotification: (id: string) => void;
 }
 
-export const useNotificationStore = create<NotificationStore>((set) => ({
+export const useNotificationStore = create<NotificationStore>(set => ({
   notifications: [],
   addNotification: (message, type = 'info') =>
-    set((state) => ({
+    set(state => ({
       notifications: [...state.notifications, { id: uuidv4(), message, type }],
     })),
-  removeNotification: (id) =>
-    set((state) => ({
-      notifications: state.notifications.filter((n) => n.id !== id),
+  removeNotification: id =>
+    set(state => ({
+      notifications: state.notifications.filter(n => n.id !== id),
     })),
 }));
 

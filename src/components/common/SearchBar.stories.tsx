@@ -4,7 +4,7 @@ import { SearchBar } from './SearchBar';
 export const DefaultSearchBar = () => (
   <SearchBar
     placeholder="Search newsletters..."
-    onSearch={(query) => console.log('Search query:', query)}
+    onSearch={query => console.log('Search query:', query)}
   />
 );
 
@@ -12,7 +12,7 @@ export const PrefilledSearchBar = () => (
   <SearchBar
     placeholder="Search newsletters..."
     initialValue="React"
-    onSearch={(query) => console.log('Search query:', query)}
+    onSearch={query => console.log('Search query:', query)}
   />
 );
 
@@ -20,7 +20,7 @@ export const DisabledSearchBar = () => (
   <SearchBar
     placeholder="Search newsletters..."
     disabled
-    onSearch={(query) => console.log('Search query:', query)}
+    onSearch={query => console.log('Search query:', query)}
   />
 );
 

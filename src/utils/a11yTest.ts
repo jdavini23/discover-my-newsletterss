@@ -29,7 +29,7 @@ export function checkColorContrast(foregroundColor: string, backgroundColor: str
     const g = (rgb >> 8) & 0xff;
     const b = (rgb >> 0) & 0xff;
 
-    const a = [r, g, b].map((v) => {
+    const a = [r, g, b].map(v => {
       v /= 255;
       return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
     });

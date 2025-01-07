@@ -42,13 +42,13 @@ interface NotificationState {
 export const useUserStore = create<UserState>()(
   devtools(
     persist(
-      (set) => ({
+      set => ({
         user: {
           isAuthenticated: false,
           mfaEnabled: false,
         },
-        setUser: (userData) =>
-          set((state) => ({
+        setUser: userData =>
+          set(state => ({
             user: { ...state.user, ...userData },
           })),
         clearUser: () =>
@@ -66,25 +66,25 @@ export const useUserStore = create<UserState>()(
 
 // Create Newsletter Store
 export const useNewsletterStore = create<NewsletterState>()(
-  devtools((set) => ({
+  devtools(set => ({
     newsletters: [],
     selectedNewsletter: null,
-    setNewsletters: (newsletters) => set({ newsletters }),
-    selectNewsletter: (id) => set({ selectedNewsletter: id }),
+    setNewsletters: newsletters => set({ newsletters }),
+    selectNewsletter: id => set({ selectedNewsletter: id }),
   }))
 );
 
 // Create Notification Store
 export const useNotificationStore = create<NotificationState>()(
-  devtools((set) => ({
+  devtools(set => ({
     notifications: [],
-    addNotification: (notification) =>
-      set((state) => ({
+    addNotification: notification =>
+      set(state => ({
         notifications: [...state.notifications, { ...notification, id: Date.now().toString() }],
       })),
-    removeNotification: (id) =>
-      set((state) => ({
-        notifications: state.notifications.filter((n) => n.id !== id),
+    removeNotification: id =>
+      set(state => ({
+        notifications: state.notifications.filter(n => n.id !== id),
       })),
   }))
 );

@@ -118,7 +118,7 @@ export function validateSecurityToken(
  */
 export function assessSecurityRisk(activities: string[]): 'low' | 'medium' | 'high' {
   const riskFactors = activities.filter(
-    (activity) =>
+    activity =>
       activity.includes('login') ||
       activity.includes('password change') ||
       activity.includes('device')

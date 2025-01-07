@@ -63,7 +63,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       </button>
 
       {/* Page Numbers */}
-      {pageNumbers.map((page) => {
+      {pageNumbers.map(page => {
         if (page === -1 || page === -2) {
           return (
             <span key={page} className="px-4 py-2 text-gray-500 dark:text-gray-400">

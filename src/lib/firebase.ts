@@ -24,7 +24,7 @@ function validateFirebaseConfig() {
     'appId',
   ];
 
-  const missingKeys = requiredKeys.filter((key) => !firebaseConfig[key]);
+  const missingKeys = requiredKeys.filter(key => !firebaseConfig[key]);
 
   if (missingKeys.length > 0) {
     console.error(

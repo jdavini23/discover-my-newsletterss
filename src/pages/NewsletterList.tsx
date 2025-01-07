@@ -26,7 +26,7 @@ const NewsletterList: React.FC = () => {
   const handleDeleteNewsletter = async (id: string) => {
     try {
       await newsletterService.deleteNewsletter(id);
-      setNewsletters(newsletters.filter((newsletter) => newsletter.id !== id));
+      setNewsletters(newsletters.filter(newsletter => newsletter.id !== id));
     } catch (err) {
       console.error('Error deleting newsletter:', err);
       setError('Failed to delete newsletter');
@@ -66,7 +66,7 @@ const NewsletterList: React.FC = () => {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {newsletters.map((newsletter) => (
+          {newsletters.map(newsletter => (
             <div
               key={newsletter.id}
               className="rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg"

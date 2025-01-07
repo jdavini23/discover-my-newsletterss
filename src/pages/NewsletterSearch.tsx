@@ -18,11 +18,11 @@ const NewsletterSearch: React.FC = () => {
   const { data, isLoading, error } = search(filters);
 
   const handleFilterChange = (newFilters: Partial<NewsletterSearchFilters>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
+    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
   };
 
   const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
+    setFilters(prev => ({ ...prev, page }));
   };
 
   if (error) {
@@ -44,7 +44,7 @@ const NewsletterSearch: React.FC = () => {
       ) : (
         <>
           <div className="my-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {data?.newsletters?.map((newsletter) => (
+            {data?.newsletters?.map(newsletter => (
               <NewsletterCard key={newsletter.id} newsletter={newsletter} />
             )) || (
               <div className="col-span-full py-8 text-center text-gray-500">

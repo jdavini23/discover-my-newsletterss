@@ -49,10 +49,10 @@ export const recordNewsletterInteraction = async (
       interactionType === 'view'
         ? { $inc: 1 }
         : interactionType === 'subscribe'
-          ? { $inc: 5 }
-          : interactionType === 'read'
-            ? { $inc: 3 }
-            : undefined,
+        ? { $inc: 5 }
+        : interactionType === 'read'
+        ? { $inc: 3 }
+        : undefined,
   });
 
   return docRef.id;
@@ -114,11 +114,11 @@ export const generatePersonalizedRecommendations = async (
   const recommendationSnapshot = await getDocs(recommendationQuery);
 
   return recommendationSnapshot.docs.map(
-    (doc) =>
+    doc =>
       ({
         id: doc.id,
         ...doc.data(),
-      }) as Newsletter
+      } as Newsletter)
   );
 };
 
@@ -135,14 +135,14 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
 
   // Calculate recommendation metadata
   const interactions = interactionsSnapshot.docs.map(
-    (doc) => doc.data() as UserNewsletterInteraction
+    doc => doc.data() as UserNewsletterInteraction
   );
 
   const topicWeights: Record<string, number> = {};
   let totalInteractions = 0;
   let contentQualityScore = 0;
 
-  interactions.forEach((interaction) => {
+  interactions.forEach(interaction => {
     totalInteractions++;
 
     // Weight interactions differently
@@ -150,16 +150,16 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
       interaction.interactionType === 'subscribe'
         ? 5
         : interaction.interactionType === 'read'
-          ? 3
-          : interaction.interactionType === 'view'
-            ? 1
-            : 0;
+        ? 3
+        : interaction.interactionType === 'view'
+        ? 1
+        : 0;
 
     // Accumulate topic weights
     // In a real scenario, you'd fetch the newsletter's topics
     // For this example, we'll simulate it
     const newsletterTopics = ['Technology', 'Business']; // Placeholder
-    newsletterTopics.forEach((topic) => {
+    newsletterTopics.forEach(topic => {
       topicWeights[topic] = (topicWeights[topic] || 0) + interactionWeight;
     });
 
@@ -170,7 +170,7 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
   });
 
   // Normalize scores
-  Object.keys(topicWeights).forEach((topic) => {
+  Object.keys(topicWeights).forEach(topic => {
     topicWeights[topic] /= totalInteractions;
   });
   contentQualityScore /= totalInteractions;
@@ -198,8 +198,8 @@ export const findSimilarNewsletters = async (newsletterId: string) => {
   const similarNewslettersSnapshot = await getDocs(similarNewslettersQuery);
 
   const similarNewsletters = similarNewslettersSnapshot.docs
-    .filter((doc) => doc.id !== newsletterId)
-    .map((doc) => doc.id);
+    .filter(doc => doc.id !== newsletterId)
+    .map(doc => doc.id);
 
   // Update newsletter with similar newsletters
   await updateDoc(newsletterRef, {
@@ -222,7 +222,7 @@ class RecommendationService implements RecommendationEngine {
     const preferences = context.preferences;
 
     // Match categories
-    preferences.categories.forEach((category) => {
+    preferences.categories.forEach(category => {
       if (newsletter.categories.includes(category)) {
         score += 0.3;
       }
@@ -230,7 +230,7 @@ class RecommendationService implements RecommendationEngine {
 
     // Match topics
     if (context.currentInterests) {
-      context.currentInterests.forEach((interest) => {
+      context.currentInterests.forEach(interest => {
         if (newsletter.tags.includes(interest)) {
           score += 0.2;
         }
@@ -255,7 +255,7 @@ class RecommendationService implements RecommendationEngine {
     );
 
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => doc.data() as UserNewsletterInteraction);
+    return snapshot.docs.map(doc => doc.data() as UserNewsletterInteraction);
   }
 
   private async calculateCollaborativeScore(
@@ -275,8 +275,8 @@ class RecommendationService implements RecommendationEngine {
 
       const similarUsersSnapshot = await getDocs(similarUsersQuery);
       const similarUserIds = similarUsersSnapshot.docs
-        .map((doc) => doc.data().userId)
-        .filter((id) => id !== userId);
+        .map(doc => doc.data().userId)
+        .filter(id => id !== userId);
 
       // If no similar users, return minimal score
       if (similarUserIds.length === 0) return 0.1;
@@ -293,7 +293,7 @@ class RecommendationService implements RecommendationEngine {
       // Calculate collaborative score based on similar users' interactions
       const totalInteractions = similarInteractionsSnapshot.docs.length;
       const newsletterInteractions = similarInteractionsSnapshot.docs.filter(
-        (doc) => doc.data().newsletterId === newsletter.id
+        doc => doc.data().newsletterId === newsletter.id
       ).length;
 
       // Normalize score
@@ -320,20 +320,20 @@ class RecommendationService implements RecommendationEngine {
       Politics: 0.1,
     };
 
-    preferences.categories.forEach((category) => {
-      const matchedCategories = newsletter.categories.filter((nc) =>
+    preferences.categories.forEach(category => {
+      const matchedCategories = newsletter.categories.filter(nc =>
         nc.toLowerCase().includes(category.toLowerCase())
       );
 
-      matchedCategories.forEach((matchedCategory) => {
+      matchedCategories.forEach(matchedCategory => {
         score += categoryWeights[matchedCategory] || 0.1;
       });
     });
 
     // Advanced topic matching with fuzzy logic
     if (context.currentInterests) {
-      context.currentInterests.forEach((interest) => {
-        const topicMatch = newsletter.tags.some((tag) =>
+      context.currentInterests.forEach(interest => {
+        const topicMatch = newsletter.tags.some(tag =>
           tag.toLowerCase().includes(interest.toLowerCase())
         );
 
@@ -410,7 +410,7 @@ class RecommendationService implements RecommendationEngine {
       },
     ];
 
-    return fallbackNewsletters.map((newsletter) => ({
+    return fallbackNewsletters.map(newsletter => ({
       newsletter,
       newsletterId: newsletter.id,
       score: 0.7, // High default score for fallback
@@ -457,7 +457,7 @@ class RecommendationService implements RecommendationEngine {
 
       const newsletters = await Promise.all(
         querySnapshot.docs
-          .map(async (doc) => {
+          .map(async doc => {
             const data = doc.data() as Newsletter;
             if (!data || !data.title) return null;
 
@@ -488,7 +488,7 @@ class RecommendationService implements RecommendationEngine {
 
       // Advanced sorting with diversity
       const recommendations = newsletters
-        .filter((rec) => !context.preferences.excludedNewsletters?.includes(rec.newsletterId))
+        .filter(rec => !context.preferences.excludedNewsletters?.includes(rec.newsletterId))
         .sort((a, b) => b.score - a.score)
         .slice(0, 15) // Increased to 15 for more variety
         .sort(() => 0.5 - Math.random()) // Add some randomness
@@ -502,7 +502,7 @@ class RecommendationService implements RecommendationEngine {
 
       console.log('RECOMMENDATION_SERVICE: Generated Recommendations', {
         count: recommendations.length,
-        recommendationDetails: recommendations.map((rec) => ({
+        recommendationDetails: recommendations.map(rec => ({
           title: rec.newsletter.title,
           score: rec.score,
         })),
@@ -566,11 +566,11 @@ class RecommendationService implements RecommendationEngine {
       const q = query(interactionsRef, where('newsletterId', '==', newsletterId));
 
       const snapshot = await getDocs(q);
-      const interactions = snapshot.docs.map((doc) => doc.data() as UserNewsletterInteraction);
+      const interactions = snapshot.docs.map(doc => doc.data() as UserNewsletterInteraction);
 
       // Calculate engagement metrics
-      const viewCount = interactions.filter((i) => i.interactionType === 'view').length;
-      const subscribeCount = interactions.filter((i) => i.interactionType === 'subscribe').length;
+      const viewCount = interactions.filter(i => i.interactionType === 'view').length;
+      const subscribeCount = interactions.filter(i => i.interactionType === 'subscribe').length;
 
       await updateDoc(newsletterRef, {
         recommendationScore: {
@@ -597,7 +597,7 @@ class RecommendationService implements RecommendationEngine {
         size: querySnapshot.size,
       });
 
-      const trendingNewsletters = querySnapshot.docs.map((doc) => {
+      const trendingNewsletters = querySnapshot.docs.map(doc => {
         const data = doc.data() as Newsletter;
         console.log('Trending Newsletter Document:', {
           id: doc.id,
@@ -614,7 +614,7 @@ class RecommendationService implements RecommendationEngine {
       console.log(`Fetched ${trendingNewsletters.length} trending newsletters`);
       console.log(
         'Trending Newsletter Titles:',
-        trendingNewsletters.map((nl) => nl.title)
+        trendingNewsletters.map(nl => nl.title)
       );
 
       return trendingNewsletters;

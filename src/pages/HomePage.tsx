@@ -117,11 +117,11 @@ const NewsletterCarousel: React.FC = () => {
   ];
 
   const nextNewsletter = () => {
-    setCurrentIndex((prev) => (prev + 1) % featuredNewsletters.length);
+    setCurrentIndex(prev => (prev + 1) % featuredNewsletters.length);
   };
 
   const prevNewsletter = () => {
-    setCurrentIndex((prev) => (prev - 1 + featuredNewsletters.length) % featuredNewsletters.length);
+    setCurrentIndex(prev => (prev - 1 + featuredNewsletters.length) % featuredNewsletters.length);
   };
 
   return (
@@ -148,7 +148,7 @@ const NewsletterCarousel: React.FC = () => {
             </h3>
             <p className="text-gray-600 mb-4">{featuredNewsletters[currentIndex].description}</p>
             <div className="flex items-center space-x-2">
-              {featuredNewsletters[currentIndex].tags.map((tag) => (
+              {featuredNewsletters[currentIndex].tags.map(tag => (
                 <span
                   key={tag}
                   className="bg-primary-100 text-primary-600 px-3 py-1 rounded-full text-sm"
@@ -199,7 +199,7 @@ const CategorySection: React.FC = () => {
           Explore Newsletters by Category
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((category) => (
+          {categories.map(category => (
             <motion.div
               key={category.name}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -307,7 +307,7 @@ const ShowcaseSection = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12">Discover Top Newsletters</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {showcaseNewsletters.map((newsletter) => (
+          {showcaseNewsletters.map(newsletter => (
             <motion.div
               key={newsletter.id}
               whileHover={{ scale: 1.05 }}
@@ -322,7 +322,7 @@ const ShowcaseSection = () => {
                 <h3 className="text-xl font-semibold mb-2">{newsletter.title}</h3>
                 <p className="text-gray-600 mb-4">{newsletter.description}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {newsletter.tags.map((tag) => (
+                  {newsletter.tags.map(tag => (
                     <span
                       key={tag}
                       className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
@@ -479,7 +479,7 @@ const HomePage: React.FC = () => {
                 type="text"
                 placeholder="Search newsletters..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               <button
@@ -547,7 +547,7 @@ const HomePage: React.FC = () => {
             Why Choose Discover My Newsletters?
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature) => (
+            {features.map(feature => (
               <motion.div
                 key={feature.id}
                 whileHover={{ scale: 1.05 }}
@@ -578,7 +578,7 @@ const HomePage: React.FC = () => {
               Personalized Recommendations
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {storeRecommendations.map((rec) => (
+              {storeRecommendations.map(rec => (
                 <div
                   key={rec.newsletterId}
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all"

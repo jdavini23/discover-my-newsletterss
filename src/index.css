@@ -6,15 +6,22 @@
 @tailwind utilities;
 
 @layer base {
-  html, body {
+  html,
+  body {
     @apply antialiased text-text-primary-light dark:text-text-primary-dark transition-colors duration-200 bg-background-light dark:bg-background-dark;
   }
 
-  .dark html, .dark body {
+  .dark html,
+  .dark body {
     @apply text-text-primary-dark bg-background-dark;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-text-primary-light dark:text-text-primary-dark;
   }
 
@@ -133,7 +140,7 @@
   :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
-    
+
     --color-primary-50: 240 249 255;
     --color-primary-100: 224 242 254;
     --color-primary-200: 186 230 253;

@@ -38,7 +38,7 @@ export const TypographyGuide: Story = () => (
     <section>
       <h2 className="text-2xl font-semibold mb-4">Font Weights</h2>
       <div className="grid grid-cols-4 gap-4">
-        {['Thin', 'Light', 'Normal', 'Medium', 'Semibold', 'Bold'].map((weight) => (
+        {['Thin', 'Light', 'Normal', 'Medium', 'Semibold', 'Bold'].map(weight => (
           <div key={weight} className="border p-4">
             <p className={`text-base font-${weight.toLowerCase()}`}>
               {weight} - {weight === 'Normal' ? 'Regular' : weight}
@@ -76,7 +76,7 @@ TypographyGuide.parameters = {
 export const FontSizeComparison: Story = () => (
   <div className="p-8 space-y-4">
     <h2 className="text-2xl font-semibold mb-4">Font Size Comparison</h2>
-    {['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'].map((size) => (
+    {['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'].map(size => (
       <div key={size} className="flex items-center space-x-4">
         <span className="w-16 text-gray-600">{size}</span>
         <p className={`text-${size}`}>The quick brown fox jumps over the lazy dog</p>

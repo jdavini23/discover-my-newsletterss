@@ -20,6 +20,17 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+console.log('Firebase Config:', {
+  apiKey: firebaseConfig.apiKey ? 'REDACTED' : 'MISSING',
+  authDomain: firebaseConfig.authDomain,
+  projectId: firebaseConfig.projectId,
+});
+
+// Validate configuration
+if (!firebaseConfig.apiKey) {
+  console.error('Firebase API Key is missing. Check your .env configuration.');
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
@@ -34,6 +45,7 @@ export const signUp = async (email: string, password: string) => {
     return userCredential.user;
   } catch (error) {
     const authError = error as AuthError;
+    console.error('Sign Up Error:', authError.message);
     throw new Error(authError.message);
   }
 };
@@ -44,6 +56,7 @@ export const signIn = async (email: string, password: string) => {
     return userCredential.user;
   } catch (error) {
     const authError = error as AuthError;
+    console.error('Sign In Error:', authError.message);
     throw new Error(authError.message);
   }
 };
@@ -53,11 +66,27 @@ export const logOut = async () => {
     await signOut(auth);
   } catch (error) {
     const authError = error as AuthError;
+    console.error('Logout Error:', authError.message);
     throw new Error(authError.message);
   }
 };
 
 // Authentication state listener
-export const onAuthChange = (callback: (user: User | null) => void) => {
-  return onAuthStateChanged(auth, callback);
+export const onAuthChange = (
+  callback: (user: User | null) => void,
+  errorCallback?: (error: Error) => void
+) => {
+  return onAuthStateChanged(
+    auth,
+    user => {
+      console.log('Auth State Changed:', user ? user.uid : 'No User');
+      callback(user);
+    },
+    error => {
+      console.error('Auth State Change Error:', error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    }
+  );
 };

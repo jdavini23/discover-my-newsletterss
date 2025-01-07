@@ -53,7 +53,7 @@ class NewsletterService {
 
     // Add request interceptor for testing
     if (process.env.NODE_ENV === 'test') {
-      this.axiosInstance.interceptors.request.use((config) => {
+      this.axiosInstance.interceptors.request.use(config => {
         // Override baseURL for tests
         config.baseURL = 'http://localhost:3000/api';
         return config;

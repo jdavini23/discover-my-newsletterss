@@ -64,9 +64,7 @@ export const NewsletterSearch: React.FC = () => {
   };
 
   const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    setSelectedTags(prev => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]));
   };
 
   if (error) {
@@ -79,14 +77,14 @@ export const NewsletterSearch: React.FC = () => {
         <Input
           placeholder="Search newsletters..."
           value={localQuery}
-          onChange={(e) => setLocalQuery(e.target.value)}
+          onChange={e => setLocalQuery(e.target.value)}
         />
         <Select
           placeholder="Select Category"
           value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          onChange={e => setSelectedCategory(e.target.value)}
         >
-          {categories.map((category) => (
+          {categories.map(category => (
             <option key={category} value={category}>
               {category}
             </option>
@@ -95,9 +93,9 @@ export const NewsletterSearch: React.FC = () => {
         <Select
           placeholder="Frequency"
           value={selectedFrequency}
-          onChange={(e) => setSelectedFrequency(e.target.value)}
+          onChange={e => setSelectedFrequency(e.target.value)}
         >
-          {frequencies.map((freq) => (
+          {frequencies.map(freq => (
             <option key={freq} value={freq}>
               {freq}
             </option>
@@ -112,7 +110,7 @@ export const NewsletterSearch: React.FC = () => {
       </HStack>
 
       <Wrap spacing={2}>
-        {tags.map((tag) => (
+        {tags.map(tag => (
           <WrapItem key={tag}>
             <Button
               size="sm"
@@ -130,7 +128,7 @@ export const NewsletterSearch: React.FC = () => {
         <Spinner />
       ) : (
         <VStack align="stretch">
-          {newsletters.map((newsletter) => (
+          {newsletters.map(newsletter => (
             <NewsletterCard key={newsletter.id} newsletter={newsletter} />
           ))}
         </VStack>
@@ -149,7 +147,7 @@ const NewsletterCard: React.FC<{ newsletter: Newsletter }> = ({ newsletter }) =>
       </HStack>
       <Text>{newsletter.description}</Text>
       <HStack>
-        {newsletter.categories.map((category) => (
+        {newsletter.categories.map(category => (
           <Text key={category} fontSize="sm" color="blue.500">
             {category}
           </Text>

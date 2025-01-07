@@ -33,14 +33,14 @@ export const SearchFilters: React.FC<Props> = ({ filters, onFilterChange }) => {
 
   const handleCategoryChange = (category: string) => {
     const newCategories = filters.categories?.includes(category)
-      ? filters.categories.filter((c) => c !== category)
+      ? filters.categories.filter(c => c !== category)
       : [...(filters.categories || []), category];
     onFilterChange({ categories: newCategories });
   };
 
   const handleFrequencyChange = (frequency: (typeof FREQUENCIES)[number]) => {
     const newFrequencies = filters.frequency?.includes(frequency)
-      ? filters.frequency.filter((f) => f !== frequency)
+      ? filters.frequency.filter(f => f !== frequency)
       : [...(filters.frequency || []), frequency];
     onFilterChange({ frequency: newFrequencies });
   };
@@ -64,7 +64,7 @@ export const SearchFilters: React.FC<Props> = ({ filters, onFilterChange }) => {
       <div>
         <h3 className="mb-2 font-medium">Categories</h3>
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((category) => (
+          {CATEGORIES.map(category => (
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
@@ -83,7 +83,7 @@ export const SearchFilters: React.FC<Props> = ({ filters, onFilterChange }) => {
       <div>
         <h3 className="mb-2 font-medium">Frequency</h3>
         <div className="flex gap-4">
-          {FREQUENCIES.map((frequency) => (
+          {FREQUENCIES.map(frequency => (
             <label key={frequency} className="flex items-center">
               <input
                 type="checkbox"
@@ -104,7 +104,7 @@ export const SearchFilters: React.FC<Props> = ({ filters, onFilterChange }) => {
           onChange={handleSortChange}
           className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:ring-indigo-500"
         >
-          {SORT_OPTIONS.map((option) => (
+          {SORT_OPTIONS.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
