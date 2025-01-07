@@ -52,7 +52,7 @@ const NewsletterInteractionPanel: React.FC<NewsletterInteractionPanelProps> = ({
   }, [newsletterId]);
 
   return (
-    <div className="flex space-x-4 items-center">
+    <div className='flex space-x-4 items-center'>
       <button
         onClick={handleFavoriteToggle}
         disabled={isFavoriting}
@@ -68,13 +68,13 @@ const NewsletterInteractionPanel: React.FC<NewsletterInteractionPanelProps> = ({
           isSubscribed ? 'text-blue-500' : 'text-gray-500'
         }`}
       >
-        <ShareIcon className="w-6 h-6" />
+        <ShareIcon className='w-6 h-6' />
       </button>
       <button
         onClick={handleShare}
-        className="text-gray-500 hover:text-green-500 transition-colors"
+        className='text-gray-500 hover:text-green-500 transition-colors'
       >
-        <ShareIcon className="w-6 h-6" />
+        <ShareIcon className='w-6 h-6' />
       </button>
     </div>
   );

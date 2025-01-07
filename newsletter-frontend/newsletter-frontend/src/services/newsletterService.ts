@@ -141,7 +141,7 @@ const MOCK_NEWSLETTERS: Newsletter[] = [
 ];
 
 // Simulated delay to mimic real API call
-const simulateDelay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
+const simulateDelay = (ms: number = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Mock image URLs for newsletters
 const NEWSLETTER_IMAGES = [
@@ -187,7 +187,9 @@ export const generateMockNewsletters = (count: number = 20): Newsletter[] => {
   return Array.from({ length: count }, (_, index) => ({
     id: `newsletter_${index + 1}`,
     title: `${categories[index % categories.length]} Insights`,
-    description: `Curated ${categories[index % categories.length]} newsletter with the latest trends and insights.`,
+    description: `Curated ${
+      categories[index % categories.length]
+    } newsletter with the latest trends and insights.`,
     author: `${categories[index % categories.length]} Digest`,
     category: categories[index % categories.length],
     tags: tags.sort(() => 0.5 - Math.random()).slice(0, 3),
@@ -228,7 +230,7 @@ export const NewsletterService = {
 
     // Apply category filter
     if (categories && categories.length > 0) {
-      filteredNewsletters = filteredNewsletters.filter(newsletter =>
+      filteredNewsletters = filteredNewsletters.filter((newsletter) =>
         categories.includes(newsletter.category)
       );
     }
@@ -237,10 +239,10 @@ export const NewsletterService = {
     if (searchQuery) {
       const lowerCaseQuery = searchQuery.toLowerCase();
       filteredNewsletters = filteredNewsletters.filter(
-        newsletter =>
+        (newsletter) =>
           newsletter.title.toLowerCase().includes(lowerCaseQuery) ||
           newsletter.description.toLowerCase().includes(lowerCaseQuery) ||
-          newsletter.tags.some(tag => tag.toLowerCase().includes(lowerCaseQuery))
+          newsletter.tags.some((tag) => tag.toLowerCase().includes(lowerCaseQuery))
       );
     }
 
@@ -278,7 +280,7 @@ export const NewsletterService = {
       }
 
       // Find the newsletter
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
       if (!newsletter) {
         throw new Error('Newsletter not found');
       }
@@ -294,7 +296,7 @@ export const NewsletterService = {
   async getNewslettersByCategory(category: string): Promise<Newsletter[]> {
     try {
       await simulateDelay();
-      return MOCK_NEWSLETTERS.filter(newsletter => newsletter.category === category);
+      return MOCK_NEWSLETTERS.filter((newsletter) => newsletter.category === category);
     } catch (error) {
       console.error('Error fetching newsletters by category:', error);
       return [];
@@ -304,7 +306,7 @@ export const NewsletterService = {
   async getNewsletterEngagement(newsletterId: string): Promise<NewsletterEngagement> {
     try {
       await simulateDelay();
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
 
       return {
         subscribers: newsletter?.subscribers || 0,
@@ -330,7 +332,7 @@ export const NewsletterService = {
   }> {
     try {
       await simulateDelay();
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
+      const newsletter = MOCK_NEWSLETTERS.find((nl) => nl.id === newsletterId);
 
       return {
         subscribersCount: newsletter?.subscribers || 0,

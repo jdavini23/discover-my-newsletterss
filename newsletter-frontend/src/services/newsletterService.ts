@@ -1,5 +1,5 @@
 import { Newsletter } from '@/stores/newsletterStore';
-import { auth } from '@/services/firebaseConfig';
+import { auth } from '@/config/firebase';
 import {
   getFirestore,
   collection,

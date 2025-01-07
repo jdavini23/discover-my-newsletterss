@@ -18,7 +18,7 @@ interface AuthState {
   initializeAuth: () => void;
 }
 
-const useAuthStore = create<AuthState>(set => ({
+const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: true,
@@ -87,7 +87,7 @@ const useAuthStore = create<AuthState>(set => ({
 
   initializeAuth: () => {
     console.log('Initializing authentication...');
-    onAuthChange(user => {
+    onAuthChange((user) => {
       console.log('Auth state changed:', user);
       if (user) {
         console.log('User authenticated:', user.email);

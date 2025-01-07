@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import Navigation from './Navigation';
-import { Navigation } from './Navigation';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,9 +7,9 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-background dark:bg-gray-900 transition-colors duration-300'>
       <Navigation />
-      <div className='pt-16'>{children}</div>
+      <main className='pt-16 container mx-auto px-4 sm:px-6 lg:px-8'>{children}</main>
     </div>
   );
 };
