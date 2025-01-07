@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "discover-my-newsletters",
   "version": "1.0.0",
   "private": true,
@@ -69,6 +70,72 @@
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
     "vitest": "^2.1.8"
+=======
+  "name": "newsletter-frontend",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepare": "husky install",
+    "deploy:indexes": "npx firebase deploy --only firestore:indexes",
+    "vercel-build": "tsc --noEmit && vite build",
+    "seed:newsletters": "node --loader ts-node/esm scripts/seedNewsletters.ts"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^3.9.1",
+    "@types/uuid": "^10.0.0",
+    "axios": "^1.6.7",
+    "firebase": "^11.1.0",
+    "framer-motion": "^11.15.0",
+    "immer": "^10.1.1",
+    "plausible-tracker": "^0.3.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^5.0.0",
+    "react-ga4": "^2.1.0",
+    "react-hook-form": "^7.54.2",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.28.1",
+    "uuid": "^11.0.3",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "autoprefixer": "^10.4.20",
+    "dotenv": "^16.4.7",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "firebase-admin": "^13.0.2",
+    "firebase-tools": "^13.29.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "postcss": "^8.4.49",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.17",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "vitest": "^1.2.2"
+>>>>>>> master
   },
   "lint-staged": {
     "*.{ts,tsx}": [
