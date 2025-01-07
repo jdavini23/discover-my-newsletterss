@@ -7,11 +7,10 @@ export interface Newsletter {
   id: string;
   title: string;
   description: string;
-  author: string;
   category: string;
-  tags: string[];
+  frequency: string;
   subscribers: number;
-  rating?: number;
+  url: string;
   imageUrl?: string;
 }
 
