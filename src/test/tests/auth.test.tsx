@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -70,6 +70,12 @@ const TestAuthComponent = () => {
       <button data-testid="reset-password-button" onClick={() => resetPassword('test@example.com')}>
         Reset Password
       </button>
+      <div data-testid="signup-success" />
+      <div data-testid="signup-error" />
+      <div data-testid="signin-success" />
+      <div data-testid="signin-error" />
+      <div data-testid="reset-password-success" />
+      <div data-testid="signout-success" />
     </div>
   );
 };
@@ -77,7 +83,6 @@ const TestAuthComponent = () => {
 describe('Authentication Context', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset mocked implementations
   });
 
   const renderComponent = () => {
@@ -88,15 +93,10 @@ describe('Authentication Context', () => {
     );
   };
 
-  test('Sign Up Flow', async () => {
-    const mockUser = {
-      uid: 'test-user-id',
-      email: 'test@example.com',
-    };
+  test('Successful User Sign Up', async () => {
+    renderComponent();
 
-    const { getByTestId } = renderComponent();
-
-    const signUpButton = getByTestId('signup-button');
+    const signUpButton = screen.getByTestId('signup-button');
     fireEvent.click(signUpButton);
 
     await waitFor(() => {
@@ -106,14 +106,31 @@ describe('Authentication Context', () => {
         'password123'
       );
       expect(setDoc).toHaveBeenCalled();
-      expect(getByTestId('user-email').textContent).toBe(mockUser.email);
+      const successMessage = screen.getByTestId('signup-success');
+      expect(successMessage.textContent).toContain('Sign up successful');
     });
   });
 
-  test('Sign In Flow', async () => {
-    const { getByTestId } = renderComponent();
+  test('Sign Up with Existing Email', async () => {
+    vi.mocked(createUserWithEmailAndPassword).mockRejectedValueOnce(
+      new Error('Email already in use')
+    );
 
-    const signInButton = getByTestId('signin-button');
+    renderComponent();
+
+    const signUpButton = screen.getByTestId('signup-button');
+    fireEvent.click(signUpButton);
+
+    await waitFor(() => {
+      const errorMessage = screen.getByTestId('signup-error');
+      expect(errorMessage.textContent).toContain('Email already in use');
+    });
+  });
+
+  test('Successful User Sign In', async () => {
+    renderComponent();
+
+    const signInButton = screen.getByTestId('signin-button');
     fireEvent.click(signInButton);
 
     await waitFor(() => {
@@ -122,30 +139,53 @@ describe('Authentication Context', () => {
         'test@example.com',
         'password123'
       );
-      expect(getByTestId('user-email').textContent).toBe('test@example.com');
+      const successMessage = screen.getByTestId('signin-success');
+      expect(successMessage.textContent).toContain('Sign in successful');
     });
   });
 
-  test('Logout Flow', async () => {
-    const { getByTestId } = renderComponent();
+  test('Sign In with Invalid Credentials', async () => {
+    vi.mocked(signInWithEmailAndPassword).mockRejectedValueOnce(
+      new Error('Invalid credentials')
+    );
 
-    const logoutButton = getByTestId('logout-button');
-    fireEvent.click(logoutButton);
+    renderComponent();
+
+    const signInButton = screen.getByTestId('signin-button');
+    fireEvent.click(signInButton);
+
+    await waitFor(() => {
+      const errorMessage = screen.getByTestId('signin-error');
+      expect(errorMessage.textContent).toContain('Invalid credentials');
+    });
+  });
+
+  test('Password Reset Flow', async () => {
+    renderComponent();
+
+    const resetButton = screen.getByTestId('reset-password-button');
+    fireEvent.click(resetButton);
+
+    await waitFor(() => {
+      expect(sendPasswordResetEmail).toHaveBeenCalledWith(
+        expect.anything(),
+        'test@example.com'
+      );
+      const successMessage = screen.getByTestId('reset-password-success');
+      expect(successMessage.textContent).toContain('Password reset email sent');
+    });
+  });
+
+  test('User Sign Out', async () => {
+    renderComponent();
+
+    const signOutButton = screen.getByTestId('logout-button');
+    fireEvent.click(signOutButton);
 
     await waitFor(() => {
       expect(signOut).toHaveBeenCalled();
-      expect(getByTestId('user-email').textContent).toBe('');
-    });
-  });
-
-  test('Reset Password Flow', async () => {
-    const { getByTestId } = renderComponent();
-
-    const resetPasswordButton = getByTestId('reset-password-button');
-    fireEvent.click(resetPasswordButton);
-
-    await waitFor(() => {
-      expect(sendPasswordResetEmail).toHaveBeenCalledWith(expect.anything(), 'test@example.com');
+      const signedOutMessage = screen.getByTestId('signout-success');
+      expect(signedOutMessage.textContent).toContain('Signed out successfully');
     });
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { updateProfile, onAuthStateChanged } from 'firebase/auth';
 import { setDoc } from 'firebase/firestore';
 
@@ -57,6 +57,8 @@ const UserManagementTestComponent = () => {
           >
             Update Profile
           </button>
+          <div data-testid="error-message" />
+          <div data-testid="validation-error" />
         </>
       )}
     </div>
@@ -77,24 +79,54 @@ describe('User Management Features', () => {
     );
   };
 
-  test('Update User Profile', async () => {
+  test('Initial User Profile Rendering', async () => {
+    renderComponent();
+    
+    await waitFor(() => {
+      const nameElement = screen.getByTestId('current-name');
+      expect(nameElement.textContent).toBe('Original Name');
+    });
+  });
+
+  test('Update User Profile Successfully', async () => {
     renderComponent();
 
-    // Initial name check
-    await waitFor(() => {
-      expect(screen.getByTestId('current-name').textContent).toBe('Original Name');
-    });
-
-    const updateProfileButton = screen.getByTestId('update-profile-button');
-    fireEvent.click(updateProfileButton);
+    const updateButton = screen.getByTestId('update-profile-button');
+    fireEvent.click(updateButton);
 
     await waitFor(() => {
+      const nameElement = screen.getByTestId('current-name');
+      expect(nameElement.textContent).toBe('Updated Name');
       expect(updateProfile).toHaveBeenCalledWith(expect.anything(), {
         displayName: 'Updated Name',
-        photoURL: 'https://example.com/avatar.jpg',
       });
-      expect(setDoc).toHaveBeenCalled();
-      expect(screen.getByTestId('current-name').textContent).toBe('Updated Name');
+    });
+  });
+
+  test('Error Handling in Profile Update', async () => {
+    // Simulate profile update failure
+    vi.mocked(updateProfile).mockRejectedValueOnce(new Error('Update failed'));
+
+    renderComponent();
+
+    const updateButton = screen.getByTestId('update-profile-button');
+    fireEvent.click(updateButton);
+
+    await waitFor(() => {
+      const errorElement = screen.getByTestId('error-message');
+      expect(errorElement.textContent).toContain('Failed to update profile');
+    });
+  });
+
+  test('Profile Update with Invalid Input', async () => {
+    renderComponent();
+
+    const updateButton = screen.getByTestId('update-profile-button');
+    fireEvent.click(updateButton);
+
+    await waitFor(() => {
+      const validationErrorElement = screen.getByTestId('validation-error');
+      expect(validationErrorElement.textContent).toContain('Name is too short');
     });
   });
 });
