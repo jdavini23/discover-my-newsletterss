@@ -80,8 +80,8 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
   };
 
   const handleCategoryToggle = (category: string) => {
-    setSelectedCategories(prev =>
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
   };
 
@@ -155,44 +155,44 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
-        className="bg-white dark:bg-dark-surface rounded-2xl p-8 max-w-2xl w-full"
-        onClick={e => e.stopPropagation()}
+        className='bg-white dark:bg-dark-surface rounded-2xl p-8 max-w-2xl w-full'
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-center mb-6">
-          <UserIcon className="mx-auto h-12 w-12 text-primary-600 mb-4" />
-          <h2 className="text-2xl font-bold">Customize Your Profile</h2>
+        <div className='text-center mb-6'>
+          <UserIcon className='mx-auto h-12 w-12 text-primary-600 mb-4' />
+          <h2 className='text-2xl font-bold'>Customize Your Profile</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className='space-y-6'>
           {/* Profile Image Upload */}
-          <div className="flex justify-center mb-6">
-            <div className="relative">
+          <div className='flex justify-center mb-6'>
+            <div className='relative'>
               <img
                 src={
                   profileImage
                     ? URL.createObjectURL(profileImage)
                     : user?.photoURL || '/default-avatar.png'
                 }
-                alt="Profile"
-                className="w-24 h-24 rounded-full object-cover"
+                alt='Profile'
+                className='w-24 h-24 rounded-full object-cover'
               />
               <label
-                htmlFor="profileImage"
-                className="absolute bottom-0 right-0 bg-primary-600 text-white p-2 rounded-full cursor-pointer"
+                htmlFor='profileImage'
+                className='absolute bottom-0 right-0 bg-primary-600 text-white p-2 rounded-full cursor-pointer'
               >
-                <CameraIcon className="h-5 w-5" />
+                <CameraIcon className='h-5 w-5' />
                 <input
-                  type="file"
-                  id="profileImage"
-                  accept="image/*"
-                  className="hidden"
+                  type='file'
+                  id='profileImage'
+                  accept='image/*'
+                  className='hidden'
                   onChange={handleProfileImageChange}
                 />
               </label>
@@ -200,35 +200,35 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
           </div>
 
           {/* Personal Details */}
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className='grid md:grid-cols-2 gap-4'>
             <div>
-              <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor='displayName' className='block text-sm font-medium text-gray-700 mb-2'>
                 Display Name
               </label>
-              <div className="relative">
-                <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <div className='relative'>
+                <UserIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
                 <input
-                  type="text"
-                  id="displayName"
+                  type='text'
+                  id='displayName'
                   value={displayName}
-                  onChange={e => setDisplayName(e.target.value)}
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Enter your name"
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className='pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500'
+                  placeholder='Enter your name'
                 />
               </div>
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-2'>
                 Email
               </label>
-              <div className="relative">
-                <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <div className='relative'>
+                <EnvelopeIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
                 <input
-                  type="email"
-                  id="email"
+                  type='email'
+                  id='email'
                   value={email}
                   readOnly
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
+                  className='pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100'
                 />
               </div>
             </div>
@@ -236,15 +236,15 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
 
           {/* Newsletter Preferences */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <StarIcon className="h-6 w-6 mr-2 text-yellow-500 dark:text-yellow-300" />
+            <h3 className='text-lg font-semibold mb-4 flex items-center'>
+              <StarIcon className='h-6 w-6 mr-2 text-yellow-500 dark:text-yellow-300' />
               Newsletter Interests
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {NEWSLETTER_CATEGORIES.map(category => (
+            <div className='flex flex-wrap gap-2'>
+              {NEWSLETTER_CATEGORIES.map((category) => (
                 <button
                   key={category}
-                  type="button"
+                  type='button'
                   onClick={() => handleCategoryToggle(category)}
                   className={`
                     px-3 py-1 rounded-full text-sm transition
@@ -262,20 +262,20 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
           </div>
 
           {/* Newsletter Frequency */}
-          <div className="mb-6">
+          <div className='mb-6'>
             <label
-              htmlFor="newsletter-frequency"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              htmlFor='newsletter-frequency'
+              className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
             >
               Newsletter Frequency
             </label>
             <select
-              id="newsletter-frequency"
+              id='newsletter-frequency'
               value={newsletterFrequency}
-              onChange={e =>
+              onChange={(e) =>
                 setNewsletterFrequency(e.target.value as 'daily' | 'weekly' | 'monthly')
               }
-              className="
+              className='
                 w-full 
                 px-3 
                 py-2 
@@ -290,9 +290,9 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
                 focus:ring-primary-500 
                 dark:bg-dark-surface 
                 dark:text-white
-              "
+              '
             >
-              {NEWSLETTER_FREQUENCIES.map(freq => (
+              {NEWSLETTER_FREQUENCIES.map((freq) => (
                 <option key={freq.value} value={freq.value}>
                   {freq.label}
                 </option>
@@ -301,32 +301,32 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
           </div>
 
           {/* Settings Section */}
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <CogIcon className="h-6 w-6 mr-2 text-gray-600 dark:text-gray-300" />
+          <div className='mt-6'>
+            <h3 className='text-lg font-semibold mb-4 flex items-center'>
+              <CogIcon className='h-6 w-6 mr-2 text-gray-600 dark:text-gray-300' />
               User Settings
             </h3>
 
             {/* Dark Mode Toggle */}
-            <div className="flex items-center justify-between bg-gray-100 dark:bg-dark-background p-4 rounded-lg mb-4">
-              <div className="flex items-center">
+            <div className='flex items-center justify-between bg-gray-100 dark:bg-dark-background p-4 rounded-lg mb-4'>
+              <div className='flex items-center'>
                 {isDarkMode ? (
-                  <MoonIcon className="h-6 w-6 mr-3 text-indigo-600" />
+                  <MoonIcon className='h-6 w-6 mr-3 text-indigo-600' />
                 ) : (
-                  <SunIcon className="h-6 w-6 mr-3 text-yellow-500" />
+                  <SunIcon className='h-6 w-6 mr-3 text-yellow-500' />
                 )}
                 <div>
-                  <span className="text-sm font-medium block">
+                  <span className='text-sm font-medium block'>
                     {isDarkMode ? 'Dark Mode' : 'Light Mode'}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className='text-xs text-gray-500 dark:text-gray-400'>
                     Customize your app's appearance
                   </span>
                 </div>
               </div>
               <button
                 onClick={toggleDarkMode}
-                className="
+                className='
                   relative 
                   inline-flex 
                   h-6 
@@ -345,8 +345,8 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
                   focus:ring-offset-2
                   bg-gray-200 
                   dark:bg-gray-700
-                "
-                aria-label="Toggle dark mode"
+                '
+                aria-label='Toggle dark mode'
               >
                 <span
                   className={`
@@ -371,9 +371,9 @@ export const ProfileCustomizationModal: React.FC<ProfileCustomizationModalProps>
 
           {/* Submit Button */}
           <button
-            type="submit"
+            type='submit'
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 mt-6"
+            className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 mt-6'
           >
             {isLoading ? 'Updating...' : 'Save Profile'}
           </button>
