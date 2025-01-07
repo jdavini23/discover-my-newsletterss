@@ -26,7 +26,7 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
       `}
     >
       {showDarkModeToggle && (
-        <div className="fixed top-4 right-4 z-50">
+        <div className='fixed top-4 right-4 z-50'>
           <DarkModeToggle />
         </div>
       )}
@@ -35,7 +35,7 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="
+        className='
           container 
           mx-auto 
           px-4 
@@ -43,7 +43,7 @@ export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
           lg:px-8 
           max-w-7xl 
           space-y-8
-        "
+        '
       >
         {children}
       </motion.div>

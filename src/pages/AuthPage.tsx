@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { toast } from '@/lib/react-hot-toast';
 import { UserIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-
 import { AuthService } from '@/services/authService';
 import { PasswordResetModal } from '@/components/auth/PasswordResetModal';
 

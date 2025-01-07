@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { UserProfile } from '../../types/profile';
-import useUserProfileStore from '../../stores/userProfileStore';
-import { useUserProfileStore } from '../src/../stores/userProfileStore';
+import { useUserProfileStore } from '@/stores/userProfileStore';
 
 const DEFAULT_AVATAR = '/src/assets/images/default-avatar.svg';
 

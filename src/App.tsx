@@ -1,16 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from '@/lib/react-hot-toast';
 import { useAuthStore } from '@/stores/authStore';
 import AuthPage from '@/pages/AuthPage';
-import NewsletterDiscoveryPage from '@/pages/NewsletterDiscoveryPage';
-import NewsletterDetailPage from '@/pages/NewsletterDetailPage';
-import ProfilePage from '@/pages/ProfilePage';
 import HomePage from '@/pages/HomePage';
+import NewsletterDiscoveryPage from '@/pages/NewsletterDiscoveryPage';
+import ProfilePage from '@/pages/ProfilePage';
+import NewsletterDetailPage from '@/pages/NewsletterDetailPage';
 import Layout from '@/components/layout/Layout';
-import SubscriptionsPage from '@/pages/SubscriptionsPage';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import ReadingHistoryPage from '@/pages/ReadingHistoryPage';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -38,22 +35,6 @@ function App() {
             element={isAuthenticated ? <ProfilePage /> : <Navigate to='/auth' replace />}
           />
           <Route path='/' element={<HomePage />} />
-          <Route
-            path='/subscriptions'
-            element={
-              <ProtectedRoute>
-                <SubscriptionsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/reading-history'
-            element={
-              <ProtectedRoute>
-                <ReadingHistoryPage />
-              </ProtectedRoute>
-            }
-          />
           {/* Catch-all route to handle undefined routes */}
           <Route
             path='*'
