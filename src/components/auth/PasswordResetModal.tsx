@@ -70,19 +70,19 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
-        className="bg-white rounded-2xl p-8 max-w-md w-full"
-        onClick={e => e.stopPropagation()}
+        className='bg-white rounded-2xl p-8 max-w-md w-full'
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-center mb-6">
-          <LockClosedIcon className="mx-auto h-12 w-12 text-primary-600 mb-4" />
-          <h2 className="text-2xl font-bold">
+        <div className='text-center mb-6'>
+          <LockClosedIcon className='mx-auto h-12 w-12 text-primary-600 mb-4' />
+          <h2 className='text-2xl font-bold'>
             {resetStage === 'email' && 'Reset Your Password'}
             {resetStage === 'code' && 'Enter Reset Code'}
             {resetStage === 'newPassword' && 'Create New Password'}
@@ -91,29 +91,29 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
 
         {resetStage === 'email' && (
           <form onSubmit={handleSendResetCode}>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='mb-4'>
+              <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-2'>
                 Email Address
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                  <EnvelopeIcon className='h-5 w-5 text-gray-400' />
                 </div>
                 <input
-                  type="email"
-                  id="email"
+                  type='email'
+                  id='email'
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Enter your email"
+                  className='pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500'
+                  placeholder='Enter your email'
                 />
               </div>
             </div>
             <button
-              type="submit"
+              type='submit'
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
             >
               {isLoading ? 'Sending...' : 'Send Reset Code'}
             </button>
@@ -122,24 +122,24 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
 
         {resetStage === 'code' && (
           <form onSubmit={handleVerifyResetCode}>
-            <div className="mb-4">
-              <label htmlFor="resetCode" className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='mb-4'>
+              <label htmlFor='resetCode' className='block text-sm font-medium text-gray-700 mb-2'>
                 Reset Code
               </label>
               <input
-                type="text"
-                id="resetCode"
+                type='text'
+                id='resetCode'
                 value={resetCode}
-                onChange={e => setResetCode(e.target.value)}
+                onChange={(e) => setResetCode(e.target.value)}
                 required
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Enter 6-digit reset code"
+                className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500'
+                placeholder='Enter 6-digit reset code'
               />
             </div>
             <button
-              type="submit"
+              type='submit'
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
             >
               {isLoading ? 'Verifying...' : 'Verify Code'}
             </button>
@@ -148,43 +148,43 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
 
         {resetStage === 'newPassword' && (
           <form onSubmit={handleResetPassword}>
-            <div className="mb-4">
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='mb-4'>
+              <label htmlFor='newPassword' className='block text-sm font-medium text-gray-700 mb-2'>
                 New Password
               </label>
               <input
-                type="password"
-                id="newPassword"
+                type='password'
+                id='newPassword'
                 value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
+                onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={8}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Enter new password"
+                className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500'
+                placeholder='Enter new password'
               />
             </div>
-            <div className="mb-4">
+            <div className='mb-4'>
               <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor='confirmPassword'
+                className='block text-sm font-medium text-gray-700 mb-2'
               >
                 Confirm New Password
               </label>
               <input
-                type="password"
-                id="confirmPassword"
+                type='password'
+                id='confirmPassword'
                 value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={8}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Confirm new password"
+                className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500'
+                placeholder='Confirm new password'
               />
             </div>
             <button
-              type="submit"
+              type='submit'
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
             >
               {isLoading ? 'Resetting...' : 'Reset Password'}
             </button>

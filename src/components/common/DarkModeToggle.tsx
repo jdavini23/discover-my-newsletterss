@@ -31,7 +31,7 @@ export const DarkModeToggle: React.FC = () => {
     <motion.button
       onClick={toggleDarkMode}
       whileTap={{ scale: 0.9 }}
-      className="
+      className='
         p-2 
         rounded-full 
         bg-gray-100 
@@ -42,7 +42,7 @@ export const DarkModeToggle: React.FC = () => {
         dark:hover:bg-gray-700 
         transition-colors 
         duration-300
-      "
+      '
       aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
       <motion.div
@@ -51,9 +51,9 @@ export const DarkModeToggle: React.FC = () => {
         transition={{ duration: 0.3 }}
       >
         {isDarkMode ? (
-          <SunIcon className="h-6 w-6 text-yellow-500" />
+          <SunIcon className='h-6 w-6 text-yellow-500' />
         ) : (
-          <MoonIcon className="h-6 w-6 text-indigo-600" />
+          <MoonIcon className='h-6 w-6 text-indigo-600' />
         )}
       </motion.div>
     </motion.button>

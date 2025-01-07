@@ -55,7 +55,7 @@ export const fetchAvailableTopics = async () => {
   const topicsRef = collection(db, 'topics');
   const topicsSnapshot = await getDocs(topicsRef);
 
-  return topicsSnapshot.docs.map(doc => ({
+  return topicsSnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
@@ -83,7 +83,7 @@ export const getUserNewsletters = async () => {
 
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map(
-    doc =>
+    (doc) =>
       ({
         id: doc.id,
         ...doc.data(),
@@ -136,7 +136,7 @@ export const fetchNewsletters = async (filters: NewsletterFilter = {}, page = 1,
 
   const newsletterSnapshot = await getDocs(newsletterQuery);
 
-  return newsletterSnapshot.docs.map(doc => {
+  return newsletterSnapshot.docs.map((doc) => {
     const data = doc.data();
     console.log('Raw newsletter data:', data);
 
@@ -234,7 +234,7 @@ export const fetchUserSubscriptions = async () => {
 
   // Get full newsletter details for each subscription
   const subscriptions = await Promise.all(
-    subscriptionSnapshot.docs.map(async subDoc => {
+    subscriptionSnapshot.docs.map(async (subDoc) => {
       const newsletterId = subDoc.data().newsletterId;
       const newsletterDoc = await getDoc(doc(db, 'newsletters', newsletterId));
 

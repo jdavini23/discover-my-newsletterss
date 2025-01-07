@@ -8,15 +8,9 @@ import NewsletterDetailPage from './pages/NewsletterDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import HomePage from './pages/HomePage';
 import Layout from './components/layout/Layout';
-import { AuthPage } from './pages/AuthPage';
-import { NewsletterDiscoveryPage } from './pages/NewsletterDiscoveryPage';
-import { NewsletterDetailPage } from './pages/NewsletterDetailPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { HomePage } from './pages/HomePage';
-import { Layout } from './components/layout/Layout';
-import { SubscriptionsPage } from './pages/SubscriptionsPage';
+import SubscriptionsPage from './pages/SubscriptionsPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { ReadingHistoryPage } from './pages/ReadingHistoryPage';
+import ReadingHistoryPage from './pages/ReadingHistoryPage';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -26,34 +20,26 @@ function App() {
       <Layout>
         <Routes>
           <Route
-            path="/auth"
-            element={!isAuthenticated ? <AuthPage /> : <Navigate to="/newsletters" replace />}
+            path='/auth'
+            element={!isAuthenticated ? <AuthPage /> : <Navigate to='/newsletters' replace />}
           />
           <Route
-            path="/newsletters"
+            path='/newsletters'
             element={
-              isAuthenticated ? <NewsletterDiscoveryPage /> : <Navigate to="/auth" replace />
+              isAuthenticated ? <NewsletterDiscoveryPage /> : <Navigate to='/auth' replace />
             }
           />
-          <Route path="/newsletters" element={<NewsletterDiscoveryPage />} />
           <Route
-            path="/newsletters/:newsletterId"
-            element={isAuthenticated ? <NewsletterDetailPage /> : <Navigate to="/auth" replace />}
+            path='/newsletters/:newsletterId'
+            element={isAuthenticated ? <NewsletterDetailPage /> : <Navigate to='/auth' replace />}
           />
           <Route
-            path="/profile"
-            element={isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" replace />}
+            path='/profile'
+            element={isAuthenticated ? <ProfilePage /> : <Navigate to='/auth' replace />}
           />
-          <Route path="/" element={<HomePage />} />
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<HomePage />} />
+          <Route path='/' element={<HomePage />} />
           <Route
-            path="/subscriptions"
+            path='/subscriptions'
             element={
               <ProtectedRoute>
                 <SubscriptionsPage />
@@ -61,7 +47,7 @@ function App() {
             }
           />
           <Route
-            path="/reading-history"
+            path='/reading-history'
             element={
               <ProtectedRoute>
                 <ReadingHistoryPage />
@@ -70,11 +56,11 @@ function App() {
           />
           {/* Catch-all route to handle undefined routes */}
           <Route
-            path="*"
+            path='*'
             element={<Navigate to={isAuthenticated ? '/newsletters' : '/auth'} replace />}
           />
         </Routes>
-        <Toaster position="top-right" />
+        <Toaster position='top-right' />
       </Layout>
     </Router>
   );

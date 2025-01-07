@@ -54,7 +54,7 @@ const isRateLimited = (eventName: string): boolean => {
 
   // Remove events older than 1 minute
   RATE_LIMIT_CONFIG.eventQueue = RATE_LIMIT_CONFIG.eventQueue.filter(
-    event => now - event.timestamp < 60000
+    (event) => now - event.timestamp < 60000
   );
 
   // Check if we've exceeded max events per minute
