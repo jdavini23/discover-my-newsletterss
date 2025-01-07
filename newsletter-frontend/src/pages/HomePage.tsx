@@ -1,18 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-hot-toast';
+import { toast } from '@/lib/react-hot-toast';
 
-import {
-  Newsletter,
-  User,
-  RecommendationContext,
-  RecommendationScore,
-  UserPreference,
-} from '../types';
-import { useRecommendationStore } from '../stores/recommendationStore';
-import { useAuthStore } from '../stores/authStore';
-import { useNewsletterStore } from '../stores/newsletterStore';
+import { Newsletter, RecommendationContext, RecommendationScore, UserPreference } from '@/types';
+import { useRecommendationStore } from '@/stores/recommendationStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useNewsletterStore } from '@/stores/newsletterStore';
 
 import {
   UserIcon,
@@ -29,9 +23,9 @@ import {
   FireIcon,
   LightBulbIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
+} from '@/lib/heroicons/react/24/outline';
 
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from '@/lib/firebase/firestore';
 import { db } from '@/services/firebaseConfig';
 import { recommendationService } from '@/services/recommendationService';
 import { trackEvent } from '@/utils/analytics';

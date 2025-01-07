@@ -7,9 +7,8 @@ import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
 
 // Establish API mocking before all tests
-const server = setupServer(
-  // Add any default handlers here if needed
-);
+const server = setupServer();
+// Add any default handlers here if needed
 
 beforeAll(() => server.listen());
 
@@ -25,7 +24,7 @@ afterAll(() => server.close());
 // Mock window.matchMedia for testing
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -90,6 +89,6 @@ console.warn = vi.fn();
 console.error = vi.fn();
 
 // Mock window.addEventListener('unhandledrejection')
-window.addEventListener('unhandledrejection', event => {
+window.addEventListener('unhandledrejection', (event) => {
   console.warn(`Unhandled promise rejection: ${event.reason}`);
 });

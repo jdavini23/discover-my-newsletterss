@@ -1,11 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  MagnifyingGlassIcon, 
-  AdjustmentsHorizontalIcon 
-} from '@heroicons/react/24/outline';
-
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { Newsletter } from '@/types/Newsletter';
 import { NewsletterService, NewsletterFilters } from '@/services/newsletterService';
 import { useNewsletterStore } from '@/stores/newsletterStore';
@@ -127,8 +123,8 @@ const NewsletterDiscoveryPage: React.FC = () => {
   };
 
   const handleCategoryToggle = (category: string) => {
-    setSelectedCategories(prev =>
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
   };
 
@@ -138,9 +134,9 @@ const NewsletterDiscoveryPage: React.FC = () => {
 
   const handleFilterChange = (event: React.MouseEvent<HTMLButtonElement>, data: any) => {
     const { category, newsletterId } = data;
-    
+
     if (category) {
-      setFilters(prev => ({ ...prev, category }));
+      setFilters((prev) => ({ ...prev, category }));
     }
   };
 
@@ -181,37 +177,37 @@ const NewsletterDiscoveryPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 text-center">Discover Newsletters</h1>
+    <div className='container mx-auto px-4 py-8'>
+      <div className='max-w-6xl mx-auto'>
+        <h1 className='text-3xl font-bold mb-6 text-center'>Discover Newsletters</h1>
 
         {/* Search and Filter Section */}
-        <div className="mb-8 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
-          <div className="relative w-full md:flex-grow">
+        <div className='mb-8 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4'>
+          <div className='relative w-full md:flex-grow'>
             <input
-              type="text"
-              placeholder="Search newsletters..."
+              type='text'
+              placeholder='Search newsletters...'
               value={searchQuery}
               onChange={handleSearchChange}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className='w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500'
             />
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400' />
           </div>
 
-          <div className="w-full md:w-auto">
+          <div className='w-full md:w-auto'>
             <button
-              className="w-full flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              className='w-full flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition'
               onClick={() => setShowFilterModal(true)}
             >
-              <AdjustmentsHorizontalIcon className="h-5 w-5 mr-2" />
+              <AdjustmentsHorizontalIcon className='h-5 w-5 mr-2' />
               Filters
             </button>
           </div>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {CATEGORIES.map(category => (
+        <div className='flex flex-wrap justify-center gap-2 mb-8'>
+          {CATEGORIES.map((category) => (
             <button
               key={category}
               onClick={() => handleCategoryToggle(category)}
@@ -228,11 +224,11 @@ const NewsletterDiscoveryPage: React.FC = () => {
 
         {/* Newsletters Grid */}
         {loading ? (
-          <div className="flex justify-center items-center h-64">
+          <div className='flex justify-center items-center h-64'>
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1 }}
-              className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full"
+              className='w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full'
             />
           </div>
         ) : newsletters.length > 0 ? (
@@ -240,9 +236,9 @@ const NewsletterDiscoveryPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
           >
-            {newsletters.map(newsletter => (
+            {newsletters.map((newsletter) => (
               <NewsletterCard
                 key={newsletter.id}
                 newsletter={newsletter}
@@ -251,7 +247,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
             ))}
           </motion.div>
         ) : (
-          <div className="text-center text-gray-500">
+          <div className='text-center text-gray-500'>
             No newsletters found. Try adjusting your search or filters.
           </div>
         )}
