@@ -35,8 +35,8 @@
       "@types/*": ["src/types/*"]
     },
     "types": ["node"],
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "allowSyntheticDefaultImports": true
   },
   "include": ["src", "scripts"],

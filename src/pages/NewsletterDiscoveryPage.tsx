@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
 import { NewsletterService, NewsletterFilters } from '@/services/newsletterService';
+import { Newsletter } from '@/stores/newsletterStore';
 import { trackEvent } from '@/utils/analytics';
 import NewsletterCard from '@/components/newsletter/NewsletterCard';
-import { Newsletter, EventData } from '@/types/firestore';
-import { useAuthStore } from '@/stores/authStore';
-import OnboardingModal from '@/components/modals/OnboardingModal';
+import { toast } from 'react-hot-toast';
+
+import { Newsletter, EventData } from '../types';
+import { NewsletterCard } from '../components/newsletter/NewsletterCard';
+import { useNewsletterStore } from '../stores/newsletterStore';
+import { useAuthStore } from '../stores/authStore';
 
 import {
   MagnifyingGlassIcon,
@@ -28,21 +33,23 @@ const CATEGORIES = [
   'Innovation',
 ];
 
+const NewsletterDiscoveryPage: React.FC = () => {
+  const navigate = useNavigate();
 const SORT_OPTIONS = [
-  { id: 'subscribers_desc', value: 'subscribers_desc', label: 'Most Subscribers' },
-  { id: 'subscribers_asc', value: 'subscribers_asc', label: 'Least Subscribers' },
-  { id: 'rating_desc', value: 'rating_desc', label: 'Highest Rated' },
-  { id: 'rating_asc', value: 'rating_asc', label: 'Lowest Rated' },
-  { id: 'newest', value: 'newest', label: 'Newest' },
-  { id: 'oldest', value: 'oldest', label: 'Oldest' },
+  { value: 'subscribers_desc', label: 'Most Subscribers' },
+  { value: 'subscribers_asc', label: 'Least Subscribers' },
+  { value: 'rating_desc', label: 'Highest Rated' },
+  { value: 'rating_asc', label: 'Lowest Rated' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'oldest', label: 'Oldest' },
 ];
 
 const SUBSCRIBER_RANGES = [
-  { id: 'any', value: undefined, label: 'Any Size' },
-  { id: '100plus', value: 100, label: '100+ Subscribers' },
-  { id: '1kplus', value: 1000, label: '1K+ Subscribers' },
-  { id: '10kplus', value: 10000, label: '10K+ Subscribers' },
-  { id: '100kplus', value: 100000, label: '100K+ Subscribers' },
+  { value: undefined, label: 'Any Size' },
+  { value: 100, label: '100+ Subscribers' },
+  { value: 1000, label: '1K+ Subscribers' },
+  { value: 10000, label: '10K+ Subscribers' },
+  { value: 100000, label: '100K+ Subscribers' },
 ];
 
 const NewsletterDiscoveryPage: React.FC = () => {
@@ -55,7 +62,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [minSubscribers, setMinSubscribers] = useState<number | undefined>();
   const [minRating, setMinRating] = useState<number | undefined>();
-  const [sortBy, setSortBy] = useState<string>('newest');
+  const [sortBy, setSortBy] = useState<'rating' | 'popularity' | 'newest'>('newest');
   const [totalNewsletters, setTotalNewsletters] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -63,6 +70,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
   const pageSize = 12;
 
   useEffect(() => {
+    // Show onboarding for new users
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
     if (!hasSeenOnboarding) {
       setShowOnboarding(true);
@@ -74,6 +82,10 @@ const NewsletterDiscoveryPage: React.FC = () => {
     setLoading(true);
     try {
       const filters: NewsletterFilters = {
+        pageSize: 12,
+        page: 1,
+        categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+        searchQuery: searchQuery || undefined,
         pageSize,
         page: currentPage,
         categories: selectedCategories.length > 0 ? selectedCategories : undefined,
@@ -88,21 +100,24 @@ const NewsletterDiscoveryPage: React.FC = () => {
       trackEvent('newsletter_search', {
         categories: selectedCategories,
         query: searchQuery,
+      });
+      setTotalNewsletters(response.total);
+
+      trackEvent('newsletter_search', {
+        categories: selectedCategories,
+        query: searchQuery,
         sortBy,
         filters: {
-          pageSize,
-          page: currentPage,
-          categories: selectedCategories,
           minSubscribers,
           minRating,
         },
-      });
-      setTotalNewsletters(response.total);
+      } as EventData);
     } catch (error) {
       console.error('Failed to fetch newsletters', error);
     } finally {
       setLoading(false);
     }
+  }, [selectedCategories, searchQuery]);
   }, [selectedCategories, searchQuery, minSubscribers, minRating, sortBy, currentPage]);
 
   useEffect(() => {
@@ -113,6 +128,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
     console.log('Newsletter clicked:', newsletterId);
     navigate(`/newsletters/${newsletterId}`);
     trackEvent('newsletter_detail_view', { newsletterId });
+    navigate(`/newsletters/${newsletterId}`);
   };
 
   const handleCategoryToggle = (category: string) => {
@@ -125,6 +141,82 @@ const NewsletterDiscoveryPage: React.FC = () => {
     setSearchQuery(e.target.value);
   };
 
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center">Discover Newsletters</h1>
+
+        {/* Search and Filter Section */}
+        <div className="mb-8 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+          <div className="relative w-full md:flex-grow">
+            <input
+              type="text"
+              placeholder="Search newsletters..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          </div>
+
+          <div className="w-full md:w-auto">
+            <button
+              className="w-full flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              onClick={() => {}}
+            >
+              <AdjustmentsHorizontalIcon className="h-5 w-5 mr-2" />
+              Filters
+            </button>
+          </div>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {CATEGORIES.map(category => (
+            <button
+              key={category}
+              onClick={() => handleCategoryToggle(category)}
+              className={`px-3 py-1 rounded-full text-sm transition ${
+                selectedCategories.includes(category)
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Newsletters Grid */}
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1 }}
+              className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full"
+            />
+          </div>
+        ) : newsletters.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          >
+            {newsletters.map(newsletter => (
+              <NewsletterCard
+                key={newsletter.id}
+                newsletter={newsletter}
+                onClick={() => handleNewsletterClick(newsletter.id)}
+              />
+            ))}
+          </motion.div>
+        ) : (
+          <div className="text-center text-gray-500">
+            No newsletters found. Try adjusting your search or filters.
+          </div>
+        )}
+      </div>
   const resetFilters = () => {
     setSelectedCategories([]);
     setSearchQuery('');
@@ -164,9 +256,7 @@ const NewsletterDiscoveryPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Onboarding Modal */}
-      {showOnboarding && (
-        <OnboardingModal isOpen={showOnboarding} onClose={() => setShowOnboarding(false)} />
-      )}
+      <OnboardingModal isOpen={showOnboarding} onClose={() => setShowOnboarding(false)} />
 
       {/* Newsletter Preview Modal */}
       {selectedNewsletter && (
@@ -241,9 +331,9 @@ const NewsletterDiscoveryPage: React.FC = () => {
                     <button
                       key={category}
                       onClick={() => handleCategoryToggle(category)}
-                      className={`px-4 py-2 rounded-full text-sm transition ${
+                      className={`px-3 py-1 rounded-full text-sm transition ${
                         selectedCategories.includes(category)
-                          ? 'bg-primary-600 text-white'
+                          ? 'bg-primary-500 text-white'
                           : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                       }`}
                     >
@@ -259,14 +349,14 @@ const NewsletterDiscoveryPage: React.FC = () => {
                   Minimum Subscribers
                 </label>
                 <select
-                  value={minSubscribers}
+                  value={minSubscribers || ''}
                   onChange={e =>
                     setMinSubscribers(e.target.value ? Number(e.target.value) : undefined)
                   }
                   className="w-full px-3 py-2 border rounded-md"
                 >
                   {SUBSCRIBER_RANGES.map(range => (
-                    <option key={range.id} value={range.value}>
+                    <option key={range.value} value={range.value}>
                       {range.label}
                     </option>
                   ))}
@@ -283,15 +373,9 @@ const NewsletterDiscoveryPage: React.FC = () => {
                   onChange={e => setMinRating(e.target.value ? Number(e.target.value) : undefined)}
                   className="w-full px-3 py-2 border rounded-md"
                 >
-                  <option key="any" value="">
-                    Any Rating
-                  </option>
-                  <option key="4stars" value="4">
-                    4+ Stars
-                  </option>
-                  <option key="3stars" value="3">
-                    3+ Stars
-                  </option>
+                  <option value="">Any Rating</option>
+                  <option value="4">4+ Stars</option>
+                  <option value="3">3+ Stars</option>
                 </select>
               </div>
 
@@ -302,12 +386,14 @@ const NewsletterDiscoveryPage: React.FC = () => {
                   value={sortBy}
                   onChange={e => {
                     const value = e.target.value;
-                    setSortBy(value);
+                    if (value === 'rating' || value === 'popularity' || value === 'newest') {
+                      setSortBy(value);
+                    }
                   }}
                   className="w-full px-3 py-2 border rounded-md"
                 >
-                  {SORT_OPTIONS.map((option, index) => (
-                    <option key={option.id} value={option.value}>
+                  {SORT_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}

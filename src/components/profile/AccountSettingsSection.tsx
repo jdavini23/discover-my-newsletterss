@@ -3,7 +3,7 @@ import { UserProfile } from '../../types/profile';
 import { auth } from '../../config/firebase';
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '../src/../stores/authStore';
 
 interface AccountSettingsSectionProps {
   profile: UserProfile;

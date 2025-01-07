@@ -187,9 +187,7 @@ export const generateMockNewsletters = (count: number = 20): Newsletter[] => {
   return Array.from({ length: count }, (_, index) => ({
     id: `newsletter_${index + 1}`,
     title: `${categories[index % categories.length]} Insights`,
-    description: `Curated ${
-      categories[index % categories.length]
-    } newsletter with the latest trends and insights.`,
+    description: `Curated ${categories[index % categories.length]} newsletter with the latest trends and insights.`,
     author: `${categories[index % categories.length]} Digest`,
     category: categories[index % categories.length],
     tags: tags.sort(() => 0.5 - Math.random()).slice(0, 3),
@@ -366,53 +364,4 @@ export const NewsletterService = {
       throw error;
     }
   },
-  async getNewsletterById(newsletterId: string): Promise<Newsletter | null> {
-    return new Promise(resolve => {
-      simulateDelay();
-      const newsletter = MOCK_NEWSLETTERS.find(nl => nl.id === newsletterId);
-      resolve(newsletter || null);
-    });
-  },
-  async getNewsletterReviews(newsletterId: string): Promise<NewsletterReview[]> {
-    return new Promise(resolve => {
-      simulateDelay();
-      const mockReviews: NewsletterReview[] = [
-        {
-          id: '1',
-          userId: 'user1',
-          userName: 'Tech Enthusiast',
-          rating: 4.5,
-          comment: 'Fantastic newsletter with cutting-edge insights!',
-          timestamp: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          userId: 'user2',
-          userName: 'Innovation Seeker',
-          rating: 4.0,
-          comment: 'Great content, always keeps me informed.',
-          timestamp: new Date().toISOString(),
-        },
-      ];
-      resolve(mockReviews);
-    });
-  },
-  async checkSubscriptionStatus(newsletterId: string): Promise<boolean> {
-    return new Promise(resolve => {
-      simulateDelay();
-      // Simulate subscription status based on newsletter ID
-      resolve(Math.random() > 0.5);
-    });
-  },
 };
-
-interface NewsletterReview {
-  id: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  timestamp: string;
-}
-
-interface NewsletterReview {} // placeholder for NewsletterReview type

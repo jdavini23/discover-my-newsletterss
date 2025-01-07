@@ -49,10 +49,10 @@ export const recordNewsletterInteraction = async (
       interactionType === 'view'
         ? { $inc: 1 }
         : interactionType === 'subscribe'
-        ? { $inc: 5 }
-        : interactionType === 'read'
-        ? { $inc: 3 }
-        : undefined,
+          ? { $inc: 5 }
+          : interactionType === 'read'
+            ? { $inc: 3 }
+            : undefined,
   });
 
   return docRef.id;
@@ -118,7 +118,7 @@ export const generatePersonalizedRecommendations = async (
       ({
         id: doc.id,
         ...doc.data(),
-      } as Newsletter)
+      }) as Newsletter
   );
 };
 
@@ -150,10 +150,10 @@ export const updateNewsletterRecommendationMetadata = async (newsletterId: strin
       interaction.interactionType === 'subscribe'
         ? 5
         : interaction.interactionType === 'read'
-        ? 3
-        : interaction.interactionType === 'view'
-        ? 1
-        : 0;
+          ? 3
+          : interaction.interactionType === 'view'
+            ? 1
+            : 0;
 
     // Accumulate topic weights
     // In a real scenario, you'd fetch the newsletter's topics

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 // Validation schema
 const loginSchema = z.object({

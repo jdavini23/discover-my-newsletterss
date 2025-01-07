@@ -1,7 +1,19 @@
 import { create, StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { NewsletterService, NewsletterFilters as ApiFilters } from '@/services/newsletterService';
-import { Newsletter } from '@/types/firestore';
+
+// Types remain the same
+export interface Newsletter {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  category: string;
+  tags: string[];
+  subscribers: number;
+  rating?: number;
+  imageUrl?: string;
+}
 
 // Align with API service filters
 export type NewsletterFilters = ApiFilters;

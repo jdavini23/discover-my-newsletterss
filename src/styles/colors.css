@@ -1,9 +1,9 @@
 /* Light Mode */
 :root {
-  --primary: #4a90e2;
-  --secondary: #f5a623;
-  --accent: #50e3c2;
-  --background: #f8f9fa;
+  --primary: #4A90E2;
+  --secondary: #F5A623;
+  --accent: #50E3C2;
+  --background: #F8F9FA;
   --text-primary: #333333;
   --text-secondary: #666666;
 }
@@ -11,9 +11,9 @@
 /* Dark Mode */
 .dark {
   --background: #121212;
-  --surface: #1e1e1e;
-  --text-primary: #ededed;
-  --text-secondary: #a1a1a1;
+  --surface: #1E1E1E;
+  --text-primary: #EDEDED;
+  --text-secondary: #A1A1A1;
 }
 
 /* Hover Effects */

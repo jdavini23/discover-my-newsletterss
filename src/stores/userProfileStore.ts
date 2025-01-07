@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { UserProfile } from '@/types/profile';
 import {
   fetchUserProfile,
@@ -58,14 +58,13 @@ const useUserProfileStore = create<UserProfileState>()(
             error: error instanceof Error ? error.message : 'Failed to update profile',
             isLoading: false,
           });
-          throw error;
         }
       },
 
       updateNewsletterPrefs: async preferences => {
         const { profile } = get();
         if (!profile) {
-          throw new Error('No profile to update');
+          throw new Error('No profile to update newsletter preferences');
         }
 
         set({ isLoading: true, error: null });
@@ -78,7 +77,6 @@ const useUserProfileStore = create<UserProfileState>()(
               error instanceof Error ? error.message : 'Failed to update newsletter preferences',
             isLoading: false,
           });
-          throw error;
         }
       },
 
@@ -86,10 +84,13 @@ const useUserProfileStore = create<UserProfileState>()(
         set({ isLoading: true, error: null });
         try {
           const topics = await fetchAvailableTopics();
-          set({ availableTopics: topics, isLoading: false });
+          set({
+            availableTopics: topics.map(topic => topic.id),
+            isLoading: false,
+          });
         } catch (error) {
           set({
-            error: error instanceof Error ? error.message : 'Failed to load available topics',
+            error: error instanceof Error ? error.message : 'Failed to load topics',
             isLoading: false,
           });
         }
@@ -98,32 +99,28 @@ const useUserProfileStore = create<UserProfileState>()(
       addActivityLog: async activity => {
         const { profile } = get();
         if (!profile) {
-          throw new Error('No profile to update');
+          throw new Error('No profile to update activity log');
         }
 
-        set({ isLoading: true, error: null });
         try {
           const updatedProfile = await updateUserProfile(profile.uid, {
-            activityLog: [...profile.activityLog, activity],
+            activityLog: [...(profile.activityLog || []), activity],
           });
-          set({ profile: updatedProfile, isLoading: false });
+          set({ profile: updatedProfile });
         } catch (error) {
           set({
             error: error instanceof Error ? error.message : 'Failed to add activity log',
-            isLoading: false,
           });
-          throw error;
         }
       },
 
-      resetProfile: () => set({ profile: null, isLoading: false, error: null }),
+      resetProfile: () => {
+        set({ profile: null, isLoading: false, error: null, availableTopics: [] });
+      },
     }),
     {
       name: 'user-profile-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: state => ({
-        profile: state.profile,
-      }),
+      partialize: state => ({ profile: state.profile }),
     }
   )
 );

@@ -67,14 +67,3 @@ export interface NewsletterFilter {
   page?: number;
   pageSize?: number;
 }
-
-export interface EventData {
-  source?: string;
-  message?: string;
-  severity?: 'info' | 'warning' | 'error';
-  error?: string;
-  stack?: string;
-  context?: Record<string, unknown>;
-  query?: string;
-  categories?: string[];
-}

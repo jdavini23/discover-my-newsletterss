@@ -19,19 +19,21 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: '127.0.0.1',
-      port: 5173,
+      port: 3000,
       strictPort: true,
       open: true,
       cors: true,
       hmr: {
         host: '127.0.0.1',
-        port: 5174,
+        port: 3001,
         protocol: 'ws',
       },
       fs: {
         // Allow serving files from one level up to the project root
         allow: [path.resolve(__dirname, '..'), path.resolve(__dirname, '.')],
       },
+      // Add more detailed logging
+      middlewareMode: true,
     },
     build: {
       outDir: 'dist',

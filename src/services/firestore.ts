@@ -87,7 +87,7 @@ export const getUserNewsletters = async () => {
       ({
         id: doc.id,
         ...doc.data(),
-      } as Newsletter)
+      }) as Newsletter
   );
 };
 
